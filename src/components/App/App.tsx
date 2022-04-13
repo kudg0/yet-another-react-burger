@@ -5,7 +5,8 @@ import Main from '../Main/Main';
 
 import Styles from './app.module.scss'
 
-import Lazyload from './lazyLoad.js';
+import Lazyload from './../utils/lazyLoad.js';
+
 
 
 class App extends React.Component {

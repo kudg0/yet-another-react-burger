@@ -1,8 +1,10 @@
 import React from 'react';
 
+import {BurgerIcon, ListIcon} from '@ya.praktikum/react-developer-burger-ui-components';
+
+
 import Styles from './navigation.module.scss';
 
-import {BurgerIcon, ListIcon} from '@ya.praktikum/react-developer-burger-ui-components';
 
 
 class Navigation extends React.Component {

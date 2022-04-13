@@ -1,8 +1,11 @@
 import React from 'react';
 
+import {ProfileIcon} from '@ya.praktikum/react-developer-burger-ui-components';
+
+
 import Styles from './profile.module.scss';
 
-import {ProfileIcon} from '@ya.praktikum/react-developer-burger-ui-components';
+
 
 class Profile extends React.Component {
   render() {

@@ -1,24 +1,28 @@
 import React from 'react';
 
+
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
-import Styles from './main.module.scss';
 import {IngredientType} from './types';
+
+
+import Styles from './main.module.scss';
+
 
 
 const jsonData = require('./../../utils/data.json');
 
 
 
-
-class Main extends React.Component<{}, { activeIngredients: Array<IngredientType>, ingredients: Array<IngredientType> }> {
+class Main extends React.Component<{}, { activeIngredients: Array<IngredientType>, ingredients: Array<IngredientType>, totalAmount: number }> {
   constructor(props: any){
     super(props);
 
     this.state = {
       activeIngredients: [],
-      ingredients: []
+      ingredients: [],
+      totalAmount: 0
     }
 
     this.increaseCounter = this.increaseCounter.bind(this);
@@ -32,40 +36,43 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
   }
 
   increaseCounter(itemId: string){
-    let target__index = this.state.ingredients.findIndex( (ingredient: IngredientType) => ingredient._id === itemId),
-        activeBun = false;
+    let target__index : number = this.state.ingredients.findIndex( (ingredient: IngredientType) => ingredient._id === itemId),
+        activeBun : boolean  = false;
 
 
+    // Собираем в массив выбранные ингредиенты
+    let updatedIngredientsArr : Array<IngredientType> = 
+        this.state.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
+          if(
+            ingredient_index !== target__index || 
+            (ingredient.type === 'bun' && ingredient.__v === 1) || 
+            (ingredient.type === 'sauce' && ingredient.__v >= 5)
+          ){
+            return ingredient;
+          }
+          if(ingredient.type === 'bun'){
+            activeBun = true;
+          }
 
-    let updatedIngredientsArr : Array<IngredientType> = this.state.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
-      if(
-        ingredient_index !== target__index || 
-        (ingredient.type === 'bun' && ingredient.__v === 1) || 
-        (ingredient.type === 'sauce' && ingredient.__v >= 5)
-      ){
-        return ingredient;
-      }
-      if(ingredient.type === 'bun'){
-        activeBun = true;
-      }
+          ingredient.__v = ingredient.__v + 1;
+          
+          return ingredient;
+        });
+    // END
 
-      ingredient.__v = ingredient.__v + 1;
-      
-      return ingredient;
-    });
+    // Если уже есть активная булка, убираем ее и заменяем новой
+      if(activeBun){
+        updatedIngredientsArr = updatedIngredientsArr.map((ingredient: IngredientType, ingredient_index: number) => {
+          if(ingredient.type === 'bun' && ingredient._id !== itemId){
+            ingredient.__v = 0;
 
-
-    if(activeBun){
-      updatedIngredientsArr = updatedIngredientsArr.map((ingredient: IngredientType, ingredient_index: number) => {
-        if(ingredient.type === 'bun' && ingredient._id !== itemId){
-          ingredient.__v = 0;
+            return ingredient;
+          }
 
           return ingredient;
-        }
-
-        return ingredient;
-      });
-    }
+        });
+      }
+    // END
 
     this.setState({
       ingredients: updatedIngredientsArr
@@ -75,15 +82,22 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
   }
 
   updateActiveIngredients(){
-    let activeIngredients : Array<IngredientType> = [];
+    let activeIngredients : Array<IngredientType> = [],
+        totalAmount : number = 0;
+
 
     this.state.ingredients.forEach((ingredient: IngredientType) => {
       for(let i = 0; i < ingredient.__v; i++){
         activeIngredients.push(ingredient);
+        
+        totalAmount += ingredient.type === 'bun' ? ingredient.price * 2 : ingredient.price;
       }
     });
 
-    this.setState({activeIngredients: activeIngredients});
+    this.setState({
+      activeIngredients: activeIngredients,
+      totalAmount: totalAmount
+    });
   }
 
 
@@ -97,7 +111,7 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
         </section>
         <section className={Styles.mainContainer__application}>
           <BurgerIngredients ingredients={this.state.ingredients} increaseCounterValue={this.increaseCounter}/>
-          <BurgerConstructor activeIngredients={this.state.activeIngredients}/>
+          <BurgerConstructor activeIngredients={this.state.activeIngredients} totalAmount={this.state.totalAmount}/>
         </section>
       </main>
     )
