@@ -36,23 +36,24 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
   }
 
   increaseCounter(itemId: string){
-    let target__index : number = this.state.ingredients.findIndex( (ingredient: IngredientType) => ingredient._id === itemId),
-        activeBun : boolean  = false;
+    let activeBun : boolean = false;
 
 
     // Собираем в массив выбранные ингредиенты
     let updatedIngredientsArr : Array<IngredientType> = 
         this.state.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
           if(
-            ingredient_index !== target__index || 
+            ingredient._id !== itemId || 
             (ingredient.type === 'bun' && ingredient.__v === 1) || 
-            (ingredient.type === 'sauce' && ingredient.__v >= 5)
+            (ingredient.type === 'sauce' && ingredient.__v >= 5) || 
+            ingredient.__v >= 10
           ){
             return ingredient;
           }
           if(ingredient.type === 'bun'){
             activeBun = true;
           }
+
 
           ingredient.__v = ingredient.__v + 1;
           
