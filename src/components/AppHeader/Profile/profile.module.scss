@@ -1,0 +1,55 @@
+.profileContainer{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  width: auto;
+
+  padding: 20px 16px;
+  
+
+  cursor: pointer;
+  user-select: none;
+
+
+  .profileContainer__icon{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    width: 24px;
+    margin-right: 8px;
+
+    svg{
+      fill: $text__color_sub;
+
+      will-change: fill;
+      transition: .3s fill;
+    }
+  }
+
+  .profileContainer__text{
+    white-space: nowrap;
+    
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+
+    color: $text__color_sub;
+
+    will-change: color;
+    transition: .3s color;
+  }
+
+  &:hover{
+    .profileContainer__icon{
+      svg{
+        fill: $text__color_prior;
+      }
+    }
+    .profileContainer__text{
+      color: $text__color_prior;
+    }
+  }
+}

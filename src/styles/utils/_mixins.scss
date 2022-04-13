@@ -1,0 +1,5 @@
+@function get-vw($fontSize, $vw-viewport) {
+  $vw-context: $vw-viewport * 0.01 * 1px;
+  
+  @return $fontSize / $vw-context * 1vw;
+}
