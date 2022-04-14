@@ -148,8 +148,7 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
 
                   <ul className={Styles.section__items}>
                     {
-                      this.props.ingredients && 
-                      this.props.ingredients.length > 0 && 
+                      this.props.ingredients && this.props.ingredients.length > 0 && 
                       this.props.ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
                       .map( (ingredient: IngredientType, item__index: number) => {
                         return (
@@ -160,10 +159,13 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
                             onClick={this.increaseCounter}
                           >
                             <div className={Styles.item__counter}>
-                              <Counter 
-                                count={ingredient.__v} 
-                                size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
-                              />
+                              {
+                                ingredient.__v > 0 && 
+                                <Counter 
+                                  count={ingredient.__v} 
+                                  size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
+                                />
+                              }
                             </div>
                             
                             <div className={Styles.item__image}>
