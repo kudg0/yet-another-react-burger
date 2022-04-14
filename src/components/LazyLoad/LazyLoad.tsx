@@ -60,8 +60,8 @@ class LazyLoadPicture extends React.Component
             height: this.props.height + 'px' 
           }}
         >
-        {
-          this.state.inView && 
+          {
+            this.state.inView && 
             <>
               <source 
                 srcSet={this.props.imageMobile ? this.props.imageMobile : this.props.image} 
@@ -77,7 +77,6 @@ class LazyLoadPicture extends React.Component
               <img
                 srcSet={this.props.image}
                 alt={this.props.alt} 
-                
               />
             </>
           }
