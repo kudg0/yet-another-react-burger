@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -6,7 +6,7 @@ import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-c
 import {IngredientType} from './../types.jsx';
 
 
-import lazyload from './../../utils/lazyLoad.js';
+import LazyLoadPicture from './../../LazyLoad/LazyLoad';
 import getCoords from './../../utils/getCoords';
 
 import Styles from './burgerIngredients.module.scss';
@@ -60,18 +60,6 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
   }
 
 
-  componentDidMount(){
-    this.initLazyLoad();
-  }
-  componentDidUpdate(){
-    this.initLazyLoad();
-  }
-  initLazyLoad(){
-    let scrollableContent : any = document.querySelector("." + Styles.burgerIngredientsContainer__content);
-    
-    lazyload(scrollableContent);
-  }
-
 
   changeActiveMenuItem(e: React.MouseEvent<HTMLElement>){
     let target : HTMLElement = e.currentTarget,
@@ -80,6 +68,7 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
 
     this.scrollToNeededSection(target__anchor);
   }
+
   scrollToNeededSection(sectionId: string){
     let scrollableContent : (HTMLElement | null) = this.contentRef.current;
     
@@ -110,6 +99,7 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
 
     scrollableContent.scrollTo(0, valueForScroll);
   }
+
   handleScrollOfContent(){
     let scrollableContent : (HTMLElement | null) = this.contentRef.current;
 
@@ -226,24 +216,13 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
                             </div>
                             
                             <div className={Styles.item__image}>
-                              <picture>
-                                <source 
-                                  data-src-set={ingredient.image_mobile} 
-                                  media="(max-width: 768px)"
-                                 />
-                                <source 
-                                  data-src-set={ingredient.image_large} 
-                                  media="(min-width: 1440px)" 
-                                />
-                                <source 
-                                  data-src-set={ingredient.image} 
-                                />
-                                <img 
-                                  data-src-set={ingredient.image} 
-                                  alt={ingredient.name} 
-                                  width='240' height='120'
-                                />
-                              </picture>
+                              <LazyLoadPicture 
+                                imageMobile={ingredient.image_mobile} 
+                                imageLarge={ingredient.image_large} 
+                                image={ingredient.image}
+                                width={240} height={120}
+                                alt={ingredient.name} 
+                              />
                             </div>
                             <div className={Styles.item__info}>
                               <span className={Styles.info__price}>
