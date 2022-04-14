@@ -60,30 +60,27 @@ class LazyLoadPicture extends React.Component
             height: this.props.height + 'px' 
           }}
         >
-          <source 
-            srcSet={
-              this.state.inView ? this.props.imageMobile ? this.props.imageMobile : this.props.image : ""
-            } 
-            media="(max-width: 768px)"
-           />
-          <source 
-            srcSet={
-              this.state.inView ? this.props.imageLarge ? this.props.imageLarge : this.props.image : ""
-            } 
-            media="(min-width: 1440px)" 
-          />
-          <source 
-            srcSet={
-              this.state.inView ? this.props.image : ""
-            }  
-          />
-          <img
-            srcSet={
-              this.state.inView ? this.props.image : ""
-            }  
-            alt={this.props.alt} 
-            
-          />
+        {
+          this.state.inView && 
+            <>
+              <source 
+                srcSet={this.props.imageMobile ? this.props.imageMobile : this.props.image} 
+                media="(max-width: 768px)"
+               />
+              <source 
+                srcSet={this.props.imageLarge ? this.props.imageLarge : this.props.image} 
+                media="(min-width: 1440px)" 
+              />
+              <source 
+                srcSet={this.props.image}
+              />
+              <img
+                srcSet={this.props.image}
+                alt={this.props.alt} 
+                
+              />
+            </>
+          }
         </picture>
       )
     }
