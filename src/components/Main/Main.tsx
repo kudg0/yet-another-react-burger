@@ -111,8 +111,14 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
           </span>
         </section>
         <section className={Styles.mainContainer__application}>
-          <BurgerIngredients ingredients={this.state.ingredients} increaseCounterValue={this.increaseCounter}/>
-          <BurgerConstructor activeIngredients={this.state.activeIngredients} totalAmount={this.state.totalAmount}/>
+          <BurgerIngredients 
+            ingredients={this.state.ingredients} 
+            increaseCounterValue={this.increaseCounter}
+          />
+          <BurgerConstructor 
+            activeIngredients={this.state.activeIngredients} 
+            totalAmount={this.state.totalAmount}
+          />
         </section>
       </main>
     )

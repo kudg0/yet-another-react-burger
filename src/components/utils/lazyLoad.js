@@ -46,6 +46,11 @@ export default function lazyload(container) {
     let lazyItem__width = imageItem.getAttribute('width'),
         lazyItem__height = imageItem.getAttribute('height');
 
+
+    if(!lazyItem__width && !lazyItem__height){
+      return;
+    }
+
     imageItem.parentNode.style.width = lazyItem__width + 'px';
     imageItem.parentNode.style.height = lazyItem__height + 'px';
   }

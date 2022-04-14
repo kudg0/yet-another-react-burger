@@ -160,15 +160,30 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
                             onClick={this.increaseCounter}
                           >
                             <div className={Styles.item__counter}>
-                              <Counter count={ingredient.__v} size={ingredient.__v.toString().length === 1 ? "default" : "small"} />
+                              <Counter 
+                                count={ingredient.__v} 
+                                size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
+                              />
                             </div>
                             
                             <div className={Styles.item__image}>
                               <picture>
-                                <source data-src-set={ingredient.image_mobile} media="(max-width: 768px)" width='240' height='120'/>
-                                <source data-src-set={ingredient.image_large} media="(min-width: 1440px)" width='240' height='120'/>
-                                <source data-src-set={ingredient.image_large} width='240' height='120'/>
-                                <img data-src-set={ingredient.image} alt="My default image" width='240' height='120'/>
+                                <source 
+                                  data-src-set={ingredient.image_mobile} 
+                                  media="(max-width: 768px)"
+                                 />
+                                <source 
+                                  data-src-set={ingredient.image_large} 
+                                  media="(min-width: 1440px)" 
+                                />
+                                <source 
+                                  data-src-set={ingredient.image} 
+                                />
+                                <img 
+                                  data-src-set={ingredient.image} 
+                                  alt={ingredient.name} 
+                                  width='240' height='120'
+                                />
                               </picture>
                             </div>
                             <div className={Styles.item__info}>
