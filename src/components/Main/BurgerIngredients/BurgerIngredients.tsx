@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -31,6 +31,11 @@ const MENU_ITEMS = [
 
 
 class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientType>, increaseCounterValue: any }, { activeMenuTab: string }> {
+  private contentRef: React.RefObject<HTMLInputElement>;
+  private contentSectionRef_bun: React.RefObject<HTMLInputElement>;
+  private contentSectionRef_sauce: React.RefObject<HTMLInputElement>;
+  private contentSectionRef_main: React.RefObject<HTMLInputElement>;
+
   constructor(props: any) {
     super(props);
 
@@ -38,6 +43,12 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
     this.state = {
       activeMenuTab: MENU_ITEMS[0].id
     };
+
+    this.contentRef = React.createRef();
+    
+    this.contentSectionRef_bun = React.createRef();
+    this.contentSectionRef_sauce = React.createRef();
+    this.contentSectionRef_main = React.createRef();
 
 
     this.increaseCounter = this.increaseCounter.bind(this);
@@ -70,8 +81,28 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
     this.scrollToNeededSection(target__anchor);
   }
   scrollToNeededSection(sectionId: string){
-    let scrollableContent : any = document.querySelector("." + Styles.burgerIngredientsContainer__content),
-        neededSection = scrollableContent.querySelector("#" + sectionId);
+    let scrollableContent : (HTMLElement | null) = this.contentRef.current;
+    
+    if(!scrollableContent){
+      return;
+    }
+
+
+    let neededRefs : (HTMLElement | null)[] = 
+      [this.contentSectionRef_bun.current, this.contentSectionRef_sauce.current, this.contentSectionRef_main.current]
+      .filter( (contentSectionRef : (HTMLElement | null)) => {
+        if(!contentSectionRef){
+          return false;
+        }
+
+        return contentSectionRef.getAttribute("id") === sectionId
+      });
+
+
+    if(neededRefs.length === 0 || neededRefs[0] === null){
+      return;
+    }
+    let neededSection : HTMLElement = neededRefs[0];
 
     // Находим позицию секции по отношению к странице
     let valueForScroll = getCoords(neededSection, scrollableContent).top + scrollableContent.scrollTop;
@@ -80,15 +111,35 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
     scrollableContent.scrollTo(0, valueForScroll);
   }
   handleScrollOfContent(){
-    let scrollableContent : any = document.querySelector("." + Styles.burgerIngredientsContainer__content),
-        scrollableContent__sections = [...scrollableContent.querySelectorAll("." + Styles.content__section)];
+    let scrollableContent : (HTMLElement | null) = this.contentRef.current;
 
-    let activeSections = scrollableContent__sections.filter( (scrollableContent__section: HTMLElement) => getCoords(scrollableContent__section, scrollableContent).top < 10);
+    if(!scrollableContent){
+      return;
+    }
+
+
+    let activeSections : (HTMLElement | null)[] = 
+      [this.contentSectionRef_bun.current, this.contentSectionRef_sauce.current, this.contentSectionRef_main.current]
+      .filter( (scrollableContent__section : (HTMLElement | null)) => {
+        if(!scrollableContent__section){
+          return false;
+        }
+
+        return getCoords(scrollableContent__section, scrollableContent).top < 10;
+      });
+
+
+    if(activeSections.length === 0){
+      return;
+    }
+
+    let activeSection : any = activeSections.pop(),
+        activeSection__id = activeSection.getAttribute('id');
 
 
     // Меняем активный элемент в меню ингедиентов
       this.setState({
-        activeMenuTab: activeSections.pop().id
+        activeMenuTab: activeSection__id
       });
     // END
   }
@@ -133,6 +184,7 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
         <section 
           className={Styles.burgerIngredientsContainer__content} 
           onScroll={this.handleScrollOfContent}
+          ref={this.contentRef}
         >
           {
             MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
@@ -140,6 +192,11 @@ class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientT
                 <div 
                   key={MENU_ITEM_INDEX} 
                   className={Styles.content__section} 
+                  ref={
+                    MENU_ITEM.id === 'bun' ? 
+                    this.contentSectionRef_bun : MENU_ITEM.id === 'sauce' ? 
+                    this.contentSectionRef_sauce : this.contentSectionRef_main
+                  } 
                   id={MENU_ITEM.id}
                 >
                   <span className={Styles.section__title}>

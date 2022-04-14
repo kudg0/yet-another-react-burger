@@ -41,7 +41,7 @@ class BurgerConstructor extends React.Component<{ activeIngredients: Array<Ingre
                   <ConstructorElement
                     type="top"
                     isLocked={true}
-                    text={activeIngredient.name}
+                    text={`${activeIngredient.name} (верх)`}
                     price={activeIngredient.price}
                     thumbnail={activeIngredient.image_mobile}
                   />
@@ -79,7 +79,7 @@ class BurgerConstructor extends React.Component<{ activeIngredients: Array<Ingre
                   <ConstructorElement
                     type="bottom"
                     isLocked={true}
-                    text={activeIngredient.name}
+                    text={`${activeIngredient.name} (низ)`}
                     price={activeIngredient.price}
                     thumbnail={activeIngredient.image_mobile}
                   />

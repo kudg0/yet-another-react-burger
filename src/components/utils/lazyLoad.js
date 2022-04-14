@@ -10,12 +10,12 @@ export default function lazyload(container) {
 
 
 
-  var options = {
+  const options = {
     root: null,
     rootMargin: '0px',
     threshold: .001
   }
-  var callback = function(entries, observer) {
+  const callback = function(entries, observer) {
     entries.forEach((item) => {
       if(item.isIntersecting && !item.target.classList.contains("lazyInit")){
         item.target.classList.add("lazyInit");
@@ -24,7 +24,7 @@ export default function lazyload(container) {
       }
     })
   };
-  var observer = new IntersectionObserver(callback, options);
+  const observer = new IntersectionObserver(callback, options);
 
 
   lazyItems.forEach( lazyItem => {
