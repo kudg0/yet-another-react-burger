@@ -1,88 +1,72 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
 
 
-class LazyLoadPicture extends React.Component
-  <{ 
-    imageMobile: (string | null), imageLarge: (string | null), image: string, alt: string, width: number, height: number }, 
-    { inView: boolean }
-  >{
-    private imageRef: React.RefObject<HTMLInputElement>;
+const LazyLoadPicture = (props: {imageMobile: (string | null), imageLarge: (string | null), image: string, alt: string, width: number, height: number}) => {
+  const [inView, setInView] = React.useState<boolean>(false);
+  
+  const imageRef = React.useRef<HTMLDivElement>(null);
 
-    constructor(props: any) {
-      super(props);
-    
-      this.state = {
-        inView: false
-      };
 
-      this.imageRef = React.createRef();
-
-      this.componentDidMount = this.componentDidMount.bind(this);
+  React.useEffect( () => {
+    if(!imageRef.current || !window['IntersectionObserver']){
+      return setInView(true);
     }
 
-    componentDidMount(){
-      if(!this.imageRef.current || !window['IntersectionObserver']){
-        return;
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: .001
+    }
+    const callback = (entries: any, observer: any) => {
+      entries.forEach((observerItem: { isIntersecting: boolean, target: HTMLElement }) => {
+        if(
+          observerItem.isIntersecting && 
+          !observerItem.target.classList.contains("lazyInit"))
+        {
+          observerItem.target.classList.add("lazyInit");
+
+          setInView(true);
+        }
+      })
+    };
+    const observer = new IntersectionObserver(callback, options);
+
+    observer.observe(imageRef.current);
+  }, [])
+
+
+
+  return (
+    <picture 
+      ref={imageRef}
+      style={{ 
+        width: props.width + 'px', 
+        height: props.height + 'px' 
+      }}
+    >
+      {
+        inView && 
+        <>
+          <source 
+            srcSet={props.imageMobile ? props.imageMobile : props.image} 
+            media="(max-width: 768px)"
+           />
+          <source 
+            srcSet={props.imageLarge ? props.imageLarge : props.image} 
+            media="(min-width: 1440px)" 
+          />
+          <source 
+            srcSet={props.image}
+          />
+          <img
+            srcSet={props.image}
+            alt={props.alt} 
+          />
+        </>
       }
-
-      const options = {
-        root: null,
-        rootMargin: '0px',
-        threshold: .001
-      }
-      const callback = (entries: any, observer: any) => {
-        entries.forEach((observerItem: { isIntersecting: boolean, target: HTMLElement }) => {
-          if(
-            observerItem.isIntersecting && 
-            !observerItem.target.classList.contains("lazyInit"))
-          {
-            observerItem.target.classList.add("lazyInit");
-
-            this.setState({
-              inView: true
-            });
-          }
-        })
-      };
-      const observer = new IntersectionObserver(callback, options);
-
-
-      observer.observe(this.imageRef.current);
-    }
-
-    render() {
-      return (
-        <picture 
-          ref={this.imageRef}
-          style={{ 
-            width: this.props.width + 'px', 
-            height: this.props.height + 'px' 
-          }}
-        >
-          {
-            this.state.inView && 
-            <>
-              <source 
-                srcSet={this.props.imageMobile ? this.props.imageMobile : this.props.image} 
-                media="(max-width: 768px)"
-               />
-              <source 
-                srcSet={this.props.imageLarge ? this.props.imageLarge : this.props.image} 
-                media="(min-width: 1440px)" 
-              />
-              <source 
-                srcSet={this.props.image}
-              />
-              <img
-                srcSet={this.props.image}
-                alt={this.props.alt} 
-              />
-            </>
-          }
-        </picture>
-      )
-    }
+    </picture>
+  )
 }
 
 export default LazyLoadPicture;

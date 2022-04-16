@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
 
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
@@ -15,33 +15,26 @@ const jsonData = require('./../../utils/data.json');
 
 
 
-class Main extends React.Component<{}, { activeIngredients: Array<IngredientType>, ingredients: Array<IngredientType>, totalAmount: number }> {
-  constructor(props: any){
-    super(props);
-
-    this.state = {
-      activeIngredients: [],
-      ingredients: [],
-      totalAmount: 0
-    }
-
-    this.increaseCounter = this.increaseCounter.bind(this);
-    this.updateActiveIngredients = this.updateActiveIngredients.bind(this);
-  }
+const Main = () => {
+  const [activeIngredients, setActiveIngredients] = React.useState<Array<IngredientType>>([]);
+  const [ingredients, setIngredients] = React.useState<Array<IngredientType>>([]);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
 
-  componentDidMount(){
-    this.setState({ ingredients: jsonData.BurgerIngredientsData })
-    this.updateActiveIngredients();   
-  }
+  React.useEffect( () => {
+    setIngredients( jsonData.BurgerIngredientsData );
 
-  increaseCounter(itemId: string){
+    updateActiveIngredients();
+  }, [])
+
+
+  const increaseCounter = (itemId: string) => {
     let activeBun : boolean = false;
 
 
     // Собираем в массив выбранные ингредиенты
     let updatedIngredientsArr : Array<IngredientType> = 
-        this.state.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
+        ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
           if(
             ingredient._id !== itemId || 
             (ingredient.type === 'bun' && ingredient.__v === 1) || 
@@ -75,54 +68,52 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
       }
     // END
 
-    this.setState({
-      ingredients: updatedIngredientsArr
-    });
-    
-    this.updateActiveIngredients();
+
+    setIngredients( updatedIngredientsArr );
+
+    updateActiveIngredients();
   }
 
-  updateActiveIngredients(){
+
+  const updateActiveIngredients = () => {
     let activeIngredients : Array<IngredientType> = [],
         totalAmount : number = 0;
 
 
-    this.state.ingredients.forEach((ingredient: IngredientType) => {
-      for(let i = 0; i < ingredient.__v; i++){
+    ingredients.forEach( (ingredient: IngredientType) => {
+      for(let i : number = 0; i < ingredient.__v; i++){
         activeIngredients.push(ingredient);
         
-        totalAmount += ingredient.type === 'bun' ? ingredient.price * 2 : ingredient.price;
+        totalAmount += ingredient.type === 'bun' ? (ingredient.price * 2) : ingredient.price;
       }
     });
 
-    this.setState({
-      activeIngredients: activeIngredients,
-      totalAmount: totalAmount
-    });
+
+    setActiveIngredients(activeIngredients);
+    setTotalAmount(totalAmount);
   }
 
 
-  render() {
-    return (
-      <main className={Styles.mainContainer}>
-        <section className={Styles.mainContainer__title}>
-          <span className={Styles.title__text}>
-            Соберите бургер
-          </span>
-        </section>
-        <section className={Styles.mainContainer__application}>
-          <BurgerIngredients 
-            ingredients={this.state.ingredients} 
-            increaseCounterValue={this.increaseCounter}
-          />
-          <BurgerConstructor 
-            activeIngredients={this.state.activeIngredients} 
-            totalAmount={this.state.totalAmount}
-          />
-        </section>
-      </main>
-    )
-  }
+
+  return (
+    <main className={Styles.mainContainer}>
+      <section className={Styles.mainContainer__title}>
+        <span className={Styles.title__text}>
+          Соберите бургер
+        </span>
+      </section>
+      <section className={Styles.mainContainer__application}>
+        <BurgerIngredients 
+          ingredients={ingredients} 
+          increaseCounterValue={increaseCounter}
+        />
+        <BurgerConstructor 
+          activeIngredients={activeIngredients} 
+          totalAmount={totalAmount}
+        />
+      </section>
+    </main>
+  )
 }
 
 export default Main;
