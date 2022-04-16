@@ -14,5 +14,4 @@ const OfferInfo = () => {
 
 }
 
-
 export default OfferInfo;

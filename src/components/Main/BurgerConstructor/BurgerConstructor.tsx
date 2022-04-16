@@ -19,8 +19,6 @@ const BurgerConstructor = (props: {activeIngredients: Array<IngredientType>, tot
   const [openOfferInfo, setOpenOfferInfo] = React.useState<boolean>(false);
   
   const deleteIngredient = () => {
-    console.log(this);
-
     setOpenOfferInfo(!openOfferInfo);
   }
 
@@ -30,12 +28,14 @@ const BurgerConstructor = (props: {activeIngredients: Array<IngredientType>, tot
   if(props.totalAmount <= 0){
     return (<></>);
   }
+  
   return (
     <>
       <section className={Styles.burgerConstructorContainer}>
         <ul className={Styles.burgerConstructorContainer__header}>
           {
-            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun").map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
+            .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
               return (
                 <li key={activeIngredient._id + activeIngredient__index} className={Styles.header__item}>
                   <ConstructorElement
@@ -53,7 +53,8 @@ const BurgerConstructor = (props: {activeIngredients: Array<IngredientType>, tot
 
         <ul className={Styles.burgerConstructorContainer__main}>
           {
-            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun").map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun")
+            .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
               return (
                 <li key={activeIngredient._id + activeIngredient__index} className={Styles.main__item}>
                   <div className={Styles.item__control}>
@@ -73,7 +74,8 @@ const BurgerConstructor = (props: {activeIngredients: Array<IngredientType>, tot
 
         <ul className={Styles.burgerConstructorContainer__footer}>
           {
-            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun").map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
+            .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
               return (
                 <li key={activeIngredient._id + activeIngredient__index} className={Styles.footer__item}>
                   <ConstructorElement

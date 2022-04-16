@@ -155,17 +155,7 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
                           data-id={ingredient._id}
                           className={Styles.items__item} 
                           onClick={increaseCounter}
-                        >
-                          <div className={Styles.item__counter}>
-                            {
-                              ingredient.__v > 0 && 
-                              <Counter 
-                                count={ingredient.__v} 
-                                size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
-                              />
-                            }
-                          </div>
-                          
+                        > 
                           <div className={Styles.item__image}>
                             <LazyLoadPicture 
                               imageMobile={ingredient.image_mobile} 
@@ -188,6 +178,17 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
                               {ingredient.name}
                             </h3>
                           </div>
+
+                          
+                          {
+                            ingredient.__v > 0 && 
+                            <div className={Styles.item__counter}>
+                              <Counter 
+                                count={ingredient.__v} 
+                                size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
+                              />
+                            </div>
+                          }
                         </li>
                       )
                     })
@@ -201,6 +202,5 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
     </div>
   )
 }
-
 
 export default BurgerIngredients;

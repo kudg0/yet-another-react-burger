@@ -1,9 +1,9 @@
 // получаем координаты элемента в контексте документа
-export default function getCoords(elem: HTMLElement, parent?: HTMLElement) : GetCoords_return {
-  const parentCoords : (HTMLElement | GetCoords_return) = 
+export default function getCoords(elem: HTMLElement, parent?: HTMLElement) : GetCoordsReturnType {
+  const parentCoords : (HTMLElement | GetCoordsReturnType) = 
     parent ? getCoords(parent) : {top: 0, bottom: 0, left: 0, right: 0};
 
-  const box : GetCoords_return = elem.getBoundingClientRect();
+  const box : GetCoordsReturnType = elem.getBoundingClientRect();
 
 
   return {
@@ -16,7 +16,7 @@ export default function getCoords(elem: HTMLElement, parent?: HTMLElement) : Get
 
 
 
-type GetCoords_return = {
+type GetCoordsReturnType = {
   top: number;
   left: number;
   right: number;
