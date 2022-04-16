@@ -15,7 +15,7 @@ const apiUrl : string = "https://norma.nomoreparties.space/api/ingredients"!;
 const templateData : {burgerIngredientsData: IngredientType[]} = require('./../../utils/data.json');
 
 
-const App = () => {
+const App = React.memo(() => {
   const [ingredients, setIngredients] = React.useState<IngredientType[]>(templateData.burgerIngredientsData);
 
   
@@ -45,7 +45,7 @@ const App = () => {
       <Main ingredients={ingredients} increaseCounterCallback={increaseCounter}/>
     </div>
   )
-};
+});
 
 
 export default App;
