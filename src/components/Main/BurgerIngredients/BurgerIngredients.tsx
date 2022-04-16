@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -25,7 +25,7 @@ const MENU_ITEMS = [
   {
     text: "Начинки",
     id: "main"
-  },
+  }
 ];
 
 
@@ -41,37 +41,26 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
 
 
   const changeActiveMenuItem = (e: React.MouseEvent<HTMLElement>) => {
-    let target : HTMLElement = e.currentTarget,
-        target__anchor : (string | null) = target.getAttribute('data-anchor');
+    const target : HTMLElement = e.currentTarget!,
+          target__anchor : string = target.getAttribute('data-anchor')!;
 
-    if(!target__anchor) return;
 
     scrollToNeededSection(target__anchor);
   }
 
 
   const scrollToNeededSection = (sectionId: string) => {
-    if(!contentRef.current) return;
+    const scrollableContent : HTMLElement = contentRef.current!;
 
-    let scrollableContent : HTMLElement = contentRef.current,
-        neededRefs : (HTMLElement | null)[] = 
-          [contentSectionRef_bun.current, contentSectionRef_sauce.current, contentSectionRef_main.current]
-          .filter( (contentSectionRef : (HTMLElement | null)) => {
-            if(!contentSectionRef) return false;
-
-            return contentSectionRef.getAttribute("id") === sectionId
-          });
+    const neededRefs : (HTMLElement)[] = 
+          [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
+          .filter( (contentSectionRef : HTMLElement) => contentSectionRef.getAttribute("id") === sectionId );
 
     if(neededRefs.length === 0) return;
 
 
-    let neededRef : (HTMLElement | null) =  neededRefs[0];
-
-    if(!neededRef) return;
-
-
-    // Находим позицию секции по отношению к странице
-    let valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop;
+    const neededRef : HTMLElement =  neededRefs[0]!,
+          valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop; // Находим позицию нужной секции по отношению к странице
 
 
     scrollableContent.scrollTo(0, valueForScroll);
@@ -79,32 +68,17 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
 
 
   const handleScrollOfContent = () => {
-    let scrollableContent : (HTMLElement | null) = contentRef.current;
+    const scrollableContent : HTMLElement = contentRef.current!;
 
-    if(!scrollableContent) return;
-
-
-    let activeSections : (HTMLElement | null)[] = 
-      [contentSectionRef_bun.current, contentSectionRef_sauce.current, contentSectionRef_main.current]
-      .filter( (scrollableContent__section : (HTMLElement | null)) => {
-        if(!scrollableContent__section || !scrollableContent){
-          return false;
-        }
-
-        return getCoords(scrollableContent__section, scrollableContent).top < 10;
-      });
+    const activeSections : (HTMLElement)[] = 
+      [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
+      .filter( (scrollableContent__section : HTMLElement) => getCoords(scrollableContent__section, scrollableContent).top < 50);
 
     if(activeSections.length === 0) return;
 
 
-    let activeSection : (HTMLElement | null) = activeSections[activeSections.length - 1];
-
-    if(!activeSection) return;
-
-
-    let activeSection__id : (string | null) = activeSection.getAttribute('id');
-
-    if(!activeSection__id) return;
+    const activeSection : HTMLElement = activeSections[activeSections.length - 1]!,
+          activeSection__id : string = activeSection.getAttribute('id')!;
 
 
     // Меняем активный элемент в меню ингедиентов
@@ -114,16 +88,13 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
 
 
   const increaseCounter = (e: React.MouseEvent<HTMLElement>) => {
-    let target : HTMLElement = e.currentTarget,
-        target__id : (string | null) = target.getAttribute("data-id");
-
-    if(!target__id) return;
+    const target : HTMLElement = e.currentTarget!,
+          target__id : string = target.getAttribute("data-id")!;
 
 
     // Увеличиваем счетчик в пропсе у выбранного ингредиента
     props.increaseCounterValue(target__id);
   }
-
 
 
 
@@ -169,9 +140,9 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
                 } 
                 id={MENU_ITEM.id}
               >
-                <span className={Styles.section__title}>
+                <h2 className={Styles.section__title}>
                   {MENU_ITEM.text}
-                </span>
+                </h2>
 
                 <ul className={Styles.section__items}>
                   {

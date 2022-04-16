@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 
 
 
@@ -9,15 +9,17 @@ const LazyLoadPicture = (props: {imageMobile: (string | null), imageLarge: (stri
 
 
   React.useEffect( () => {
-    if(!imageRef.current || !window['IntersectionObserver']){
+    const observerImage = imageRef.current!;
+
+    if(!window['IntersectionObserver']){
       return setInView(true);
     }
 
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: .001
-    }
+    initLazyLoad(observerImage);
+  }, [])
+
+
+  const initLazyLoad = (observerImage: HTMLElement) => {
     const callback = (entries: any, observer: any) => {
       entries.forEach((observerItem: { isIntersecting: boolean, target: HTMLElement }) => {
         if(
@@ -30,10 +32,11 @@ const LazyLoadPicture = (props: {imageMobile: (string | null), imageLarge: (stri
         }
       })
     };
-    const observer = new IntersectionObserver(callback, options);
+    const observer = new IntersectionObserver(callback, {threshold: .001});
 
-    observer.observe(imageRef.current);
-  }, [])
+
+    observer.observe(observerImage);
+  }
 
 
 

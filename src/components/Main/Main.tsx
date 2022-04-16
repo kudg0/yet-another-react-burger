@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 
 
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
@@ -28,7 +28,7 @@ const Main = () => {
   }, [])
 
 
-  const increaseCounter = (itemId: string) => {
+  const increaseCounter = (clickedIngredientId: string) => {
     let activeBun : boolean = false;
 
 
@@ -36,7 +36,7 @@ const Main = () => {
     let updatedIngredientsArr : Array<IngredientType> = 
         ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
           if(
-            ingredient._id !== itemId || 
+            ingredient._id !== clickedIngredientId || 
             (ingredient.type === 'bun' && ingredient.__v === 1) || 
             (ingredient.type === 'sauce' && ingredient.__v >= 5) || 
             ingredient.__v >= 10
@@ -54,10 +54,10 @@ const Main = () => {
         });
     // END
 
-    // Если уже есть активная булка, убираем ее и заменяем новой
+    // Если уже есть активная булка, убираем ее
       if(activeBun){
         updatedIngredientsArr = updatedIngredientsArr.map((ingredient: IngredientType, ingredient_index: number) => {
-          if(ingredient.type === 'bun' && ingredient._id !== itemId){
+          if(ingredient.type === 'bun' && ingredient._id !== clickedIngredientId){
             ingredient.__v = 0;
 
             return ingredient;
@@ -98,9 +98,9 @@ const Main = () => {
   return (
     <main className={Styles.mainContainer}>
       <section className={Styles.mainContainer__title}>
-        <span className={Styles.title__text}>
+        <h1 className={Styles.title__text}>
           Соберите бургер
-        </span>
+        </h1>
       </section>
       <section className={Styles.mainContainer__application}>
         <BurgerIngredients 
