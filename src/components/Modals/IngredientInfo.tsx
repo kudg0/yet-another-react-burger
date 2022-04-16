@@ -5,15 +5,16 @@ import ModalWrapper from './ModalWrapper';
 
 
 
-const OfferInfo = React.memo((props: {
+const IngredientInfo = React.memo((props: {
   shouldShow: boolean
 }) => {
- 
+
   return (
     <ModalWrapper shouldShow={props.shouldShow}>
-      Привет, я модальник оформления заказа!
+      Привет, я модальник ингредиента!
     </ModalWrapper>
   )
+
 });
 
-export default OfferInfo;
+export default IngredientInfo;

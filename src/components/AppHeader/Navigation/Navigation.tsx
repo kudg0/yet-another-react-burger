@@ -7,7 +7,7 @@ import Styles from './navigation.module.scss';
 
 
 
-const Navigation = () => {
+const Navigation = React.memo(() => {
   
   return (
     <nav className={Styles.navigationContainer}>
@@ -31,6 +31,6 @@ const Navigation = () => {
       </ul>
     </nav>
   )
-}
+});
 
 export default Navigation;

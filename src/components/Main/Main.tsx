@@ -4,37 +4,32 @@ import React from 'react';
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
-import {IngredientType} from './types';
+import {IngredientType} from './../types/types';
 
 
 import Styles from './main.module.scss';
 
 
 
-const jsonData = require('./../../utils/data.json');
-
-
-
-const Main = () => {
-  const [activeIngredients, setActiveIngredients] = React.useState<Array<IngredientType>>([]);
-  const [ingredients, setIngredients] = React.useState<Array<IngredientType>>([]);
+const Main = React.memo((props: {
+  ingredients: IngredientType[], 
+  increaseCounterCallback: (updatedIngredientsArr: IngredientType[]) => void
+}) => {
+  const [activeIngredients, setActiveIngredients] = React.useState<IngredientType[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
 
   React.useEffect( () => {
-    setIngredients( jsonData.BurgerIngredientsData );
-
     updateActiveIngredients();
   }, [])
 
 
-  const increaseCounter = (clickedIngredientId: string) => {
+  const increaseCounter = React.useCallback((clickedIngredientId: string) => {
     let activeBun : boolean = false;
 
-
     // Собираем в массив выбранные ингредиенты
-    let updatedIngredientsArr : Array<IngredientType> = 
-        ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
+    let updatedIngredientsArr : IngredientType[] = 
+        props.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
           if(
             ingredient._id !== clickedIngredientId || 
             (ingredient.type === 'bun' && ingredient.__v === 1) || 
@@ -69,18 +64,18 @@ const Main = () => {
     // END
 
 
-    setIngredients( updatedIngredientsArr );
+    props.increaseCounterCallback(updatedIngredientsArr);
 
     updateActiveIngredients();
-  }
+  }, [props.ingredients, activeIngredients]);
 
 
-  const updateActiveIngredients = () => {
-    let activeIngredients : Array<IngredientType> = [],
+  const updateActiveIngredients = React.useCallback(() => {
+    let activeIngredients : IngredientType[] = [],
         totalAmount : number = 0;
 
 
-    ingredients.forEach( (ingredient: IngredientType) => {
+    props.ingredients.forEach( (ingredient: IngredientType) => {
       for(let i : number = 0; i < ingredient.__v; i++){
         activeIngredients.push(ingredient);
         
@@ -89,9 +84,9 @@ const Main = () => {
     });
 
 
-    setActiveIngredients(activeIngredients);
     setTotalAmount(totalAmount);
-  }
+    setActiveIngredients(activeIngredients);
+  }, [props.ingredients, activeIngredients, totalAmount]);
 
 
 
@@ -104,8 +99,8 @@ const Main = () => {
       </section>
       <section className={Styles.mainContainer__application}>
         <BurgerIngredients 
-          ingredients={ingredients} 
-          increaseCounterValue={increaseCounter}
+          ingredients={props.ingredients} 
+          increaseCounterCallback={increaseCounter}
         />
         <BurgerConstructor 
           activeIngredients={activeIngredients} 
@@ -114,6 +109,6 @@ const Main = () => {
       </section>
     </main>
   )
-}
+});
 
 export default Main;

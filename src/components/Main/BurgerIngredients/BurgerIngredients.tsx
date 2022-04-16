@@ -3,7 +3,7 @@ import React from 'react';
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import {IngredientType} from './../types.jsx';
+import {IngredientType} from './../../types/types';
 
 
 import LazyLoadPicture from './../../LazyLoad/LazyLoad';
@@ -29,8 +29,11 @@ const MENU_ITEMS = [
 ];
 
 
-const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increaseCounterValue: any} ) => {
-  const [activeMenuTab, setActiveMenuTab] : [string, any] = React.useState( MENU_ITEMS[0].id );
+const BurgerIngredients = React.memo(( props: {
+  ingredients: IngredientType[], 
+  increaseCounterCallback: (clickedIngredientId: string) => void
+}) => {
+  const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   
@@ -40,61 +43,56 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
 
 
 
-  const changeActiveMenuItem = (e: React.MouseEvent<HTMLElement>) => {
+  const changeActiveMenuItem = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
     const target : HTMLElement = e.currentTarget!,
           target__anchor : string = target.getAttribute('data-anchor')!;
 
 
     scrollToNeededSection(target__anchor);
-  }
+  }, []);
 
 
-  const scrollToNeededSection = (sectionId: string) => {
+  const scrollToNeededSection = React.useCallback((sectionId: string) => {
     const scrollableContent : HTMLElement = contentRef.current!;
 
     const neededRefs : (HTMLElement)[] = 
-          [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
-          .filter( (contentSectionRef : HTMLElement) => contentSectionRef.getAttribute("id") === sectionId );
-
-    if(neededRefs.length === 0) return;
+            [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
+            .filter( (contentSectionRef : HTMLElement) => contentSectionRef.getAttribute("id") === sectionId );
 
 
     const neededRef : HTMLElement =  neededRefs[0]!,
           valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop; // Находим позицию нужной секции по отношению к странице
 
-
     scrollableContent.scrollTo(0, valueForScroll);
-  }
+  }, []);
 
 
-  const handleScrollOfContent = () => {
+  const handleScrollOfContent = React.useCallback(() => {
     const scrollableContent : HTMLElement = contentRef.current!;
 
     const activeSections : (HTMLElement)[] = 
-      [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
-      .filter( (scrollableContent__section : HTMLElement) => getCoords(scrollableContent__section, scrollableContent).top < 50);
-
-    if(activeSections.length === 0) return;
+            [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
+            .filter( (scrollableContent__section : HTMLElement) => getCoords(scrollableContent__section, scrollableContent).top < 50);
 
 
     const activeSection : HTMLElement = activeSections[activeSections.length - 1]!,
           activeSection__id : string = activeSection.getAttribute('id')!;
 
-
     // Меняем активный элемент в меню ингедиентов
       setActiveMenuTab(activeSection__id)
     // END
-  }
+  }, [activeMenuTab]);
 
 
-  const increaseCounter = (e: React.MouseEvent<HTMLElement>) => {
+  const increaseCounter = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
     const target : HTMLElement = e.currentTarget!,
           target__id : string = target.getAttribute("data-id")!;
 
 
     // Увеличиваем счетчик в пропсе у выбранного ингредиента
-    props.increaseCounterValue(target__id);
-  }
+      props.increaseCounterCallback(target__id);
+    // END
+  }, [props.ingredients]);
 
 
 
@@ -201,6 +199,6 @@ const BurgerIngredients = ( props: {ingredients: Array<IngredientType>, increase
       </section>
     </div>
   )
-}
+});
 
 export default BurgerIngredients;

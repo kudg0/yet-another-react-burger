@@ -11,7 +11,7 @@ import Styles from './appHeader.module.scss';
 
 
 
-const AppHeader = () => {
+const AppHeader = React.memo(() => {
 
   return (
     <header className={Styles.headerContainer}>
@@ -26,6 +26,6 @@ const AppHeader = () => {
       <Profile />
     </header>
   )
-}
+});
 
 export default AppHeader;

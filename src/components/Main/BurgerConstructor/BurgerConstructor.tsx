@@ -3,24 +3,31 @@ import React from 'react';
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import OfferInfo from './../../Modals/OfferInfo';
+import OfferInfoModal from './../../Modals/OfferInfo';
+import IngredientInfoModal from './../../Modals/IngredientInfo';
 
-import {IngredientType} from './../types.jsx';
+import {IngredientType} from './../../types/types';
 
 
 import Styles from './burgerConstructor.module.scss';
 
 
 
-const modal__offerInfo = OfferInfo();
-
-
-const BurgerConstructor = (props: {activeIngredients: Array<IngredientType>, totalAmount: number}) => {
+const BurgerConstructor = React.memo((props: {
+  totalAmount: number,
+  activeIngredients: IngredientType[]
+}) => {
   const [openOfferInfo, setOpenOfferInfo] = React.useState<boolean>(false);
-  
-  const deleteIngredient = () => {
+  const [openIngredientInfo, setOpenIngredientInfo] = React.useState<boolean>(false);
+    
+
+  const deleteIngredient = React.useCallback(() => {
+    setOpenIngredientInfo(!openIngredientInfo);
+  }, []);
+
+  const showOfferInfo = React.useCallback(() => {
     setOpenOfferInfo(!openOfferInfo);
-  }
+  }, []);
 
 
 
@@ -102,15 +109,16 @@ const BurgerConstructor = (props: {activeIngredients: Array<IngredientType>, tot
             </div>
           </div>
           <div className={Styles.total__button}>
-            <Button type="primary" size="medium">
+            <Button type="primary" size="medium" onClick={showOfferInfo}>
               Оформить заказ
             </Button>
           </div>
         </div>
       </section>
-      {openOfferInfo && modal__offerInfo}
+      <OfferInfoModal shouldShow={openOfferInfo} />
+      <IngredientInfoModal shouldShow={openIngredientInfo} />
     </>
   )
-}
+});
 
 export default BurgerConstructor;

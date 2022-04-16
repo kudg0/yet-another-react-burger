@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 
 
 
-const LazyLoadPicture = (props: {
+const LazyLoadPicture = React.memo((props: {
   imageMobile?: string, 
   imageLarge?: string, 
   image: string, 
@@ -56,6 +56,6 @@ const LazyLoadPicture = (props: {
       }
     </picture>
   )
-}
+});
 
 export default LazyLoadPicture;

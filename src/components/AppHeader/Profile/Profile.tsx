@@ -7,7 +7,7 @@ import Styles from './profile.module.scss';
 
 
 
-const Profile = () => {
+const Profile = React.memo(() => {
 
   return (
     <div className={Styles.profileContainer}>
@@ -19,6 +19,6 @@ const Profile = () => {
       </span>
     </div>
   )
-}
+});
 
 export default Profile;
