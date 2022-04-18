@@ -1,4 +1,4 @@
-export default function getRandomInteger(max: number, min: number) : number{
+export default function getRandomInt(max: number, min: number) : number{
   min = Math.ceil(min);
   max = Math.floor(max);
 

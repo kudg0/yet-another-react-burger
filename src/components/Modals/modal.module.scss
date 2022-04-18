@@ -1,0 +1,43 @@
+.modalContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  width: 720px;
+
+  padding: 40px 40px 60px;
+
+  background: rgba(28, 28, 33, 1);
+
+  border-radius: 40px;
+
+  z-index: 2;
+
+  position: relative;
+
+
+  .modalContainer__close{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    width: 24px;
+
+    position: absolute;
+    top: 60px; right: 40px;
+
+
+    cursor: pointer;
+
+    // ANIMATE
+      opacity: 1;
+      will-change: opacity;
+      transition: .5s opacity;
+
+      &:hover{
+        opacity: .7;
+      }
+    // END
+  }
+}

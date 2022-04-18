@@ -3,8 +3,8 @@ import React from 'react';
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import OfferInfoModal from './../../Modals/OfferInfo';
-import IngredientInfoModal from './../../Modals/IngredientInfo';
+import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
+
 
 import {IngredientType} from './../../types/types';
 
@@ -17,16 +17,19 @@ const BurgerConstructor = React.memo((props: {
   totalAmount: number,
   activeIngredients: IngredientType[]
 }) => {
-  const [openOfferInfo, setOpenOfferInfo] = React.useState<boolean>(false);
-  const [openIngredientInfo, setOpenIngredientInfo] = React.useState<boolean>(false);
+  const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
     
 
-  const deleteIngredient = React.useCallback(() => {
-    setOpenIngredientInfo(!openIngredientInfo);
+  const deleteIngredient : () => void = React.useCallback(() => {
+    console.log(true);
   }, []);
 
-  const showOfferInfo = React.useCallback(() => {
-    setOpenOfferInfo(!openOfferInfo);
+
+  const showOfferDetails : () => void = React.useCallback(() => {
+    setOpenOfferDetails(true);
+  }, []);
+  const closeOfferDetails : () => void = React.useCallback(() => {
+    setOpenOfferDetails(false);
   }, []);
 
 
@@ -109,14 +112,13 @@ const BurgerConstructor = React.memo((props: {
             </div>
           </div>
           <div className={Styles.total__button}>
-            <Button type="primary" size="medium" onClick={showOfferInfo}>
+            <Button type="primary" size="medium" onClick={showOfferDetails}>
               Оформить заказ
             </Button>
           </div>
         </div>
       </section>
-      <OfferInfoModal shouldShow={openOfferInfo} />
-      <IngredientInfoModal shouldShow={openIngredientInfo} />
+      <OrderDetails shouldShow={openOfferDetails} closeModalCallback={closeOfferDetails}/>
     </>
   )
 });
