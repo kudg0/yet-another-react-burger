@@ -17,6 +17,7 @@ const BurgerConstructor = React.memo((props: {
   totalAmount: number,
   activeIngredients: IngredientType[]
 }) => {
+  
   const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
     
 

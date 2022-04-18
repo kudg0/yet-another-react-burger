@@ -16,6 +16,7 @@ const templateData : {burgerIngredientsData: IngredientType[]} = require('./../.
 
 
 const App = React.memo(() => {
+
   const [ingredients, setIngredients] = React.useState<IngredientType[]>(templateData.burgerIngredientsData);
 
   
@@ -37,6 +38,7 @@ const App = React.memo(() => {
   const increaseCounter = React.useCallback((updatedIngredientsArr: IngredientType[]) => {
     setIngredients(updatedIngredientsArr);
   }, [ingredients]);
+
 
 
   return (

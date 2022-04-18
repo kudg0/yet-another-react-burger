@@ -15,6 +15,7 @@ const Main = React.memo((props: {
   ingredients: IngredientType[], 
   increaseCounterCallback: (updatedIngredientsArr: IngredientType[]) => void
 }) => {
+  
   const [activeIngredients, setActiveIngredients] = React.useState<IngredientType[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
 

@@ -12,6 +12,7 @@ import LazyLoadPicture from './../../LazyLoad/LazyLoad';
 import Styles from './ingredientDetails.module.scss';
 
 
+
 const nutritionalValues = [
   {
     name: "Калории,ккал",
@@ -30,7 +31,6 @@ const nutritionalValues = [
     id: "carbohydrates"
   },
 ];
-
 
 
 const IngredientDetails = React.memo((props: {

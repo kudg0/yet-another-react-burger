@@ -18,10 +18,7 @@ const Modal = React.memo((props: {
   shouldShow: boolean,
   closeModalCallback: () => void
 }) => {
-
   
-
-
   return ReactDOM.createPortal(
     props.shouldShow ? 
     <ModalOverlay closeModalCallback={props.closeModalCallback}>
