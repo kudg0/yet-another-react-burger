@@ -14,8 +14,8 @@ const modalRoot : HTMLElement = document.getElementById("root__modal")!;
 
 
 const Modal = React.memo((props: {
-  children: React.ReactNode, 
   shouldShow: boolean,
+  children: React.ReactNode, 
   closeModalCallback: () => void
 }) => {
 
