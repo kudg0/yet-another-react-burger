@@ -44,26 +44,22 @@ const BurgerIngredients = React.memo(( props: {
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   
-  const contentSectionRef_bun = React.useRef<HTMLDivElement>(null);
-  const contentSectionRef_sauce = React.useRef<HTMLDivElement>(null);
-  const contentSectionRef_main = React.useRef<HTMLDivElement>(null);
-
+  const contentSectionsRef = React.useRef<(HTMLDivElement | null)[]>(new Array(MENU_ITEMS.length));
 
 
 
   const scrollToNeededSection = React.useCallback((sectionId: string) => {
     const scrollableContent : HTMLElement = contentRef.current!;
 
-    const neededRefs : (HTMLElement)[] = 
-            [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
-            .filter( (contentSectionRef : HTMLElement) => contentSectionRef.getAttribute("id") === sectionId );
+    const neededRefs : (HTMLElement | null)[] = 
+      contentSectionsRef.current!.filter( (contentSectionRef : (HTMLElement | null)) => contentSectionRef!.getAttribute("id") === sectionId );
 
 
     const neededRef : HTMLElement =  neededRefs[0]!,
           valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop; // Находим позицию нужной секции по отношению к странице
 
     scrollableContent.scrollTo(0, valueForScroll);
-  }, [contentSectionRef_bun, contentSectionRef_sauce, contentSectionRef_main]);
+  }, [...contentSectionsRef.current]);
 
 
   const changeActiveMenuItem = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -78,9 +74,8 @@ const BurgerIngredients = React.memo(( props: {
   const handleScrollOfContent = React.useCallback(() => {
     const scrollableContent : HTMLElement = contentRef.current!;
 
-    const activeSections : (HTMLElement)[] = 
-            [contentSectionRef_bun.current!, contentSectionRef_sauce.current!, contentSectionRef_main.current!]
-            .filter( (scrollableContent__section : HTMLElement) => getCoords(scrollableContent__section, scrollableContent).top < 50);
+    const activeSections : (HTMLElement | null)[] = 
+      contentSectionsRef.current!.filter( (scrollableContent__section : (HTMLElement | null)) => getCoords(scrollableContent__section!, scrollableContent).top < 50);
 
 
     const activeSection : HTMLElement = activeSections[activeSections.length - 1]!,
@@ -89,7 +84,7 @@ const BurgerIngredients = React.memo(( props: {
     // Меняем активный элемент в меню ингедиентов
       setActiveMenuTab(activeSection__id)
     // END
-  }, [contentSectionRef_bun, contentSectionRef_sauce, contentSectionRef_main]);
+  }, [...contentSectionsRef.current]);
 
 
   const increaseCounter = (e: React.MouseEvent<HTMLElement>) => {
@@ -154,9 +149,7 @@ const BurgerIngredients = React.memo(( props: {
                 key={MENU_ITEM_INDEX} 
                 className={Styles.content__section} 
                 ref={
-                  MENU_ITEM.id === 'bun' ? 
-                  contentSectionRef_bun : MENU_ITEM.id === 'sauce' ? 
-                  contentSectionRef_sauce : contentSectionRef_main
+                  (ref) => contentSectionsRef.current[MENU_ITEM_INDEX] = ref
                 } 
                 id={MENU_ITEM.id}
               >
