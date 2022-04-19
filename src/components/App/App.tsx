@@ -24,7 +24,7 @@ const App = React.memo(() => {
     fetch(apiUrl)
       .then(response => {
         response.json().then( (result : {success: boolean, data: IngredientType[]}) => {
-          if(!result.success) return;
+          if(!result.success) return Promise.reject(result);
 
           setIngredients(result.data);
         });
