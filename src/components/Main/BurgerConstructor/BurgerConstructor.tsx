@@ -3,6 +3,7 @@ import React from 'react';
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
+import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 
@@ -119,7 +120,10 @@ const BurgerConstructor = React.memo((props: {
           </div>
         </div>
       </section>
-      <OrderDetails shouldShow={openOfferDetails} closeModalCallback={closeOfferDetails}/>
+
+      <Modal shouldShow={openOfferDetails} closeModalCallback={closeOfferDetails}>
+        <OrderDetails />
+      </Modal>
     </>
   )
 });

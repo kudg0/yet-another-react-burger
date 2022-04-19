@@ -3,6 +3,7 @@ import React from 'react';
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
+import Modal from './../../Modals/Modal';
 import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
 
 
@@ -219,7 +220,9 @@ const BurgerIngredients = React.memo(( props: {
         }
       </section>
 
-      <IngredientDetails ingredient={clickedIngredient} shouldShow={openIngredientDetails} closeModalCallback={closeIngredientDetails}/>
+      <Modal shouldShow={openIngredientDetails} closeModalCallback={closeIngredientDetails}>
+        <IngredientDetails ingredient={clickedIngredient}/>
+      </Modal>
     </div>
   )
 });
