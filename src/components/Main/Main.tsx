@@ -4,46 +4,35 @@ import React from 'react';
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
-import {IngredientType} from './types';
+import {IngredientType} from './../types/types';
 
 
 import Styles from './main.module.scss';
 
 
 
-const jsonData = require('./../../utils/data.json');
+const Main = React.memo((props: {
+  ingredients: IngredientType[], 
+  increaseCounterCallback: (updatedIngredientsArr: IngredientType[]) => void
+}) => {
+  
+  const [activeIngredients, setActiveIngredients] = React.useState<IngredientType[]>([]);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
 
-
-class Main extends React.Component<{}, { activeIngredients: Array<IngredientType>, ingredients: Array<IngredientType>, totalAmount: number }> {
-  constructor(props: any){
-    super(props);
-
-    this.state = {
-      activeIngredients: [],
-      ingredients: [],
-      totalAmount: 0
-    }
-
-    this.increaseCounter = this.increaseCounter.bind(this);
-    this.updateActiveIngredients = this.updateActiveIngredients.bind(this);
-  }
+  React.useEffect( () => {
+    updateActiveIngredients();
+  }, [])
 
 
-  componentDidMount(){
-    this.setState({ ingredients: jsonData.BurgerIngredientsData })
-    this.updateActiveIngredients();   
-  }
-
-  increaseCounter(itemId: string){
+  const increaseCounter = React.useCallback((clickedIngredientId: string) => {
     let activeBun : boolean = false;
 
-
     // Собираем в массив выбранные ингредиенты
-    let updatedIngredientsArr : Array<IngredientType> = 
-        this.state.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
+    let updatedIngredientsArr : IngredientType[] = 
+        props.ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
           if(
-            ingredient._id !== itemId || 
+            ingredient._id !== clickedIngredientId || 
             (ingredient.type === 'bun' && ingredient.__v === 1) || 
             (ingredient.type === 'sauce' && ingredient.__v >= 5) || 
             ingredient.__v >= 10
@@ -61,10 +50,10 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
         });
     // END
 
-    // Если уже есть активная булка, убираем ее и заменяем новой
+    // Если уже есть активная булка, убираем ее
       if(activeBun){
         updatedIngredientsArr = updatedIngredientsArr.map((ingredient: IngredientType, ingredient_index: number) => {
-          if(ingredient.type === 'bun' && ingredient._id !== itemId){
+          if(ingredient.type === 'bun' && ingredient._id !== clickedIngredientId){
             ingredient.__v = 0;
 
             return ingredient;
@@ -75,54 +64,52 @@ class Main extends React.Component<{}, { activeIngredients: Array<IngredientType
       }
     // END
 
-    this.setState({
-      ingredients: updatedIngredientsArr
-    });
-    
-    this.updateActiveIngredients();
-  }
 
-  updateActiveIngredients(){
-    let activeIngredients : Array<IngredientType> = [],
+    props.increaseCounterCallback(updatedIngredientsArr);
+
+    updateActiveIngredients();
+  }, [props.ingredients, activeIngredients]);
+
+
+  const updateActiveIngredients = React.useCallback(() => {
+    let activeIngredients : IngredientType[] = [],
         totalAmount : number = 0;
 
 
-    this.state.ingredients.forEach((ingredient: IngredientType) => {
-      for(let i = 0; i < ingredient.__v; i++){
+    props.ingredients.forEach( (ingredient: IngredientType) => {
+      for(let i : number = 0; i < ingredient.__v; i++){
         activeIngredients.push(ingredient);
         
-        totalAmount += ingredient.type === 'bun' ? ingredient.price * 2 : ingredient.price;
+        totalAmount += ingredient.type === 'bun' ? (ingredient.price * 2) : ingredient.price;
       }
     });
 
-    this.setState({
-      activeIngredients: activeIngredients,
-      totalAmount: totalAmount
-    });
-  }
+
+    setTotalAmount(totalAmount);
+    setActiveIngredients(activeIngredients);
+  }, [props.ingredients, activeIngredients, totalAmount]);
 
 
-  render() {
-    return (
-      <main className={Styles.mainContainer}>
-        <section className={Styles.mainContainer__title}>
-          <span className={Styles.title__text}>
-            Соберите бургер
-          </span>
-        </section>
-        <section className={Styles.mainContainer__application}>
-          <BurgerIngredients 
-            ingredients={this.state.ingredients} 
-            increaseCounterValue={this.increaseCounter}
-          />
-          <BurgerConstructor 
-            activeIngredients={this.state.activeIngredients} 
-            totalAmount={this.state.totalAmount}
-          />
-        </section>
-      </main>
-    )
-  }
-}
+
+  return (
+    <main className={Styles.mainContainer}>
+      <section className={Styles.mainContainer__title}>
+        <h1 className={Styles.title__text}>
+          Соберите бургер
+        </h1>
+      </section>
+      <section className={Styles.mainContainer__application}>
+        <BurgerIngredients 
+          ingredients={props.ingredients} 
+          increaseCounterCallback={increaseCounter}
+        />
+        <BurgerConstructor 
+          activeIngredients={activeIngredients} 
+          totalAmount={totalAmount}
+        />
+      </section>
+    </main>
+  )
+});
 
 export default Main;

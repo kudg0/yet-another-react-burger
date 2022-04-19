@@ -3,39 +3,51 @@ import React from 'react';
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import {IngredientType} from './../types.jsx';
+import Modal from './../../Modals/Modal';
+import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
+
+
+import {IngredientType} from './../../types/types';
 
 
 import Styles from './burgerConstructor.module.scss';
 
 
 
-class BurgerConstructor extends React.Component<{ activeIngredients: Array<IngredientType>, totalAmount: number }, {}> {
-  constructor(props: any) {
-    super(props);    
+const BurgerConstructor = React.memo((props: {
+  totalAmount: number,
+  activeIngredients: IngredientType[]
+}) => {
+  
+  const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
+    
 
-    this.deleteIngredient = this.deleteIngredient.bind(this);
+  const deleteIngredient : () => void = React.useCallback(() => {
+    console.log(true);
+  }, []);
+
+
+  const showOfferDetails : () => void = React.useCallback(() => {
+    setOpenOfferDetails(true);
+  }, []);
+  const closeOfferDetails : () => void = React.useCallback(() => {
+    setOpenOfferDetails(false);
+  }, []);
+
+
+
+  // Если ничего не выбрали, возвращаем пустой компонент
+  if(props.totalAmount <= 0){
+    return (<></>);
   }
-
-  componentDidUpdate(){
-
-  }
-
-  deleteIngredient(){
-    console.log(this);
-  }
-
-  render() {
-    // Если ничего не выбрали, возвращаем пустой компонент
-    if(this.props.totalAmount <= 0){
-      return;
-    }
-
-    return (
+  
+  return (
+    <>
       <section className={Styles.burgerConstructorContainer}>
         <ul className={Styles.burgerConstructorContainer__header}>
           {
-            this.props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun").map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
+            .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
               return (
                 <li key={activeIngredient._id + activeIngredient__index} className={Styles.header__item}>
                   <ConstructorElement
@@ -53,7 +65,8 @@ class BurgerConstructor extends React.Component<{ activeIngredients: Array<Ingre
 
         <ul className={Styles.burgerConstructorContainer__main}>
           {
-            this.props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun").map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun")
+            .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
               return (
                 <li key={activeIngredient._id + activeIngredient__index} className={Styles.main__item}>
                   <div className={Styles.item__control}>
@@ -63,7 +76,7 @@ class BurgerConstructor extends React.Component<{ activeIngredients: Array<Ingre
                     text={activeIngredient.name}
                     price={activeIngredient.price}
                     thumbnail={activeIngredient.image_mobile}
-                    handleClose={this.deleteIngredient}
+                    handleClose={deleteIngredient}
                   />
                 </li>
               )
@@ -73,7 +86,8 @@ class BurgerConstructor extends React.Component<{ activeIngredients: Array<Ingre
 
         <ul className={Styles.burgerConstructorContainer__footer}>
           {
-            this.props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun").map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+            props.activeIngredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
+            .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
               return (
                 <li key={activeIngredient._id + activeIngredient__index} className={Styles.footer__item}>
                   <ConstructorElement
@@ -93,21 +107,25 @@ class BurgerConstructor extends React.Component<{ activeIngredients: Array<Ingre
         <div className={Styles.burgerConstructorContainer__total}>
           <div className={Styles.total__price}>
             <span>
-              {this.props.totalAmount}
+              {props.totalAmount}
             </span>
             <div className={Styles.total__icon}>
               <CurrencyIcon type="primary" />
             </div>
           </div>
           <div className={Styles.total__button}>
-            <Button type="primary" size="medium">
+            <Button type="primary" size="medium" onClick={showOfferDetails}>
               Оформить заказ
             </Button>
           </div>
         </div>
       </section>
-    )
-  }
-}
+
+      <Modal shouldShow={openOfferDetails} closeModalCallback={closeOfferDetails}>
+        <OrderDetails />
+      </Modal>
+    </>
+  )
+});
 
 export default BurgerConstructor;

@@ -1,9 +1,13 @@
 import React from 'react';
 
-import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import {IngredientType} from './../types.jsx';
+import Modal from './../../Modals/Modal';
+import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
+
+
+import {IngredientType} from './../../types/types';
 
 
 import LazyLoadPicture from './../../LazyLoad/LazyLoad';
@@ -25,231 +29,195 @@ const MENU_ITEMS = [
   {
     text: "Начинки",
     id: "main"
-  },
+  }
 ];
 
 
+const BurgerIngredients = React.memo(( props: {
+  ingredients: IngredientType[], 
+  increaseCounterCallback: (clickedIngredientId: string) => void
+}) => {
+  
+  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0 });
+  const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
+  const [openIngredientDetails, setOpenIngredientDetails] = React.useState<boolean>(false);
 
-class BurgerIngredients extends React.Component<{ ingredients: Array<IngredientType>, increaseCounterValue: any }, { activeMenuTab: string }> {
-  private contentRef: React.RefObject<HTMLInputElement>;
-  private contentSectionRef_bun: React.RefObject<HTMLInputElement>;
-  private contentSectionRef_sauce: React.RefObject<HTMLInputElement>;
-  private contentSectionRef_main: React.RefObject<HTMLInputElement>;
-
-  constructor(props: any) {
-    super(props);
-
-
-    this.state = {
-      activeMenuTab: MENU_ITEMS[0].id
-    };
-
-    this.contentRef = React.createRef();
-    
-    this.contentSectionRef_bun = React.createRef();
-    this.contentSectionRef_sauce = React.createRef();
-    this.contentSectionRef_main = React.createRef();
-
-
-    this.increaseCounter = this.increaseCounter.bind(this);
-
-    this.changeActiveMenuItem = this.changeActiveMenuItem.bind(this);
-
-    this.scrollToNeededSection = this.scrollToNeededSection.bind(this);
-    this.handleScrollOfContent = this.handleScrollOfContent.bind(this);
-  }
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  
+  const contentSectionsRef = React.useRef<(HTMLDivElement | null)[]>(new Array(MENU_ITEMS.length));
 
 
 
-  changeActiveMenuItem(e: React.MouseEvent<HTMLElement>){
-    let target : HTMLElement = e.currentTarget,
-        target__anchor : any = target.getAttribute('data-anchor');
+  const scrollToNeededSection = React.useCallback((sectionId: string) => {
+    const scrollableContent : HTMLElement = contentRef.current!;
+
+    const neededRefs : (HTMLElement | null)[] = 
+      contentSectionsRef.current!.filter( (contentSectionRef : (HTMLElement | null)) => contentSectionRef!.getAttribute("id") === sectionId );
 
 
-    this.scrollToNeededSection(target__anchor);
-  }
-
-  scrollToNeededSection(sectionId: string){
-    let scrollableContent : (HTMLElement | null) = this.contentRef.current;
-    
-    if(!scrollableContent){
-      return;
-    }
-
-
-    let neededRefs : (HTMLElement | null)[] = 
-      [this.contentSectionRef_bun.current, this.contentSectionRef_sauce.current, this.contentSectionRef_main.current]
-      .filter( (contentSectionRef : (HTMLElement | null)) => {
-        if(!contentSectionRef){
-          return false;
-        }
-
-        return contentSectionRef.getAttribute("id") === sectionId
-      });
-
-
-    if(neededRefs.length === 0 || neededRefs[0] === null){
-      return;
-    }
-    let neededSection : HTMLElement = neededRefs[0];
-
-    // Находим позицию секции по отношению к странице
-    let valueForScroll = getCoords(neededSection, scrollableContent).top + scrollableContent.scrollTop;
-
+    const neededRef : HTMLElement =  neededRefs[0]!,
+          valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop; // Находим позицию нужной секции по отношению к странице
 
     scrollableContent.scrollTo(0, valueForScroll);
-  }
-
-  handleScrollOfContent(){
-    let scrollableContent : (HTMLElement | null) = this.contentRef.current;
-
-    if(!scrollableContent){
-      return;
-    }
+  }, [...contentSectionsRef.current]);
 
 
-    let activeSections : (HTMLElement | null)[] = 
-      [this.contentSectionRef_bun.current, this.contentSectionRef_sauce.current, this.contentSectionRef_main.current]
-      .filter( (scrollableContent__section : (HTMLElement | null)) => {
-        if(!scrollableContent__section){
-          return false;
-        }
-
-        return getCoords(scrollableContent__section, scrollableContent).top < 10;
-      });
+  const changeActiveMenuItem = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const target : HTMLElement = e.currentTarget!,
+          target__anchor : string = target.getAttribute('data-anchor')!;
 
 
-    if(activeSections.length === 0){
-      return;
-    }
+    scrollToNeededSection(target__anchor);
+  }, [scrollToNeededSection]);
 
-    let activeSection : any = activeSections.pop(),
-        activeSection__id = activeSection.getAttribute('id');
 
+  const handleScrollOfContent = React.useCallback(() => {
+    const scrollableContent : HTMLElement = contentRef.current!;
+
+    const activeSections : (HTMLElement | null)[] = 
+      contentSectionsRef.current!.filter( (scrollableContent__section : (HTMLElement | null)) => getCoords(scrollableContent__section!, scrollableContent).top < 50);
+
+
+    const activeSection : HTMLElement = activeSections[activeSections.length - 1]!,
+          activeSection__id : string = activeSection.getAttribute('id')!;
 
     // Меняем активный элемент в меню ингедиентов
-      this.setState({
-        activeMenuTab: activeSection__id
-      });
+      setActiveMenuTab(activeSection__id)
     // END
-  }
+  }, [...contentSectionsRef.current]);
 
 
-  increaseCounter(e: React.MouseEvent<HTMLElement>){
-    let target = e.currentTarget,
-        target__id = target.getAttribute("data-id");
+  const increaseCounter = (e: React.MouseEvent<HTMLElement>) => {
+    const target : HTMLElement = e.currentTarget!,
+          target__id : string = target.getAttribute("data-id")!;
+
+    
+    const selectedIngredient : IngredientType[] = props.ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id );
+    
+    setClickedIngredient(selectedIngredient[0]);
+    showIngredientDetails();
 
 
     // Увеличиваем счетчик в пропсе у выбранного ингредиента
-    this.props.increaseCounterValue(target__id);
-  }
+      props.increaseCounterCallback(target__id);
+    // END
+  };
+
+
+  const showIngredientDetails : () => void = React.useCallback(() => {
+    setOpenIngredientDetails(true);
+  }, []);
+  const closeIngredientDetails : () => void = React.useCallback(() => {
+    setOpenIngredientDetails(false);
+  }, []);
 
 
 
-  render(){
-    return (
-      <div className={Styles.burgerIngredientsContainer}>
-        <section className={Styles.burgerIngredientsContainer__menu}>
-          <ul className={Styles.menu__items}>
-            {
-              MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
-                return (
-                  <li 
-                    key={MENU_ITEM_INDEX} 
-                    className={Styles.items__item} 
-                    data-active={MENU_ITEM.id === this.state.activeMenuTab} 
-                    data-anchor={MENU_ITEM.id}
-                    onClick={this.changeActiveMenuItem}
-                  >
-                    <span className={Styles.item__text}>
-                      {MENU_ITEM.text}
-                    </span>
-                  </li>
-                );
-              })
-            }
-          </ul>
-        </section>
-
-        <section 
-          className={Styles.burgerIngredientsContainer__content} 
-          onScroll={this.handleScrollOfContent}
-          ref={this.contentRef}
-        >
+  return (
+    <div className={Styles.burgerIngredientsContainer}>
+      <section className={Styles.burgerIngredientsContainer__menu}>
+        <ul className={Styles.menu__items}>
           {
             MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
               return (
-                <div 
+                <li 
                   key={MENU_ITEM_INDEX} 
-                  className={Styles.content__section} 
-                  ref={
-                    MENU_ITEM.id === 'bun' ? 
-                    this.contentSectionRef_bun : MENU_ITEM.id === 'sauce' ? 
-                    this.contentSectionRef_sauce : this.contentSectionRef_main
-                  } 
-                  id={MENU_ITEM.id}
+                  className={Styles.items__item} 
+                  data-active={MENU_ITEM.id === activeMenuTab} 
+                  data-anchor={MENU_ITEM.id}
+                  onClick={changeActiveMenuItem}
                 >
-                  <span className={Styles.section__title}>
+                  <span className={Styles.item__text}>
                     {MENU_ITEM.text}
                   </span>
-
-                  <ul className={Styles.section__items}>
-                    {
-                      this.props.ingredients && this.props.ingredients.length > 0 && 
-                      this.props.ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
-                      .map( (ingredient: IngredientType, item__index: number) => {
-                        return (
-                          <li 
-                            key={ingredient._id} 
-                            data-id={ingredient._id}
-                            className={Styles.items__item} 
-                            onClick={this.increaseCounter}
-                          >
-                            <div className={Styles.item__counter}>
-                              {
-                                ingredient.__v > 0 && 
-                                <Counter 
-                                  count={ingredient.__v} 
-                                  size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
-                                />
-                              }
-                            </div>
-                            
-                            <div className={Styles.item__image}>
-                              <LazyLoadPicture 
-                                imageMobile={ingredient.image_mobile} 
-                                imageLarge={ingredient.image_large} 
-                                image={ingredient.image}
-                                width={240} height={120}
-                                alt={ingredient.name} 
-                              />
-                            </div>
-                            <div className={Styles.item__info}>
-                              <span className={Styles.info__price}>
-                                {ingredient.price}
-                              </span>
-                              <div className={Styles.info__icon}>
-                                <CurrencyIcon type="primary"/>
-                              </div>
-                            </div>
-                            <div className={Styles.item__title}>
-                              <h3 className={Styles.title__text}>
-                                {ingredient.name}
-                              </h3>
-                            </div>
-                          </li>
-                        )
-                      })
-                    }
-                  </ul>
-                </div>
+                </li>
               );
             })
           }
-        </section>
-      </div>
-    )
-  }
-}
+        </ul>
+      </section>
+
+      <section 
+        className={Styles.burgerIngredientsContainer__content} 
+        onScroll={handleScrollOfContent}
+        ref={contentRef}
+      >
+        {
+          MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
+            return (
+              <div 
+                key={MENU_ITEM_INDEX} 
+                className={Styles.content__section} 
+                ref={
+                  (ref) => contentSectionsRef.current[MENU_ITEM_INDEX] = ref
+                } 
+                id={MENU_ITEM.id}
+              >
+                <h2 className={Styles.section__title}>
+                  {MENU_ITEM.text}
+                </h2>
+
+                <ul className={Styles.section__items}>
+                  {
+                    props.ingredients && props.ingredients.length > 0 && 
+                    props.ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
+                    .map( (ingredient: IngredientType, item__index: number) => {
+                      return (
+                        <li 
+                          key={ingredient._id} 
+                          data-id={ingredient._id}
+                          className={Styles.items__item} 
+                          onClick={increaseCounter}
+                        > 
+                          <div className={Styles.item__image}>
+                            <LazyLoadPicture 
+                              imageMobile={ingredient.image_mobile} 
+                              imageLarge={ingredient.image_large} 
+                              image={ingredient.image}
+                              width={240} height={120}
+                              alt={ingredient.name} 
+                            />
+                          </div>
+                          <div className={Styles.item__info}>
+                            <span className={Styles.info__price}>
+                              {ingredient.price}
+                            </span>
+                            <div className={Styles.info__icon}>
+                              <CurrencyIcon type="primary"/>
+                            </div>
+                          </div>
+                          <div className={Styles.item__title}>
+                            <h3 className={Styles.title__text}>
+                              {ingredient.name}
+                            </h3>
+                          </div>
+
+                          
+                          {
+                            ingredient.__v > 0 && 
+                            <div className={Styles.item__counter}>
+                              <Counter 
+                                count={ingredient.__v} 
+                                size={ingredient.__v.toString().length === 1 ? "default" : "small"} 
+                              />
+                            </div>
+                          }
+                        </li>
+                      )
+                    })
+                  }
+                </ul>
+              </div>
+            );
+          })
+        }
+      </section>
+
+      <Modal shouldShow={openIngredientDetails} closeModalCallback={closeIngredientDetails}>
+        <IngredientDetails ingredient={clickedIngredient}/>
+      </Modal>
+    </div>
+  )
+});
 
 export default BurgerIngredients;
