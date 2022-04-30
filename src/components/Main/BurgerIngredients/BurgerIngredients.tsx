@@ -7,7 +7,7 @@ import Modal from './../../Modals/Modal';
 import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
 
 
-import {IngredientType} from './../../types/types';
+import { IngredientType } from './../../types/types';
 
 
 import LazyLoadPicture from './../../LazyLoad/LazyLoad';
@@ -16,7 +16,8 @@ import getCoords from './../../utils/getCoords';
 import Styles from './burgerIngredients.module.scss';
 
 
-import { ProductsContext, ActiveProductsContext } from '../../../services/productsContext';
+import { ProductsContext } from '../../../services/productsContext';
+import { OfferContext } from '../../../services/offerContext';
 
 
 
@@ -38,7 +39,7 @@ const MENU_ITEMS = [
 
 const BurgerIngredients = React.memo(() => {
   const { ingredients, setIngredients } = React.useContext(ProductsContext);
-  const { activeIngredients, setActiveIngredients } = React.useContext(ActiveProductsContext);
+  const { activeIngredients, setActiveIngredients, setTotalAmount } = React.useContext(OfferContext);
   
 
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
@@ -62,7 +63,19 @@ const BurgerIngredients = React.memo(() => {
     });
 
     setActiveIngredients(activeIngredients);
-  }, [clickedIngredient])
+
+    setTotalAmount(
+      activeIngredients
+        .reduce( (prevAmount : number, currentActiveIngredient : IngredientType ) => {
+          if(currentActiveIngredient.type === "bun"){
+            return prevAmount + (currentActiveIngredient.price * 2);
+          }
+
+          return prevAmount + (currentActiveIngredient.price * currentActiveIngredient.__v);
+        }, 0)
+    )
+  }, [{...clickedIngredient}])
+
 
 
   const scrollToNeededSection = React.useCallback((sectionId: string) => {

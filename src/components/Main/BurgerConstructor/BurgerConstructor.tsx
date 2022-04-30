@@ -7,37 +7,22 @@ import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 
-import {IngredientType} from './../../types/types';
+import { IngredientType } from './../../types/types';
 
 
 import Styles from './burgerConstructor.module.scss';
 
 
-import { ActiveProductsContext } from '../../../services/productsContext';
+import { OfferContext } from '../../../services/offerContext';
 
 
 
 const BurgerConstructor = React.memo(() => {
-  const { activeIngredients } = React.useContext(ActiveProductsContext);
-
-  const [totalAmount, setTotalAmount] = React.useState<number>(0);
+  const { activeIngredients, totalAmount } = React.useContext(OfferContext);
 
   const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
   const [offerDetails, setOfferDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
 
-
-  React.useEffect(() => {
-    setTotalAmount(
-      activeIngredients
-        .reduce( (prevActiveIngredient, currentActiveIngredient ) => {
-          if(currentActiveIngredient.type === "bun"){
-            return (currentActiveIngredient.price * 2);
-          }
-
-          return currentActiveIngredient.price;
-        }, 0)
-    )
-  }, [activeIngredients])
 
   const deleteIngredient : () => void = React.useCallback(() => {
     console.log(true);

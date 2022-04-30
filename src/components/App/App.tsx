@@ -4,7 +4,7 @@ import React from 'react';
 import AppHeader from '../AppHeader/AppHeader';
 import Main from '../Main/Main';
 
-import {IngredientType} from './../types/types';
+import { IngredientType } from './../types/types';
 
 
 import Styles from './app.module.scss';

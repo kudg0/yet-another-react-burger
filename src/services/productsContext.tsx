@@ -1,6 +1,8 @@
 import React from 'react';
 
+
 import { IngredientType } from './../components/types/types';
+
 
 
 export const ProductsContext = React.createContext<{
@@ -8,11 +10,4 @@ export const ProductsContext = React.createContext<{
   setIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>> 
 }>({
   ingredients: [], setIngredients: () => {}
-});
-
-export const ActiveProductsContext = React.createContext<{
-  activeIngredients: IngredientType[], 
-  setActiveIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>> 
-}>({
-  activeIngredients: [], setActiveIngredients: () => {}
 });

@@ -4,7 +4,7 @@ import React from 'react';
 import Modal from './../Modal';
 
 
-import {IngredientType} from './../../types/types';
+import { IngredientType } from './../../types/types';
 
 
 import LazyLoadPicture from './../../LazyLoad/LazyLoad';
