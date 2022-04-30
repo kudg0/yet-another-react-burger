@@ -17,7 +17,7 @@ import Styles from './burgerIngredients.module.scss';
 
 
 import { ProductsContext } from '../../../services/productsContext';
-import { OfferContext } from '../../../services/offerContext';
+import { OrderContext } from '../../../services/orderContext';
 
 
 
@@ -39,7 +39,7 @@ const MENU_ITEMS = [
 
 const BurgerIngredients = React.memo(() => {
   const { ingredients, setIngredients } = React.useContext(ProductsContext);
-  const { activeIngredients, setActiveIngredients, setTotalAmount } = React.useContext(OfferContext);
+  const { activeIngredients, setActiveIngredients, setTotalAmount } = React.useContext(OrderContext);
   
 
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
@@ -61,6 +61,7 @@ const BurgerIngredients = React.memo(() => {
         activeIngredients.push(ingredient);
       }
     });
+    if(activeIngredients.length === 0) return;
 
     setActiveIngredients(activeIngredients);
 
@@ -74,7 +75,7 @@ const BurgerIngredients = React.memo(() => {
           return prevAmount + (currentActiveIngredient.price * currentActiveIngredient.__v);
         }, 0)
     )
-  }, [{...clickedIngredient}])
+  }, [ingredients, setActiveIngredients, setTotalAmount, clickedIngredient._id, clickedIngredient.__v])
 
 
 
@@ -89,7 +90,7 @@ const BurgerIngredients = React.memo(() => {
           valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop; // Находим позицию нужной секции по отношению к странице
 
     scrollableContent.scrollTo(0, valueForScroll);
-  }, [...contentSectionsRef.current]);
+  }, [contentSectionsRef]);
 
 
   const changeActiveMenuItem = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -114,10 +115,10 @@ const BurgerIngredients = React.memo(() => {
     // Меняем активный элемент в меню ингедиентов
       setActiveMenuTab(activeSection__id)
     // END
-  }, [...contentSectionsRef.current]);
+  }, [contentSectionsRef]);
 
 
-  const increaseCounter = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
+  const increaseCounter : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
     const target : HTMLElement = e.currentTarget!,
           target__id : string = target.getAttribute("data-id")!;
 
@@ -165,11 +166,22 @@ const BurgerIngredients = React.memo(() => {
     // END
 
     setIngredients(updatedIngredientsArr);
-  }, [...ingredients]);
+  }, [ingredients, setIngredients]);
 
-  const showIngredientDetails : () => void = React.useCallback(() => {
+
+  const showIngredientDetails : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
+    e.stopPropagation();
+
+    const target__id = e.currentTarget!.getAttribute("data-id")!;
+
+    const selectedIngredient : IngredientType[] = ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id );
+
+    if(selectedIngredient.length === 0) return;
+
+    setClickedIngredient(selectedIngredient[0]);
     setOpenIngredientDetails(true);
-  }, []);
+  }, [ingredients]);
+
   const closeIngredientDetails : () => void = React.useCallback(() => {
     setOpenIngredientDetails(false);
   }, []);
@@ -256,7 +268,9 @@ const BurgerIngredients = React.memo(() => {
                           </div>
                           <div 
                             className={Styles.item__more} 
-                            onClick={showIngredientDetails}
+                            data-id={ingredient._id}
+                            onClick={showIngredientDetails} 
+                            title="Узнать состав 👀"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 24 24" width="24px" height="24px">    
                               <path d="M 12 2 C 6.4889971 2 2 6.4889971 2 12 C 2 17.511003 6.4889971 22 12 22 C 17.511003 22 22 17.511003 22 12 C 22 6.4889971 17.511003 2 12 2 z M 12 4 C 16.430123 4 20 7.5698774 20 12 C 20 16.430123 16.430123 20 12 20 C 7.5698774 20 4 16.430123 4 12 C 4 7.5698774 7.5698774 4 12 4 z M 11 7 L 11 9 L 13 9 L 13 7 L 11 7 z M 11 11 L 11 17 L 13 17 L 13 11 L 11 11 z"/>

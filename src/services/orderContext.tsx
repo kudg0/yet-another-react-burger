@@ -5,7 +5,7 @@ import { IngredientType } from './../components/types/types';
 
 
 
-export const OfferContext = React.createContext<{
+export const OrderContext = React.createContext<{
   activeIngredients: IngredientType[], 
   totalAmount: number,
   setActiveIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>>,

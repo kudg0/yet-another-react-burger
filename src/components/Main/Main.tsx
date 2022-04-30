@@ -10,7 +10,7 @@ import { IngredientType } from './../types/types';
 import Styles from './main.module.scss';
 
 
-import { OfferContext } from '../../services/offerContext';
+import { OrderContext } from '../../services/orderContext';
 
 
 
@@ -20,7 +20,7 @@ const Main = React.memo(() => {
   
   
   return (
-    <OfferContext.Provider value={{activeIngredients, setActiveIngredients, totalAmount, setTotalAmount}}>
+    <OrderContext.Provider value={{activeIngredients, setActiveIngredients, totalAmount, setTotalAmount}}>
       <main className={Styles.mainContainer}>
         <section className={Styles.mainContainer__title}>
           <h1 className={Styles.title__text}>
@@ -32,7 +32,7 @@ const Main = React.memo(() => {
           <BurgerConstructor />
         </section>
       </main>
-    </OfferContext.Provider>
+    </OrderContext.Provider>
   )
 });
 

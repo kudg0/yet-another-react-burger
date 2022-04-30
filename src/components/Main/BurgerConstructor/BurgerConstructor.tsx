@@ -10,15 +10,21 @@ import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 import { IngredientType } from './../../types/types';
 
 
+import checkApiResponse from './../../utils/checkApiResponse';
+import handleApiErrors from './../../utils/handleApiErrors';
+
 import Styles from './burgerConstructor.module.scss';
 
 
-import { OfferContext } from '../../../services/offerContext';
+import { OrderContext } from '../../../services/orderContext';
 
+
+
+const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/orders"!;
 
 
 const BurgerConstructor = React.memo(() => {
-  const { activeIngredients, totalAmount } = React.useContext(OfferContext);
+  const { activeIngredients, totalAmount } = React.useContext(OrderContext);
 
   const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
   const [offerDetails, setOfferDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
@@ -29,32 +35,39 @@ const BurgerConstructor = React.memo(() => {
   }, []);
 
 
-  const showOfferDetails : () => void = React.useCallback(() => {
-    const mapIdOfActiveIngredients : {ingredients: string[]} = {
-      ingredients: activeIngredients.map(activeIngredient => activeIngredient._id)
+  const showOfferDetails : (e: any) => void = React.useCallback((e) => {
+    const target : HTMLElement = e.currentTarget!;
+    
+    target.style.pointerEvents = "none";
+
+
+    const objForServer : {ingredients: string[]} = {
+      ingredients: activeIngredients.map( (activeIngredient : IngredientType) => activeIngredient._id)
     }
 
-    fetch("https://norma.nomoreparties.space/api/orders", {
+    fetch(apiUrl, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(mapIdOfActiveIngredients)
+      body: JSON.stringify(objForServer)
     })
-      .then(response => {
-        response.json()
+      .then( response => {
+        checkApiResponse(response)
           .then( (result : {success: boolean, name?: string, order?: {number: number}} ) => {
             if(!result.success || !result.order || !result.name) return Promise.reject(result);
 
             setOfferDetails({id: result.order.number, name: result.name});
             setOpenOfferDetails(true);
+
+            target.style.pointerEvents = "";
           })
-          .catch( (error: Error) => {
-            console.log(error);
+          .catch( (error : Error) => {
+            handleApiErrors(error, () => {target.style.pointerEvents = "";})
           })
       })
       .catch( (error: Error) => {
-        console.log(error);
+        handleApiErrors(error, () => {target.style.pointerEvents = "";})
       })
     
   }, [activeIngredients]);
@@ -141,11 +154,27 @@ const BurgerConstructor = React.memo(() => {
               <CurrencyIcon type="primary" />
             </div>
           </div>
-          <div className={Styles.total__button}>
-            <Button type="primary" size="medium" onClick={showOfferDetails}>
-              Оформить заказ
-            </Button>
-          </div>
+          {
+            (
+              activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0 &&
+              activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0
+            ) ?
+            <div className={Styles.total__button}>
+              <Button type="primary" size="medium" onClick={showOfferDetails}>
+                Оформить заказ
+              </Button>
+            </div>
+            : 
+            <div className={Styles.total__button + " " + Styles.total__button_disabled} >
+              <Button type="primary" size="medium">
+                {
+                  (activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0) ? 
+                  "Осталось выбрать начинку 🥓" : activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0 ? 
+                  "Осталось выбрать булку 🥯" : "Выберите булку и начинку 🍔"
+                }
+              </Button>
+            </div>
+          }
         </div>
       </section>
 

@@ -7,6 +7,9 @@ import Main from '../Main/Main';
 import { IngredientType } from './../types/types';
 
 
+import checkApiResponse from './../utils/checkApiResponse';
+import handleApiErrors from './../utils/handleApiErrors';
+
 import Styles from './app.module.scss';
 
 
@@ -14,7 +17,8 @@ import { ProductsContext } from '../../services/productsContext';
 
 
 
-const apiUrl : string = "https://norma.nomoreparties.space/api/ingredients"!;
+const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/ingredients"!;
+
 const templateData : {burgerIngredientsData: IngredientType[]} = require('./../../utils/data.json');
 
 
@@ -23,20 +27,20 @@ const App = React.memo(() => {
 
   
   React.useEffect( () => {
-    fetch(apiUrl)
+    fetch( apiUrl )
       .then(response => {
-        response.json()
+        checkApiResponse(response)
           .then( (result : {success: boolean, data: IngredientType[]}) => {
             if(!result.success) return Promise.reject(result);
 
             setIngredients(result.data);
           })
           .catch( (error: Error) => {
-            console.log(error);
+            handleApiErrors(error)
           })
       })
       .catch( (error: Error) => {
-        console.log(error);
+        handleApiErrors(error)
       })
   }, []);
 

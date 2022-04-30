@@ -10,6 +10,9 @@ import reportWebVitals from './reportWebVitals';
 import './styles/index.scss';
 
 
+const baseUrl = "https://norma.nomoreparties.space/api";
+
+
 
 const container = document.getElementById('root')!,
       root = createRoot(container);
