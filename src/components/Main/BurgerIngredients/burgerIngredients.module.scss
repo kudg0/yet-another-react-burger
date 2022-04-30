@@ -169,6 +169,19 @@
               box-sizing: unset;
             }
           }
+          .item__more{
+            display: flex;
+            width: 24px; height: 24px;
+
+            position: absolute;
+            top: 0; left: 0;
+
+            cursor: help;
+
+            svg{
+              fill: #fff;
+            }
+          }
 
           .item__image{
             display: flex;
@@ -224,6 +237,7 @@
               color: $text__color_prior;
             }
           }
+
         }
       }
     }

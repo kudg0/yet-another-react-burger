@@ -16,6 +16,9 @@ import getCoords from './../../utils/getCoords';
 import Styles from './burgerIngredients.module.scss';
 
 
+import { ProductsContext, ActiveProductsContext } from '../../../services/productsContext';
+
+
 
 const MENU_ITEMS = [
   {
@@ -33,19 +36,33 @@ const MENU_ITEMS = [
 ];
 
 
-const BurgerIngredients = React.memo(( props: {
-  ingredients: IngredientType[], 
-  increaseCounterCallback: (clickedIngredientId: string) => void
-}) => {
+const BurgerIngredients = React.memo(() => {
+  const { ingredients, setIngredients } = React.useContext(ProductsContext);
+  const { activeIngredients, setActiveIngredients } = React.useContext(ActiveProductsContext);
   
-  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0 });
+
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
+
+  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0 });
   const [openIngredientDetails, setOpenIngredientDetails] = React.useState<boolean>(false);
 
+
   const contentRef = React.useRef<HTMLDivElement>(null);
-  
   const contentSectionsRef = React.useRef<(HTMLDivElement | null)[]>(new Array(MENU_ITEMS.length));
 
+
+
+  React.useEffect( () => {
+    let activeIngredients : IngredientType[] = [];
+
+    ingredients.forEach( (ingredient: IngredientType) => {
+      for(let i : number = 0; i < ingredient.__v; i++){
+        activeIngredients.push(ingredient);
+      }
+    });
+
+    setActiveIngredients(activeIngredients);
+  }, [clickedIngredient])
 
 
   const scrollToNeededSection = React.useCallback((sectionId: string) => {
@@ -87,22 +104,55 @@ const BurgerIngredients = React.memo(( props: {
   }, [...contentSectionsRef.current]);
 
 
-  const increaseCounter = (e: React.MouseEvent<HTMLElement>) => {
+  const increaseCounter = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
     const target : HTMLElement = e.currentTarget!,
           target__id : string = target.getAttribute("data-id")!;
 
     
-    const selectedIngredient : IngredientType[] = props.ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id );
+    const selectedIngredient : IngredientType[] = ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id );
     
     setClickedIngredient(selectedIngredient[0]);
-    showIngredientDetails();
+
+    let activeBun : boolean = false;
+
+    // Собираем в массив выбранные ингредиенты
+    let updatedIngredientsArr : IngredientType[] = 
+        ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
+          if(
+            ingredient._id !== target__id || 
+            (ingredient.type === 'bun' && ingredient.__v === 1) || 
+            (ingredient.type === 'sauce' && ingredient.__v >= 5) || 
+            ingredient.__v >= 10
+          ){
+            return ingredient;
+          }
+          if(ingredient.type === 'bun'){
+            activeBun = true;
+          }
 
 
-    // Увеличиваем счетчик в пропсе у выбранного ингредиента
-      props.increaseCounterCallback(target__id);
+          ingredient.__v = ingredient.__v + 1;
+          
+          return ingredient;
+        });
     // END
-  };
 
+    // Если уже есть активная булка, убираем ее
+      if(activeBun){
+        updatedIngredientsArr = updatedIngredientsArr.map((ingredient: IngredientType, ingredient_index: number) => {
+          if(ingredient.type === 'bun' && ingredient._id !== target__id){
+            ingredient.__v = 0;
+
+            return ingredient;
+          }
+
+          return ingredient;
+        });
+      }
+    // END
+
+    setIngredients(updatedIngredientsArr);
+  }, [...ingredients]);
 
   const showIngredientDetails : () => void = React.useCallback(() => {
     setOpenIngredientDetails(true);
@@ -159,8 +209,8 @@ const BurgerIngredients = React.memo(( props: {
 
                 <ul className={Styles.section__items}>
                   {
-                    props.ingredients && props.ingredients.length > 0 && 
-                    props.ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
+                    ingredients && ingredients.length > 0 && 
+                    ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
                     .map( (ingredient: IngredientType, item__index: number) => {
                       return (
                         <li 
@@ -191,7 +241,14 @@ const BurgerIngredients = React.memo(( props: {
                               {ingredient.name}
                             </h3>
                           </div>
-
+                          <div 
+                            className={Styles.item__more} 
+                            onClick={showIngredientDetails}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 24 24" width="24px" height="24px">    
+                              <path d="M 12 2 C 6.4889971 2 2 6.4889971 2 12 C 2 17.511003 6.4889971 22 12 22 C 17.511003 22 22 17.511003 22 12 C 22 6.4889971 17.511003 2 12 2 z M 12 4 C 16.430123 4 20 7.5698774 20 12 C 20 16.430123 16.430123 20 12 20 C 7.5698774 20 4 16.430123 4 12 C 4 7.5698774 7.5698774 4 12 4 z M 11 7 L 11 9 L 13 9 L 13 7 L 11 7 z M 11 11 L 11 17 L 13 17 L 13 11 L 11 11 z"/>
+                            </svg>
+                          </div>
                           
                           {
                             ingredient.__v > 0 && 
