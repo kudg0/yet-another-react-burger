@@ -7,7 +7,7 @@ import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 
-import { IngredientType } from './../../types/types';
+import { IngredientType } from './../../../services/types/';
 
 
 import checkApiResponse from './../../utils/checkApiResponse';

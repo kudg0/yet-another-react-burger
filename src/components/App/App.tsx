@@ -1,10 +1,13 @@
 import React from 'react';
 
+import { useDispatch } from 'react-redux';
+import { INGREDIENTS_SET } from './../../services/actions/ingredientsActions';
+
 
 import AppHeader from '../AppHeader/AppHeader';
 import Main from '../Main/Main';
 
-import { IngredientType } from './../types/types';
+import { IngredientType } from './../../services/types/';
 
 
 import checkApiResponse from './../utils/checkApiResponse';
@@ -13,17 +16,12 @@ import handleApiErrors from './../utils/handleApiErrors';
 import Styles from './app.module.scss';
 
 
-import { ProductsContext } from '../../services/productsContext';
-
-
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/ingredients"!;
 
-const templateData : {burgerIngredientsData: IngredientType[]} = require('./../../utils/data.json');
-
 
 const App = React.memo(() => {
-  const [ingredients, setIngredients] = React.useState<IngredientType[]>(templateData.burgerIngredientsData);
+  const dispatch = useDispatch();
 
   
   React.useEffect( () => {
@@ -33,7 +31,7 @@ const App = React.memo(() => {
           .then( (result : {success: boolean, data: IngredientType[]}) => {
             if(!result.success) return Promise.reject(result);
 
-            setIngredients(result.data);
+            dispatch({type: INGREDIENTS_SET, ingredients: result.data});
           })
           .catch( (error: Error) => {
             handleApiErrors(error)
@@ -42,16 +40,14 @@ const App = React.memo(() => {
       .catch( (error: Error) => {
         handleApiErrors(error)
       })
-  }, []);
+  }, [dispatch]);
 
 
   return (
-    <ProductsContext.Provider value={{ingredients, setIngredients}}>
-      <div className={Styles.appContainer}>
-        <AppHeader />
-        <Main />
-      </div>
-    </ProductsContext.Provider>
+    <div className={Styles.appContainer}>
+      <AppHeader />
+      <Main />
+    </div>
   )
 });
 

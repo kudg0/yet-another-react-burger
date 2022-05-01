@@ -4,7 +4,7 @@ import React from 'react';
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
-import { IngredientType } from './../types/types';
+import { IngredientType } from './../../services/types/';
 
 
 import Styles from './main.module.scss';

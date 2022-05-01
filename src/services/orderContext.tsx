@@ -1,16 +1,16 @@
 import React from 'react';
 
 
-import { IngredientType } from './../components/types/types';
+import { IngredientType } from './../components/../services/types/';
 
 
 
 export const OrderContext = React.createContext<{
-  activeIngredients: IngredientType[], 
   totalAmount: number,
+  activeIngredients: IngredientType[],
+  setTotalAmount: React.Dispatch<React.SetStateAction<number>>,
   setActiveIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>>,
-  setTotalAmount: React.Dispatch<React.SetStateAction<number>>
 }>({
-  activeIngredients: [], totalAmount: 0, 
-  setActiveIngredients: () => {}, setTotalAmount: () => {}
+  totalAmount: 0, activeIngredients: [],
+  setTotalAmount: () => {}, setActiveIngredients: () => {}
 });

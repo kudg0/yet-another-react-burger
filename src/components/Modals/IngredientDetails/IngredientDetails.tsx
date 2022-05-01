@@ -4,10 +4,10 @@ import React from 'react';
 import Modal from './../Modal';
 
 
-import { IngredientType } from './../../types/types';
+import { IngredientType } from './../../../services/types/';
 
 
-import LazyLoadPicture from './../../LazyLoad/LazyLoad';
+import LazyLoadPicture from './../../../services/utils/LazyLoad/';
 
 import Styles from './ingredientDetails.module.scss';
 
