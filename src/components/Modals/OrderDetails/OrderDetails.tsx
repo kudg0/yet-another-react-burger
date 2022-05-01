@@ -12,17 +12,20 @@ import Styles from './orderDetails.module.scss';
 
 
 
-const OfferInfo = React.memo(() => {
+const OfferInfo = React.memo((props: {
+  id: number,
+  name: string 
+}) => {
  
   return (
 
     <div className={Styles.offerDetails}>
       <div className={Styles.offerDetails__id}>
         <span className={Styles.id__title}>
-          {Math.random().toFixed(6).toString().split('.')[1]}
+          {props.id}
         </span>
         <span className={Styles.id__subtitle}>
-          идентификатор заказа
+          {props.name}
         </span>
       </div>
       <div className={Styles.offerDetails__info}>

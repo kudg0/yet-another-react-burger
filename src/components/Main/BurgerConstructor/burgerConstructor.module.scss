@@ -156,6 +156,18 @@
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
+
+        user-select: none;
+
+        &_disabled{
+          cursor: not-allowed;
+
+          button{
+            opacity: .3;
+            
+            pointer-events: none;
+          }
+        }
       }
     }
   // END
