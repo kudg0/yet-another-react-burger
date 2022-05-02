@@ -1,4 +1,4 @@
-export type IngredientType = {
+export interface IngredientType {
   _id: string;
   name: string;
   type: string;
@@ -12,3 +12,21 @@ export type IngredientType = {
   image_large: string;
   __v: number;
 }
+
+// REDUX STORE
+  export interface ReduxStore {
+    ingredients: ReduxStore__Ingredients,
+    order: ReduxStore__Order
+  }
+  export interface ReduxStore__Ingredients {
+    data: IngredientType[],
+    request: {
+      pending: boolean,
+      success: boolean,
+      failed: boolean
+    }
+  }
+  export interface ReduxStore__Order {
+    totalAmount: number
+  }
+// END

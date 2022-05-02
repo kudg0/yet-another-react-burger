@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { INGREDIENT_INCREASE_COUNTER, INGREDIENT_DECREASE_COUNTER } from './../../../services/actions/ingredientsActions';
+import { increaseCounter } from './../../../services/slicers/ingredientsSlice';
 
 
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -11,16 +11,13 @@ import Modal from './../../Modals/Modal';
 import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
 
 
-import { IngredientType } from './../../../services/types/';
+import { IngredientType, ReduxStore } from './../../../services/types/';
 
 
 import LazyLoadPicture from './../../../services/utils/LazyLoad/';
-import getCoords from './../../utils/getCoords';
+import getCoords from './../../../services/utils/helpers/getCoords';
 
 import Styles from './burgerIngredients.module.scss';
-
-
-import { OrderContext } from '../../../services/orderContext';
 
 
 
@@ -42,9 +39,8 @@ const MENU_ITEMS : {text: string, id: string}[] = [
 
 const BurgerIngredients = React.memo(() => {
   const dispatch = useDispatch();
-
-  const ingredients = useSelector( (store : {ingredients: IngredientType[]}) => store.ingredients, shallowEqual);
-  const { activeIngredients, setActiveIngredients, setTotalAmount } = React.useContext(OrderContext);
+  
+  const ingredients = useSelector( (store : ReduxStore) => store.ingredients, shallowEqual);
 
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
 
@@ -54,31 +50,6 @@ const BurgerIngredients = React.memo(() => {
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   const contentSectionsRef = React.useRef<(HTMLDivElement | null)[]>(new Array(MENU_ITEMS.length));
-
-
-
-  React.useEffect( () => {
-    let activeIngredients : IngredientType[] = [];
-
-    ingredients.forEach( (ingredient: IngredientType) => {
-      for(let i : number = 0; i < ingredient.__v; i++){
-        activeIngredients.push(ingredient);
-      }
-    });
-
-    setActiveIngredients(activeIngredients);
-
-    setTotalAmount(
-      activeIngredients
-        .reduce( (prevAmount : number, currentActiveIngredient : IngredientType ) => {
-          if(currentActiveIngredient.type === "bun"){
-            return prevAmount + (currentActiveIngredient.price * 2);
-          }
-
-          return prevAmount + (currentActiveIngredient.price * currentActiveIngredient.__v);
-        }, 0)
-    )
-  }, [ingredients, setActiveIngredients, setTotalAmount])
 
 
 
@@ -121,16 +92,15 @@ const BurgerIngredients = React.memo(() => {
   }, [contentSectionsRef]);
 
 
-  const increaseCounter : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
+  const handleIncreaseCounter : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
     const target : HTMLElement = e.currentTarget!,
           target__id : string = target.getAttribute("data-id")!;
 
+    const selectedIngredient : IngredientType = ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
 
-    dispatch({
-      type: INGREDIENT_INCREASE_COUNTER, 
-      selectedIngredient: ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()
-    });
-  }, [ingredients, dispatch]);
+
+    dispatch(increaseCounter(selectedIngredient))
+  }, [ingredients.data, dispatch]);
 
 
   const showIngredientDetails : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
@@ -139,11 +109,11 @@ const BurgerIngredients = React.memo(() => {
     const target__id = e.currentTarget!.getAttribute("data-id")!;
 
     const selectedIngredient : IngredientType = 
-      ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
+      ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
 
 
     setClickedIngredient(selectedIngredient); setOpenIngredientDetails(true);
-  }, [ingredients]);
+  }, [ingredients.data]);
 
   const closeIngredientDetails : () => void = React.useCallback(() => {
     setOpenIngredientDetails(false);
@@ -152,6 +122,7 @@ const BurgerIngredients = React.memo(() => {
 
 
   return (
+    
     <div className={Styles.burgerIngredientsContainer}>
       <section className={Styles.burgerIngredientsContainer__menu}>
         <ul className={Styles.menu__items}>
@@ -176,7 +147,13 @@ const BurgerIngredients = React.memo(() => {
       </section>
 
       <section 
-        className={Styles.burgerIngredientsContainer__content} 
+        className={
+          Styles.burgerIngredientsContainer__content + ' ' + 
+          ( 
+            (!ingredients || !ingredients.request.success) ? 
+            Styles.burgerIngredientsContainer__content_loading : ''
+          )
+        } 
         onScroll={handleScrollOfContent}
         ref={contentRef}
       >
@@ -197,15 +174,15 @@ const BurgerIngredients = React.memo(() => {
 
                 <ul className={Styles.section__items}>
                   {
-                    ingredients && ingredients.length > 0 && 
-                    ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
+                    ingredients.data && ingredients.data.length > 0 && 
+                    ingredients.data.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
                     .map( (ingredient: IngredientType, item__index: number) => {
                       return (
                         <li 
                           key={ingredient._id} 
                           data-id={ingredient._id}
                           className={Styles.items__item} 
-                          onClick={increaseCounter}
+                          onClick={handleIncreaseCounter}
                         > 
                           <div className={Styles.item__image}>
                             <LazyLoadPicture 

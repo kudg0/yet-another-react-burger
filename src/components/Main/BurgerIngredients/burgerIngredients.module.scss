@@ -96,6 +96,8 @@
     overflow-y: scroll;
 
     scroll-behavior: smooth;
+
+    position: relative;
     
 
     &::-webkit-scrollbar {
@@ -108,6 +110,47 @@
 
     &::-webkit-scrollbar-thumb {
       background: rgba(133, 133, 173, 1);
+    }
+
+
+    &_loading{
+      justify-content: center;
+      align-items: flex-start;
+
+      .content__section{
+        opacity: 0;
+      }
+    
+      &:after{
+        content: '';
+        pointer-events: none;
+
+        width: 42px; height: 42px;
+
+        position:absolute;
+        left: calc( 50% - (3.5vw / 2)); top: calc( 50% - (3.5vw / 2));
+
+
+
+        z-index:10;
+
+        transform-origin:50%;
+
+        animation: lazyload-preloader-spin 1s infinite linear;
+
+        border: 4px solid #fff;
+        border-top-color: transparent;
+
+        border-radius:50%;
+
+        z-index: 2;
+      }
+
+      @keyframes lazyload-preloader-spin{
+        100%{
+          transform:rotate(360deg)
+        }
+      }
     }
 
 

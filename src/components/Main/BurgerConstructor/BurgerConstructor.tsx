@@ -1,5 +1,9 @@
 import React from 'react';
 
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { updateTotalAmount } from './../../../services/slicers/orderSlice';
+
+
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
@@ -7,16 +11,13 @@ import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 
-import { IngredientType } from './../../../services/types/';
+import { IngredientType, ReduxStore } from './../../../services/types/';
 
 
-import checkApiResponse from './../../utils/checkApiResponse';
-import handleApiErrors from './../../utils/handleApiErrors';
+import checkApiResponse from './../../../services/utils/checkApiResponse';
+import handleApiErrors from './../../../services/utils/handleApiErrors';
 
 import Styles from './burgerConstructor.module.scss';
-
-
-import { OrderContext } from '../../../services/orderContext';
 
 
 
@@ -24,10 +25,43 @@ const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/orders"!;
 
 
 const BurgerConstructor = React.memo(() => {
-  const { activeIngredients, totalAmount } = React.useContext(OrderContext);
+  const dispatch = useDispatch();
+
+  const { totalAmount } = useSelector( (store : ReduxStore) => store.order);
+  const ingredients = useSelector( (store : ReduxStore) => store.ingredients).data;
+
+  const [ activeIngredients, setActiveIngredients ] = React.useState<IngredientType[]>([]);
 
   const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
   const [offerDetails, setOfferDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
+
+
+
+  React.useEffect(() => {
+    let tempActiveIngredients : IngredientType[] = [];
+
+    ingredients
+      .filter( (ingredient : IngredientType) => ingredient.__v > 0)
+      .forEach( (ingredient: IngredientType) => {
+        for(let i = 0; i < ingredient.__v; i++){
+          tempActiveIngredients.push(ingredient)
+        }
+      });
+
+    setActiveIngredients( tempActiveIngredients )
+  }, [setActiveIngredients, ingredients])
+
+  React.useEffect(() => {
+    dispatch(
+      updateTotalAmount(
+        activeIngredients.reduce((prevAmount: number, ingredient: IngredientType) => {
+          if(ingredient.type === 'bun') return prevAmount + (ingredient.price * ingredient.__v) * 2;
+
+          return prevAmount + ingredient.price * ingredient.__v;
+        }, 0)
+      )
+    )
+  }, [dispatch, activeIngredients])
 
 
   const deleteIngredient : () => void = React.useCallback(() => {
@@ -70,11 +104,11 @@ const BurgerConstructor = React.memo(() => {
         handleApiErrors(error, () => {target.style.pointerEvents = "";})
       })
     
-  }, [activeIngredients]);
+  }, [activeIngredients, setOfferDetails, setOpenOfferDetails]);
 
   const closeOfferDetails : () => void = React.useCallback(() => {
     setOpenOfferDetails(false);
-  }, []);
+  }, [setOpenOfferDetails]);
 
 
 
