@@ -23,7 +23,7 @@ import Styles from './burgerConstructor.module.scss';
 const BurgerConstructor = React.memo(() => {
   const dispatch = useDispatch();
 
-  const { orderId, totalAmount, burger } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
+  const { orderId, totalAmount, burger, request } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
 
   const [openOrderDetails, setOpenOrderDetails] = React.useState<boolean>(false);
   const [orderDetails, setOrderDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
@@ -151,7 +151,9 @@ const BurgerConstructor = React.memo(() => {
             ) ?
             <div className={Styles.total__button}>
               <Button type="primary" size="medium" onClick={showOrderDetails}>
-                Оформить заказ
+                {
+                  request.pending ? <>Оформляем заказ...</> : <>Оформить заказ</>
+                }
               </Button>
             </div>
             : 
