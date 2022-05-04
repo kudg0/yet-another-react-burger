@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { updateTotalAmount } from './../../../services/slicers/orderSlice';
-
+import { submitOrderEnhance } from './../../../services/enhances/submitOrderEnhance';
 
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -21,104 +20,61 @@ import Styles from './burgerConstructor.module.scss';
 
 
 
-const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/orders"!;
-
-
 const BurgerConstructor = React.memo(() => {
   const dispatch = useDispatch();
 
-  const { totalAmount } = useSelector( (store : ReduxStore) => store.order);
-  const ingredients = useSelector( (store : ReduxStore) => store.ingredients).data;
+  const { orderId, totalAmount, burger } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
 
-  const [ activeIngredients, setActiveIngredients ] = React.useState<IngredientType[]>([]);
-
-  const [openOfferDetails, setOpenOfferDetails] = React.useState<boolean>(false);
-  const [offerDetails, setOfferDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
+  const [openOrderDetails, setOpenOrderDetails] = React.useState<boolean>(false);
+  const [orderDetails, setOrderDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
 
 
 
   React.useEffect(() => {
-    let tempActiveIngredients : IngredientType[] = [];
+    if(!orderId || !burger.name) return;
 
-    ingredients
-      .filter( (ingredient : IngredientType) => ingredient.__v > 0)
-      .forEach( (ingredient: IngredientType) => {
-        for(let i = 0; i < ingredient.__v; i++){
-          tempActiveIngredients.push(ingredient)
-        }
-      });
-
-    setActiveIngredients( tempActiveIngredients )
-  }, [setActiveIngredients, ingredients])
-
-  React.useEffect(() => {
-    dispatch(
-      updateTotalAmount(
-        activeIngredients.reduce((prevAmount: number, ingredient: IngredientType) => {
-          if(ingredient.type === 'bun') return prevAmount + (ingredient.price * ingredient.__v) * 2;
-
-          return prevAmount + ingredient.price * ingredient.__v;
-        }, 0)
-      )
-    )
-  }, [dispatch, activeIngredients])
+    setOrderDetails({id: orderId, name: burger.name})
+  }, [orderId, burger.name, setOrderDetails])
 
 
   const deleteIngredient : () => void = React.useCallback(() => {
     console.log(true);
   }, []);
 
-
-  const showOfferDetails : (e: any) => void = React.useCallback((e) => {
+  const showOrderDetails : (e: any) => void = React.useCallback((e) => {
     const target : HTMLElement = e.currentTarget!;
     
     target.style.pointerEvents = "none";
 
 
     const objForServer : {ingredients: string[]} = {
-      ingredients: activeIngredients.map( (activeIngredient : IngredientType) => activeIngredient._id)
+      ingredients: burger.ingredients.map( (activeIngredient : IngredientType) => activeIngredient._id)
     }
 
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(objForServer)
-    })
-      .then( response => {
-        checkApiResponse(response)
-          .then( (result : {success: boolean, name?: string, order?: {number: number}} ) => {
-            if(!result.success || !result.order || !result.name) return Promise.reject(result);
+    dispatch( submitOrderEnhance( objForServer ) as any)
+      .then( (response : Response) => {
+        target.style.pointerEvents = "";
 
-            setOfferDetails({id: result.order.number, name: result.name});
-            setOpenOfferDetails(true);
-
-            target.style.pointerEvents = "";
-          })
-          .catch( (error : Error) => {
-            handleApiErrors(error, () => {target.style.pointerEvents = "";})
-          })
+        setOpenOrderDetails(true);
       })
-      .catch( (error: Error) => {
-        handleApiErrors(error, () => {target.style.pointerEvents = "";})
+      .catch( (err : Error) => {
+        target.style.pointerEvents = "";
       })
     
-  }, [activeIngredients, setOfferDetails, setOpenOfferDetails]);
+  }, [burger.ingredients, setOpenOrderDetails, dispatch]);
 
-  const closeOfferDetails : () => void = React.useCallback(() => {
-    setOpenOfferDetails(false);
-  }, [setOpenOfferDetails]);
+  const closeOrderDetails : () => void = React.useCallback(() => {
+    setOpenOrderDetails(false);
+  }, [setOpenOrderDetails]);
 
 
 
   return (
-    totalAmount > 0 ?
     <>
       <section className={Styles.burgerConstructorContainer}>
         <ul className={Styles.burgerConstructorContainer__header}>
           {
-            activeIngredients
+            burger.ingredients
               .filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
@@ -138,7 +94,7 @@ const BurgerConstructor = React.memo(() => {
 
         <ul className={Styles.burgerConstructorContainer__main}>
           {
-            activeIngredients
+            burger.ingredients
               .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun")
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
@@ -160,7 +116,7 @@ const BurgerConstructor = React.memo(() => {
 
         <ul className={Styles.burgerConstructorContainer__footer}>
           {
-            activeIngredients
+            burger.ingredients
               .filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
@@ -190,11 +146,11 @@ const BurgerConstructor = React.memo(() => {
           </div>
           {
             (
-              activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0 &&
-              activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0
+              burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0 &&
+              burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0
             ) ?
             <div className={Styles.total__button}>
-              <Button type="primary" size="medium" onClick={showOfferDetails}>
+              <Button type="primary" size="medium" onClick={showOrderDetails}>
                 Оформить заказ
               </Button>
             </div>
@@ -202,8 +158,8 @@ const BurgerConstructor = React.memo(() => {
             <div className={Styles.total__button + " " + Styles.total__button_disabled} >
               <Button type="primary" size="medium">
                 {
-                  (activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0) ? 
-                  "Осталось выбрать начинку 🥓" : activeIngredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0 ? 
+                  (burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0) ? 
+                  "Осталось выбрать начинку 🥓" : burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0 ? 
                   "Осталось выбрать булку 🥯" : "Выберите булку и начинку 🍔"
                 }
               </Button>
@@ -212,10 +168,10 @@ const BurgerConstructor = React.memo(() => {
         </div>
       </section>
 
-      <Modal shouldShow={openOfferDetails} closeModalCallback={closeOfferDetails}>
-        <OrderDetails {...offerDetails}/>
+      <Modal shouldShow={openOrderDetails} closeModalCallback={closeOrderDetails}>
+        <OrderDetails {...orderDetails}/>
       </Modal>
-    </> : <></>
+    </>
   )
 });
 

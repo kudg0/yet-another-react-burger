@@ -15,18 +15,29 @@ export interface IngredientType {
 
 // REDUX STORE
   export interface ReduxStore {
-    ingredients: ReduxStore__Ingredients,
-    order: ReduxStore__Order
+    app: ReduxStore__App,
   }
-  export interface ReduxStore__Ingredients {
-    data: IngredientType[],
-    request: {
-      pending: boolean,
-      success: boolean,
-      failed: boolean
+  export interface ReduxStore__App {
+    ingredients: {
+      data: IngredientType[],
+      request: {
+        pending: boolean,
+        success: boolean,
+        failed: boolean
+      }
+    },
+    order: {
+      totalAmount: number,
+      orderId: number | null,
+      burger: {
+        name: string | null,
+        ingredients: IngredientType[]
+      },
+      request: {
+        pending: boolean,
+        success: boolean,
+        failed: boolean
+      }
     }
-  }
-  export interface ReduxStore__Order {
-    totalAmount: number
   }
 // END

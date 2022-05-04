@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { increaseCounter } from './../../../services/slicers/ingredientsSlice';
+import { ingredients_increaseCounter } from './../../../services/slicers/appSlice';
 
 
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -40,7 +40,7 @@ const MENU_ITEMS : {text: string, id: string}[] = [
 const BurgerIngredients = React.memo(() => {
   const dispatch = useDispatch();
   
-  const ingredients = useSelector( (store : ReduxStore) => store.ingredients, shallowEqual);
+  const {ingredients, order} = useSelector( (store : ReduxStore) => store.app, shallowEqual);
 
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
 
@@ -51,6 +51,13 @@ const BurgerIngredients = React.memo(() => {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const contentSectionsRef = React.useRef<(HTMLDivElement | null)[]>(new Array(MENU_ITEMS.length));
 
+
+
+  React.useEffect(() => {
+    if(!order.orderId || !contentRef.current) return ;
+
+    contentRef.current.scrollTo(0, 0);
+  }, [contentRef, order.orderId])
 
 
   const scrollToNeededSection = React.useCallback((sectionId: string) => {
@@ -64,7 +71,7 @@ const BurgerIngredients = React.memo(() => {
 
 
     scrollableContent.scrollTo(0, valueForScroll);
-  }, [contentSectionsRef]);
+  }, [contentRef, contentSectionsRef]);
 
 
   const changeActiveMenuItem : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
@@ -89,7 +96,7 @@ const BurgerIngredients = React.memo(() => {
     // Меняем активный элемент в меню ингедиентов
       setActiveMenuTab(activeSection__id)
     // END
-  }, [contentSectionsRef]);
+  }, [contentRef, contentSectionsRef]);
 
 
   const handleIncreaseCounter : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
@@ -99,7 +106,7 @@ const BurgerIngredients = React.memo(() => {
     const selectedIngredient : IngredientType = ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
 
 
-    dispatch(increaseCounter(selectedIngredient))
+    dispatch(ingredients_increaseCounter(selectedIngredient))
   }, [ingredients.data, dispatch]);
 
 
