@@ -29,6 +29,8 @@ export const getIngredientsEnhance = () => {
           .then( (result : {success: boolean, data: IngredientType[]}) => {
             if(!result.success) return Promise.reject(result);
 
+            result.data = result.data.map( (ingredient: IngredientType) => {return {...ingredient, section: 'ingredients'} });
+
             dispatch(ingredients_request_success(result.data));
           })
           .catch( (error: Error) => {

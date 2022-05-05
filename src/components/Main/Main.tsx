@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
+
 
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
@@ -21,8 +24,10 @@ const Main = React.memo(() => {
         </h1>
       </section>
       <section className={Styles.mainContainer__application}>
-        <BurgerIngredients />
-        <BurgerConstructor />
+        <DndProvider backend={HTML5Backend}>
+          <BurgerIngredients />
+          <BurgerConstructor />
+        </DndProvider>
       </section>
     </main>
   )

@@ -1,7 +1,12 @@
 import React from 'react';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { ingredients_increaseCounter } from './../../../services/slicers/appSlice';
 import { submitOrderEnhance } from './../../../services/enhances/submitOrderEnhance';
+
+
+import { useDrop } from 'react-dnd';
+
 
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -23,11 +28,19 @@ import Styles from './burgerConstructor.module.scss';
 const BurgerConstructor = React.memo(() => {
   const dispatch = useDispatch();
 
+  const ingredients = useSelector( (store : ReduxStore) => store.app.ingredients, shallowEqual);
   const { orderId, totalAmount, burger, request } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
 
   const [openOrderDetails, setOpenOrderDetails] = React.useState<boolean>(false);
   const [orderDetails, setOrderDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
 
+
+  const [, dropTarget] = useDrop({
+      accept: "ingredient",
+      drop(item : {id: string}) {
+        handleIncreaseCounter( item.id )
+      },
+  });
 
 
   React.useEffect(() => {
@@ -36,6 +49,15 @@ const BurgerConstructor = React.memo(() => {
     setOrderDetails({id: orderId, name: burger.name})
   }, [orderId, burger.name, setOrderDetails])
 
+
+
+  const handleIncreaseCounter = React.useCallback(( ingredientId : string ) => {
+    const selectedIngredient : IngredientType = ingredients.data
+      .filter( (ingredient : IngredientType) => ingredient._id === ingredientId ).shift()!;
+
+
+    dispatch(ingredients_increaseCounter(selectedIngredient))
+  }, [ingredients.data, dispatch]);
 
   const deleteIngredient : () => void = React.useCallback(() => {
     console.log(true);
@@ -71,7 +93,7 @@ const BurgerConstructor = React.memo(() => {
 
   return (
     <>
-      <section className={Styles.burgerConstructorContainer}>
+      <section className={Styles.burgerConstructorContainer} ref={dropTarget}>
         <ul className={Styles.burgerConstructorContainer__header}>
           {
             burger.ingredients
@@ -138,7 +160,7 @@ const BurgerConstructor = React.memo(() => {
         <div className={Styles.burgerConstructorContainer__total}>
           <div className={Styles.total__price}>
             <span>
-              {totalAmount}
+              {totalAmount.toLocaleString()}
             </span>
             <div className={Styles.total__icon}>
               <CurrencyIcon type="primary" />

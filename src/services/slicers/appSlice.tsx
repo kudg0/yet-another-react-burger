@@ -56,7 +56,7 @@ const appSlice = createSlice({
 
         return ingredient._id !== action.payload._id ? 
           ingredient : ( (action.payload.type === 'bun' || action.payload.type === 'sauce') && action.payload.__v !== 0) ? 
-          ingredient : (action.payload.type === 'main' && action.payload.__v > 14) ? 
+          ingredient : (action.payload.type === 'main' && action.payload.__v > 9) ? 
           ingredient : { ...ingredient, __v: ++ingredient.__v};
       })
 
@@ -69,7 +69,10 @@ const appSlice = createSlice({
           }
         });
 
-      state.order.totalAmount =  state.order.burger.ingredients.reduce((acc: number, ingredient : IngredientType) => acc + ingredient.price * ingredient.__v, 0)
+      state.order.totalAmount = state.order.burger.ingredients
+        .reduce((acc: number, ingredient : IngredientType) => 
+          acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
+        , 0)
     },
     ingredients_decreaseCounter: (state, action: PayloadAction<IngredientType>) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => 
