@@ -1,7 +1,9 @@
 import React from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { ingredients_increaseCounter } from './../../../services/slicers/appSlice';
+import { ingredientsIncreaseCounter } from './../../../services/slicers/appSlice';
 import { submitOrderEnhance } from './../../../services/enhances/submitOrderEnhance';
 
 
@@ -58,7 +60,7 @@ const BurgerConstructor = React.memo(() => {
       .filter( (ingredient : IngredientType) => ingredient._id === ingredientId ).shift()!;
 
 
-    dispatch(ingredients_increaseCounter(selectedIngredient))
+    dispatch(ingredientsIncreaseCounter(selectedIngredient))
   }, [ingredients.data, dispatch]);
 
 
@@ -91,6 +93,7 @@ const BurgerConstructor = React.memo(() => {
 
 
   return (
+    
     <>
       <section className={Styles.burgerConstructorContainer} ref={dropTarget}>
         <ul className={Styles.burgerConstructorContainer__header}>
@@ -100,7 +103,7 @@ const BurgerConstructor = React.memo(() => {
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
                   <DraggableConstructorElement 
-                    key={activeIngredient._id + activeIngredient__index} 
+                    key={activeIngredient.uuid} 
                     className={Styles.header__item}
                     ingredient={activeIngredient} 
                     ingredientIndex={activeIngredient__index}
@@ -118,7 +121,7 @@ const BurgerConstructor = React.memo(() => {
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
                   <DraggableConstructorElement 
-                    key={activeIngredient._id + activeIngredient__index} 
+                    key={activeIngredient.uuid} 
                     className={Styles.main__item}
                     ingredient={activeIngredient} 
                     ingredientIndex={activeIngredient__index}
@@ -135,7 +138,7 @@ const BurgerConstructor = React.memo(() => {
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
                   <DraggableConstructorElement 
-                    key={activeIngredient._id + activeIngredient__index} 
+                    key={activeIngredient.uuid} 
                     className={Styles.footer__item}
                     ingredient={activeIngredient} 
                     ingredientIndex={activeIngredient__index}

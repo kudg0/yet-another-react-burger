@@ -11,7 +11,7 @@ export interface IngredientType {
   image_mobile: string;
   image_large: string;
   __v: number;
-  section: string;
+  uuid: string;
 }
 
 // REDUX STORE

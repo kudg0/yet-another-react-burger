@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { ingredients_decreaseCounter, ingredient_updatePos } from './../../../services/slicers/appSlice';
+import { ingredientsDecreaseCounter, ingredientUpdatePos } from './../../../services/slicers/appSlice';
 
 
 import { useDrag, useDrop } from 'react-dnd';
@@ -43,10 +43,10 @@ const DraggableConstructorElement = React.memo((props: {
 
 
   const handleUpdatePosition = React.useCallback(( newItem: IngredientType, newItemIndex: number ) => {
-    dispatch(ingredient_updatePos({currentItem: newItem, currentItemIndex: newItemIndex, toNeededItemIndex: props.ingredientIndex}))
+    dispatch(ingredientUpdatePos({currentItem: newItem, currentItemIndex: newItemIndex, toNeededItemIndex: props.ingredientIndex}))
   }, [dispatch, props.ingredientIndex])
   const deleteIngredient = React.useCallback(() => {
-    dispatch(ingredients_decreaseCounter(props.ingredient));
+    dispatch(ingredientsDecreaseCounter(props.ingredient));
   }, [dispatch, props.ingredient]);
   
 
@@ -56,7 +56,6 @@ const DraggableConstructorElement = React.memo((props: {
     props.type ?
       <li className={props.className}>
         <div className={Styles.constructorWrapper} >
-           
           <ConstructorElement
             type={props.type}
             text={
@@ -70,10 +69,7 @@ const DraggableConstructorElement = React.memo((props: {
         </div>
       </li> : 
       <li className={props.className} ref={dropTarget}>
-        <div 
-          className={Styles.constructorWrapper} 
-          ref={ref}
-        >
+        <div className={Styles.constructorWrapper} ref={ref}>
           <div className={Styles.controlElement}>
             <DragIcon type="primary" />
           </div>

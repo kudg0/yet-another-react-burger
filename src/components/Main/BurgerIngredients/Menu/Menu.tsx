@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
 
 import Styles from './menu.module.scss';
 
@@ -8,7 +10,7 @@ import getCoords from './../../../../services/utils/helpers/getCoords';
 
 const Menu = React.forwardRef((
   props: {
-    menuItems: {text: string, id: string}[], 
+    menuItems: {text: string, id: string, uuid: string}[], 
     scollableContainer: HTMLDivElement | null, 
     contentContainers: (HTMLDivElement  | null)[]
   }, 
@@ -67,10 +69,10 @@ const Menu = React.forwardRef((
     <section className={Styles.menuContainer}>
       <ul className={Styles.menuContainer__items}>
         {
-          props.menuItems.map( (menuItem: {id: string, text: string}, menuItemIndex: number) => {
+          props.menuItems.map( (menuItem: {id: string, text: string, uuid: string}, menuItemIndex: number) => {
             return (
               <li 
-                key={menuItemIndex + menuItem.id} 
+                key={menuItem.uuid} 
                 className={Styles.items__item} 
                 data-active={menuItem.id === activeMenuTab} 
                 data-anchor={menuItem.id}

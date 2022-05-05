@@ -1,10 +1,13 @@
 import { Dispatch } from 'redux';
 
 
+import { v4 as uuidv4 } from 'uuid';
+
+
 import { 
-  ingredients_request,
-  ingredients_request_success,
-  ingredients_request_failed
+  ingredientsRequest,
+  ingredientsRequestSuccess,
+  ingredientsRequestFailed
 } from './../slicers/appSlice';
 
 
@@ -21,7 +24,7 @@ const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/ingredients"!;
 export const getIngredientsEnhance = () => {
   return ( dispatch : Dispatch ) => {
 
-    dispatch(ingredients_request());
+    dispatch(ingredientsRequest());
 
     fetch( apiUrl )
       .then(response => {
@@ -29,20 +32,20 @@ export const getIngredientsEnhance = () => {
           .then( (result : {success: boolean, data: IngredientType[]}) => {
             if(!result.success) return Promise.reject(result);
 
-            result.data = result.data.map( (ingredient: IngredientType) => {return {...ingredient, section: 'ingredients'} });
+            result.data = result.data.map( (ingredient: IngredientType) => {return {...ingredient, uuid: uuidv4()} });
 
-            dispatch(ingredients_request_success(result.data));
+            dispatch(ingredientsRequestSuccess(result.data));
           })
           .catch( (error: Error) => {
             handleApiErrors(error);
 
-            dispatch(ingredients_request_failed());
+            dispatch(ingredientsRequestFailed());
           })
       })
       .catch( (error: Error) => {
         handleApiErrors(error);
 
-        dispatch(ingredients_request_failed());
+        dispatch(ingredientsRequestFailed());
       })
   }
 }

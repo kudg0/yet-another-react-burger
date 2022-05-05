@@ -1,7 +1,9 @@
 import React from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { ingredients_increaseCounter } from './../../../services/slicers/appSlice';
+import { ingredientsIncreaseCounter } from './../../../services/slicers/appSlice';
 
 
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -24,18 +26,21 @@ import Styles from './burgerIngredients.module.scss';
 
 
 
-const MENU_ITEMS : {text: string, id: string}[] = [
+const MENU_ITEMS : {text: string, id: string, uuid: string}[] = [
   {
     text: "Булки",
-    id: "bun"
+    id: "bun",
+    uuid: uuidv4()
   },
   {
     text: "Соусы",
-    id: "sauce"
+    id: "sauce",
+    uuid: uuidv4()
   },
   {
     text: "Начинки",
-    id: "main"
+    id: "main",
+    uuid: uuidv4()
   }
 ];
 
@@ -45,7 +50,7 @@ const BurgerIngredients = React.memo(() => {
   
   const {ingredients, order} = useSelector( (store : ReduxStore) => store.app, shallowEqual);
 
-  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0, section: 'ingredients' });
+  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0, uuid: '' });
   const [openIngredientDetails, setOpenIngredientDetails] = React.useState<boolean>(false);
 
   const menuRef = React.useRef<{handleScrollOfContent: () => void}>(null);
@@ -68,7 +73,7 @@ const BurgerIngredients = React.memo(() => {
     const selectedIngredient : IngredientType = ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
 
 
-    dispatch(ingredients_increaseCounter(selectedIngredient))
+    dispatch(ingredientsIncreaseCounter(selectedIngredient))
   }, [ingredients.data, dispatch]);
 
 
@@ -112,10 +117,10 @@ const BurgerIngredients = React.memo(() => {
         ref={contentRef}
       >
         {
-          MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
+          MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string, uuid: string}, MENU_ITEM_INDEX: number) => {
             return (
               <div 
-                key={MENU_ITEM_INDEX} 
+                key={MENU_ITEM.uuid} 
                 className={Styles.content__section} 
                 ref={
                   (ref) => contentSectionsRef.current[MENU_ITEM_INDEX] = ref!
@@ -133,7 +138,7 @@ const BurgerIngredients = React.memo(() => {
                     .map( (ingredient: IngredientType, item__index: number) => {
                       return (
                         <DraggableIngredient 
-                          key={ingredient._id} 
+                          key={ingredient.uuid} 
                           ingredientData={ingredient}
                           className={Styles.items__item} 
                           onClick={handleIncreaseCounter}

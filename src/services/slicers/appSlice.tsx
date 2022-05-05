@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
+import { v4 as uuidv4 } from 'uuid';
+
 
 import { 
   IngredientType, 
@@ -34,20 +36,20 @@ const appSlice = createSlice({
     }
   } as ReduxStore__App,
   reducers: {
-    ingredients_request: (state) => {
+    ingredientsRequest: (state) => {
       state.ingredients.request.pending = true
     },
-    ingredients_request_success: (state, action: PayloadAction<IngredientType[]>) => {
+    ingredientsRequestSuccess: (state, action: PayloadAction<IngredientType[]>) => {
       state.ingredients.request.pending = false;
       state.ingredients.request.success = true;
 
       state.ingredients.data = action.payload;
     },
-    ingredients_request_failed: (state) => {
+    ingredientsRequestFailed: (state) => {
       state.ingredients.request.pending = false;
       state.ingredients.request.failed = true;
     },
-    ingredients_increaseCounter: (state, action: PayloadAction<IngredientType>) => {
+    ingredientsIncreaseCounter: (state, action: PayloadAction<IngredientType>) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
         // Если уже была выбрана булка, убираем ее из выбранных
         if(ingredient._id !== action.payload._id && action.payload.type === 'bun' && ingredient.type === 'bun') {
@@ -55,47 +57,43 @@ const appSlice = createSlice({
         } 
 
         return ingredient._id !== action.payload._id ? 
-          ingredient : ( (action.payload.type === 'bun' || action.payload.type === 'sauce') && action.payload.__v !== 0) ? 
-          ingredient : (action.payload.type === 'main' && action.payload.__v > 9) ? 
+          ingredient : ( action.payload.type === 'bun' && action.payload.__v !== 0) ? 
+          ingredient : ( (action.payload.type === 'main' || action.payload.type === 'sauce') && action.payload.__v > 9) ? 
           ingredient : { ...ingredient, __v: ++ingredient.__v};
       })
 
-      state.order.burger.ingredients = [];
-      state.ingredients.data
-        .filter( (ingredient : IngredientType) => ingredient.__v > 0)
-        .forEach( (ingredient: IngredientType) => {
-          for(let i = 0; i < ingredient.__v; i++){
-            state.order.burger.ingredients.push(ingredient)
-          }
-        });
+      state.order.burger.ingredients = [...state.order.burger.ingredients]
+        .filter( (ingredient : IngredientType) => action.payload.type === 'bun' ? ingredient.type !== 'bun' : true);
 
+      state.order.burger.ingredients.push({...action.payload, uuid: uuidv4(), __v: action.payload.__v + 1})
+
+      
       state.order.totalAmount = state.order.burger.ingredients
         .reduce((acc: number, ingredient : IngredientType) => 
           acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
         , 0)
     },
-    ingredients_decreaseCounter: (state, action: PayloadAction<IngredientType>) => {
+    ingredientsDecreaseCounter: (state, action: PayloadAction<IngredientType>) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => 
         ingredient._id !== action.payload._id ? 
         ingredient : action.payload.__v === 0 ? 
         ingredient : { ...ingredient, __v: --ingredient.__v}
       )
 
-      state.order.burger.ingredients = [];
-      state.ingredients.data
-        .filter( (ingredient : IngredientType) => ingredient.__v > 0)
-        .forEach( (ingredient: IngredientType) => {
-          for(let i = 0; i < ingredient.__v; i++){
-            state.order.burger.ingredients.push(ingredient)
-          }
-        });
+      state.order.burger.ingredients = [...state.order.burger.ingredients].map( (ingredient : IngredientType) => 
+        ingredient._id !== action.payload._id ? 
+        ingredient : action.payload.__v === 0 ? 
+        ingredient : { ...ingredient, __v: --ingredient.__v}
+      ).filter( (ingredient : IngredientType) => ingredient.__v !== 0);
 
+      // Переписать логику удаления ингедиента
+      
       state.order.totalAmount = state.order.burger.ingredients
         .reduce((acc: number, ingredient : IngredientType) => 
           acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
         , 0)
     },
-    ingredients_reset: (state) => {
+    ingredientsReset: (state) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
         return { ...ingredient, __v: 0}
       })
@@ -103,7 +101,7 @@ const appSlice = createSlice({
       state.order.totalAmount =  0;
       state.order.burger.ingredients = [];
     },
-    ingredient_updatePos: (state, action: PayloadAction<{currentItem: IngredientType, currentItemIndex: number, toNeededItemIndex: number}>) => {
+    ingredientUpdatePos: (state, action: PayloadAction<{currentItem: IngredientType, currentItemIndex: number, toNeededItemIndex: number}>) => {
       let tempIngredientsArr = [...state.order.burger.ingredients]
         .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun");
       
@@ -119,17 +117,17 @@ const appSlice = createSlice({
         ...tempIngredientsArr
       ];
     },
-    order_request: (state) => {
+    orderRequest: (state) => {
       state.order.request.pending = true
     },
-    order_request_success: (state, action: PayloadAction<{orderId: number, name: string}>) => {
+    orderRequestSuccess: (state, action: PayloadAction<{orderId: number, name: string}>) => {
       state.order.request.pending = false;
       state.order.request.success = true;
 
       state.order.orderId = action.payload.orderId;
       state.order.burger.name = action.payload.name;
     },
-    order_request_failed: (state) => {
+    orderRequestFailed: (state) => {
       state.order.request.pending = false;
       state.order.request.failed = true;
     },
@@ -141,16 +139,16 @@ const appSlice = createSlice({
 const { actions, reducer } = appSlice
 // Extract and export each action creator by name
 export const {
-  ingredients_request,
-  ingredients_request_success,
-  ingredients_request_failed,
-  ingredients_increaseCounter,
-  ingredients_decreaseCounter,
-  ingredients_reset,
-  ingredient_updatePos,
-  order_request,
-  order_request_success,
-  order_request_failed,
+  ingredientsRequest,
+  ingredientsRequestSuccess,
+  ingredientsRequestFailed,
+  ingredientsIncreaseCounter,
+  ingredientsDecreaseCounter,
+  ingredientsReset,
+  ingredientUpdatePos,
+  orderRequest,
+  orderRequestSuccess,
+  orderRequestFailed,
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer
