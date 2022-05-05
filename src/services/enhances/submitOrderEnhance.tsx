@@ -34,22 +34,20 @@ export const submitOrderEnhance = ( objForServer : {ingredients : string[]} ) =>
               if(!result.success || !result.order || !result.name) return Promise.reject(result);
 
               dispatch(orderRequestSuccess({orderId: result.order.number, name: result.name}));
-              dispatch(ingredientsReset());
+              dispatch(ingredientsReset()); 
 
-              return resolve(result)
+              resolve(result)
             })
             .catch( (error: Error) => {
               handleApiErrors(error);
 
-              dispatch(orderRequestFailed());
-              return reject(error)
+              dispatch(orderRequestFailed()); reject(error)
             })
         })
         .catch( (error: Error) => {
           handleApiErrors(error);
 
-          dispatch(orderRequestFailed());
-          return reject(error)
+          dispatch(orderRequestFailed()); reject(error)
         })
     })
   }
