@@ -8,9 +8,10 @@ import { submitOrderEnhance } from './../../../services/enhances/submitOrderEnha
 import { useDrop } from 'react-dnd';
 
 
-import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Button, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
+import DraggableConstructorElement from './DraggableConstructorElement';
 import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
@@ -20,6 +21,7 @@ import { IngredientType, ReduxStore } from './../../../services/types/';
 
 import checkApiResponse from './../../../services/utils/checkApiResponse';
 import handleApiErrors from './../../../services/utils/handleApiErrors';
+
 
 import Styles from './burgerConstructor.module.scss';
 
@@ -59,9 +61,6 @@ const BurgerConstructor = React.memo(() => {
     dispatch(ingredients_increaseCounter(selectedIngredient))
   }, [ingredients.data, dispatch]);
 
-  const deleteIngredient : () => void = React.useCallback(() => {
-    console.log(true);
-  }, []);
 
   const showOrderDetails : (e: any) => void = React.useCallback((e) => {
     const target : HTMLElement = e.currentTarget!;
@@ -100,15 +99,13 @@ const BurgerConstructor = React.memo(() => {
               .filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
-                  <li key={activeIngredient._id + activeIngredient__index} className={Styles.header__item}>
-                    <ConstructorElement
-                      type="top"
-                      isLocked={true}
-                      text={`${activeIngredient.name} (верх)`}
-                      price={activeIngredient.price}
-                      thumbnail={activeIngredient.image_mobile}
-                    />
-                  </li>
+                  <DraggableConstructorElement 
+                    key={activeIngredient._id + activeIngredient__index} 
+                    className={Styles.header__item}
+                    ingredient={activeIngredient} 
+                    ingredientIndex={activeIngredient__index}
+                    type="top"
+                  />
                 )
               })
           }
@@ -120,17 +117,12 @@ const BurgerConstructor = React.memo(() => {
               .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun")
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
-                  <li key={activeIngredient._id + activeIngredient__index} className={Styles.main__item}>
-                    <div className={Styles.item__control}>
-                      <DragIcon type="primary" />
-                    </div>
-                    <ConstructorElement
-                      text={activeIngredient.name}
-                      price={activeIngredient.price}
-                      thumbnail={activeIngredient.image_mobile}
-                      handleClose={deleteIngredient}
-                    />
-                  </li>
+                  <DraggableConstructorElement 
+                    key={activeIngredient._id + activeIngredient__index} 
+                    className={Styles.main__item}
+                    ingredient={activeIngredient} 
+                    ingredientIndex={activeIngredient__index}
+                  />
                 )
               })
           }
@@ -142,15 +134,13 @@ const BurgerConstructor = React.memo(() => {
               .filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
               .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
                 return (
-                  <li key={activeIngredient._id + activeIngredient__index} className={Styles.footer__item}>
-                    <ConstructorElement
-                      type="bottom"
-                      isLocked={true}
-                      text={`${activeIngredient.name} (низ)`}
-                      price={activeIngredient.price}
-                      thumbnail={activeIngredient.image_mobile}
-                    />
-                  </li>
+                  <DraggableConstructorElement 
+                    key={activeIngredient._id + activeIngredient__index} 
+                    className={Styles.footer__item}
+                    ingredient={activeIngredient} 
+                    ingredientIndex={activeIngredient__index}
+                    type="bottom"
+                  />
                 )
               })
           }

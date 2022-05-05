@@ -1,12 +1,14 @@
 import React from 'react';
 
+
 import { useDrag } from 'react-dnd';
+
 
 import { IngredientType, ReduxStore } from './../../../services/types/';
 
 
 
-const DraggableIngredient = (props: {
+const DraggableIngredient = React.memo((props: {
   children: React.ReactNode, 
   ingredientData: IngredientType,
   className: string,
@@ -27,6 +29,6 @@ const DraggableIngredient = (props: {
       {props.children}
     </li>
   );
-};
+});
 
 export default DraggableIngredient;

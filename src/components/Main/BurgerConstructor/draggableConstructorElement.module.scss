@@ -1,0 +1,38 @@
+.constructorWrapper{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  width: 100%;
+}
+
+.controlElement{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  width: 24px;
+
+  margin-right: 8px;
+
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+
+  // ANIMATE
+    opacity: 1;
+
+    will-change: opacity;
+    transition: .3s opacity;
+
+    &:hover{
+      opacity: .7;
+    }
+    &:active {
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+    }
+  // END
+}

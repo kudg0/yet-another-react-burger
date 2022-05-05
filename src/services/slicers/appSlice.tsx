@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 
 import { 
@@ -81,8 +81,19 @@ const appSlice = createSlice({
         ingredient : { ...ingredient, __v: --ingredient.__v}
       )
 
-      state.order.burger.ingredients.splice(state.order.burger.ingredients.indexOf(action.payload), 1);
-      state.order.totalAmount =  state.order.burger.ingredients.reduce((acc: number, ingredient : IngredientType) => acc + ingredient.price * ingredient.__v, 0)
+      state.order.burger.ingredients = [];
+      state.ingredients.data
+        .filter( (ingredient : IngredientType) => ingredient.__v > 0)
+        .forEach( (ingredient: IngredientType) => {
+          for(let i = 0; i < ingredient.__v; i++){
+            state.order.burger.ingredients.push(ingredient)
+          }
+        });
+
+      state.order.totalAmount = state.order.burger.ingredients
+        .reduce((acc: number, ingredient : IngredientType) => 
+          acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
+        , 0)
     },
     ingredients_reset: (state) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
@@ -91,6 +102,22 @@ const appSlice = createSlice({
 
       state.order.totalAmount =  0;
       state.order.burger.ingredients = [];
+    },
+    ingredient_updatePos: (state, action: PayloadAction<{currentItem: IngredientType, currentItemIndex: number, toNeededItemIndex: number}>) => {
+      let tempIngredientsArr = [...state.order.burger.ingredients]
+        .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun");
+      
+      tempIngredientsArr.splice(
+        action.payload.toNeededItemIndex < action.payload.currentItemIndex ? action.payload.toNeededItemIndex : action.payload.toNeededItemIndex + 1, 
+        0, action.payload.currentItem);
+      tempIngredientsArr.splice(
+        action.payload.toNeededItemIndex < action.payload.currentItemIndex ? 
+        action.payload.currentItemIndex + 1 : action.payload.currentItemIndex, 1);
+
+      state.order.burger.ingredients = [
+        ...state.order.burger.ingredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun"), 
+        ...tempIngredientsArr
+      ];
     },
     order_request: (state) => {
       state.order.request.pending = true
@@ -120,6 +147,7 @@ export const {
   ingredients_increaseCounter,
   ingredients_decreaseCounter,
   ingredients_reset,
+  ingredient_updatePos,
   order_request,
   order_request_success,
   order_request_failed,
