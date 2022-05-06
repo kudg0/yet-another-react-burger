@@ -27,36 +27,6 @@
 
         user-select: none;
 
-        .item__control{
-          display: flex;
-          justify-content: flex-start;
-          align-items: flex-start;
-
-          width: 24px;
-
-          margin-right: 8px;
-
-          cursor: move; /* fallback if grab cursor is unsupported */
-          cursor: grab;
-          cursor: -moz-grab;
-          cursor: -webkit-grab;
-
-          // ANIMATE
-            opacity: 1;
-
-            will-change: opacity;
-            transition: .3s opacity;
-
-            &:hover{
-              opacity: .7;
-            }
-            &:active {
-              cursor: grabbing;
-              cursor: -moz-grabbing;
-              cursor: -webkit-grabbing;
-            }
-          // END
-        }
 
         :global(.constructor-element){
           width: 536px; 
@@ -68,6 +38,11 @@
           flex-grow: 0;
 
           :global(.constructor-element__text){
+             -moz-hyphens: none;
+            -ms-hyphens: none;
+            -webkit-hyphens: none;
+            hyphens: none;
+            
             height: 48px;
 
             font-size: 16px;

@@ -1,172 +1,80 @@
 import React from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { ingredientsIncreaseCounter } from './../../../services/slicers/appSlice';
+
+
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
+
+import Menu from './Menu/Menu';
+import DraggableIngredient from './DraggableIngredient';
 
 import Modal from './../../Modals/Modal';
 import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
 
 
-import { IngredientType } from './../../types/types';
+import { IngredientType, ReduxStore } from './../../../services/types/';
 
 
-import LazyLoadPicture from './../../LazyLoad/LazyLoad';
-import getCoords from './../../utils/getCoords';
+import LazyLoadPicture from './../../../services/utils/LazyLoad/';
+
 
 import Styles from './burgerIngredients.module.scss';
 
 
-import { ProductsContext } from '../../../services/productsContext';
-import { OrderContext } from '../../../services/orderContext';
 
-
-
-const MENU_ITEMS = [
+const MENU_ITEMS : {text: string, id: string, uuid: string}[] = [
   {
     text: "Булки",
-    id: "bun"
+    id: "bun",
+    uuid: uuidv4()
   },
   {
     text: "Соусы",
-    id: "sauce"
+    id: "sauce",
+    uuid: uuidv4()
   },
   {
     text: "Начинки",
-    id: "main"
+    id: "main",
+    uuid: uuidv4()
   }
 ];
 
 
 const BurgerIngredients = React.memo(() => {
-  const { ingredients, setIngredients } = React.useContext(ProductsContext);
-  const { activeIngredients, setActiveIngredients, setTotalAmount } = React.useContext(OrderContext);
+  const dispatch = useDispatch();
   
+  const {ingredients, order} = useSelector( (store : ReduxStore) => store.app, shallowEqual);
 
-  const [activeMenuTab, setActiveMenuTab] = React.useState<string>( MENU_ITEMS[0].id );
-
-  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0 });
+  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0, uuid: '' });
   const [openIngredientDetails, setOpenIngredientDetails] = React.useState<boolean>(false);
 
-
+  const menuRef = React.useRef<{handleScrollOfContent: () => void}>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
-  const contentSectionsRef = React.useRef<(HTMLDivElement | null)[]>(new Array(MENU_ITEMS.length));
+  const contentSectionsRef = React.useRef<HTMLDivElement[]>(new Array(MENU_ITEMS.length));
 
 
 
-  React.useEffect( () => {
-    let activeIngredients : IngredientType[] = [];
+  React.useEffect(() => {
+    if(!order.orderId || !contentRef.current) return ;
 
-    ingredients.forEach( (ingredient: IngredientType) => {
-      for(let i : number = 0; i < ingredient.__v; i++){
-        activeIngredients.push(ingredient);
-      }
-    });
-    if(activeIngredients.length === 0) return;
-
-    setActiveIngredients(activeIngredients);
-
-    setTotalAmount(
-      activeIngredients
-        .reduce( (prevAmount : number, currentActiveIngredient : IngredientType ) => {
-          if(currentActiveIngredient.type === "bun"){
-            return prevAmount + (currentActiveIngredient.price * 2);
-          }
-
-          return prevAmount + (currentActiveIngredient.price * currentActiveIngredient.__v);
-        }, 0)
-    )
-  }, [ingredients, setActiveIngredients, setTotalAmount, clickedIngredient._id, clickedIngredient.__v])
+    contentRef.current.scrollTo(0, 0);
+  }, [contentRef, order.orderId])
 
 
-
-  const scrollToNeededSection = React.useCallback((sectionId: string) => {
-    const scrollableContent : HTMLElement = contentRef.current!;
-
-    const neededRefs : (HTMLElement | null)[] = 
-      contentSectionsRef.current!.filter( (contentSectionRef : (HTMLElement | null)) => contentSectionRef!.getAttribute("id") === sectionId );
-
-
-    const neededRef : HTMLElement =  neededRefs[0]!,
-          valueForScroll : number = getCoords(neededRef, scrollableContent).top + scrollableContent.scrollTop; // Находим позицию нужной секции по отношению к странице
-
-    scrollableContent.scrollTo(0, valueForScroll);
-  }, [contentSectionsRef]);
-
-
-  const changeActiveMenuItem = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
-    const target : HTMLElement = e.currentTarget!,
-          target__anchor : string = target.getAttribute('data-anchor')!;
-
-
-    scrollToNeededSection(target__anchor);
-  }, [scrollToNeededSection]);
-
-
-  const handleScrollOfContent = React.useCallback(() => {
-    const scrollableContent : HTMLElement = contentRef.current!;
-
-    const activeSections : (HTMLElement | null)[] = 
-      contentSectionsRef.current!.filter( (scrollableContent__section : (HTMLElement | null)) => getCoords(scrollableContent__section!, scrollableContent).top < 50);
-
-
-    const activeSection : HTMLElement = activeSections[activeSections.length - 1]!,
-          activeSection__id : string = activeSection.getAttribute('id')!;
-
-    // Меняем активный элемент в меню ингедиентов
-      setActiveMenuTab(activeSection__id)
-    // END
-  }, [contentSectionsRef]);
-
-
-  const increaseCounter : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
+  const handleIncreaseCounter : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
     const target : HTMLElement = e.currentTarget!,
           target__id : string = target.getAttribute("data-id")!;
 
-    
-    const selectedIngredient : IngredientType[] = ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id );
-    
-    setClickedIngredient(selectedIngredient[0]);
-
-    let activeBun : boolean = false;
-
-    // Собираем в массив выбранные ингредиенты
-    let updatedIngredientsArr : IngredientType[] = 
-        ingredients.map( (ingredient: IngredientType, ingredient_index: number) => {
-          if(
-            ingredient._id !== target__id || 
-            (ingredient.type === 'bun' && ingredient.__v === 1) || 
-            (ingredient.type === 'sauce' && ingredient.__v >= 5) || 
-            ingredient.__v >= 10
-          ){
-            return ingredient;
-          }
-          if(ingredient.type === 'bun'){
-            activeBun = true;
-          }
+    const selectedIngredient : IngredientType = ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
 
 
-          ingredient.__v = ingredient.__v + 1;
-          
-          return ingredient;
-        });
-    // END
-
-    // Если уже есть активная булка, убираем ее
-      if(activeBun){
-        updatedIngredientsArr = updatedIngredientsArr.map((ingredient: IngredientType, ingredient_index: number) => {
-          if(ingredient.type === 'bun' && ingredient._id !== target__id){
-            ingredient.__v = 0;
-
-            return ingredient;
-          }
-
-          return ingredient;
-        });
-      }
-    // END
-
-    setIngredients(updatedIngredientsArr);
-  }, [ingredients, setIngredients]);
+    dispatch(ingredientsIncreaseCounter(selectedIngredient))
+  }, [ingredients.data, dispatch]);
 
 
   const showIngredientDetails : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
@@ -174,13 +82,12 @@ const BurgerIngredients = React.memo(() => {
 
     const target__id = e.currentTarget!.getAttribute("data-id")!;
 
-    const selectedIngredient : IngredientType[] = ingredients.filter( (ingredient : IngredientType) => ingredient._id === target__id );
+    const selectedIngredient : IngredientType = 
+      ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
 
-    if(selectedIngredient.length === 0) return;
 
-    setClickedIngredient(selectedIngredient[0]);
-    setOpenIngredientDetails(true);
-  }, [ingredients]);
+    setClickedIngredient(selectedIngredient); setOpenIngredientDetails(true);
+  }, [ingredients.data]);
 
   const closeIngredientDetails : () => void = React.useCallback(() => {
     setOpenIngredientDetails(false);
@@ -189,42 +96,34 @@ const BurgerIngredients = React.memo(() => {
 
 
   return (
+    
     <div className={Styles.burgerIngredientsContainer}>
-      <section className={Styles.burgerIngredientsContainer__menu}>
-        <ul className={Styles.menu__items}>
-          {
-            MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
-              return (
-                <li 
-                  key={MENU_ITEM_INDEX} 
-                  className={Styles.items__item} 
-                  data-active={MENU_ITEM.id === activeMenuTab} 
-                  data-anchor={MENU_ITEM.id}
-                  onClick={changeActiveMenuItem}
-                >
-                  <span className={Styles.item__text}>
-                    {MENU_ITEM.text}
-                  </span>
-                </li>
-              );
-            })
-          }
-        </ul>
-      </section>
+      <Menu 
+        menuItems={MENU_ITEMS!} 
+        scollableContainer={contentRef.current!} 
+        contentContainers={contentSectionsRef.current} 
+        ref={menuRef}
+      />
 
       <section 
-        className={Styles.burgerIngredientsContainer__content} 
-        onScroll={handleScrollOfContent}
+        className={
+          Styles.burgerIngredientsContainer__content + ' ' + 
+          ( 
+            (!ingredients || !ingredients.request.success) ? 
+            Styles.burgerIngredientsContainer__content_loading : ''
+          )
+        } 
+        onScroll={() => menuRef.current!.handleScrollOfContent()}
         ref={contentRef}
       >
         {
-          MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string}, MENU_ITEM_INDEX: number) => {
+          MENU_ITEMS.map( (MENU_ITEM: {id: string, text: string, uuid: string}, MENU_ITEM_INDEX: number) => {
             return (
               <div 
-                key={MENU_ITEM_INDEX} 
+                key={MENU_ITEM.uuid} 
                 className={Styles.content__section} 
                 ref={
-                  (ref) => contentSectionsRef.current[MENU_ITEM_INDEX] = ref
+                  (ref) => contentSectionsRef.current[MENU_ITEM_INDEX] = ref!
                 } 
                 id={MENU_ITEM.id}
               >
@@ -234,16 +133,16 @@ const BurgerIngredients = React.memo(() => {
 
                 <ul className={Styles.section__items}>
                   {
-                    ingredients && ingredients.length > 0 && 
-                    ingredients.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
+                    ingredients.data && ingredients.data.length > 0 && 
+                    ingredients.data.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
                     .map( (ingredient: IngredientType, item__index: number) => {
                       return (
-                        <li 
-                          key={ingredient._id} 
-                          data-id={ingredient._id}
+                        <DraggableIngredient 
+                          key={ingredient.uuid} 
+                          ingredientData={ingredient}
                           className={Styles.items__item} 
-                          onClick={increaseCounter}
-                        > 
+                          onClick={handleIncreaseCounter}
+                        >
                           <div className={Styles.item__image}>
                             <LazyLoadPicture 
                               imageMobile={ingredient.image_mobile} 
@@ -255,7 +154,7 @@ const BurgerIngredients = React.memo(() => {
                           </div>
                           <div className={Styles.item__info}>
                             <span className={Styles.info__price}>
-                              {ingredient.price}
+                              {ingredient.price.toLocaleString()}
                             </span>
                             <div className={Styles.info__icon}>
                               <CurrencyIcon type="primary"/>
@@ -286,7 +185,7 @@ const BurgerIngredients = React.memo(() => {
                               />
                             </div>
                           }
-                        </li>
+                        </DraggableIngredient>
                       )
                     })
                   }

@@ -6,7 +6,7 @@ import {CheckMarkIcon} from '@ya.praktikum/react-developer-burger-ui-components'
 import Modal from './../Modal';
 
 
-import getRandomInt from './../../utils/getRandomInt';
+import getRandomInt from './../../../services/utils/helpers/getRandomInt';
 
 import Styles from './orderDetails.module.scss';
 

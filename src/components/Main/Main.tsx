@@ -1,38 +1,35 @@
 import React from 'react';
 
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
+
 
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
-import { IngredientType } from './../types/types';
+import { IngredientType } from './../../services/types/';
 
 
 import Styles from './main.module.scss';
 
 
-import { OrderContext } from '../../services/orderContext';
-
-
 
 const Main = React.memo(() => {
-  const [activeIngredients, setActiveIngredients] = React.useState<IngredientType[]>([]);
-  const [totalAmount, setTotalAmount] = React.useState<number>(0);
-  
   
   return (
-    <OrderContext.Provider value={{activeIngredients, setActiveIngredients, totalAmount, setTotalAmount}}>
-      <main className={Styles.mainContainer}>
-        <section className={Styles.mainContainer__title}>
-          <h1 className={Styles.title__text}>
-            Соберите бургер
-          </h1>
-        </section>
-        <section className={Styles.mainContainer__application}>
+    <main className={Styles.mainContainer}>
+      <section className={Styles.mainContainer__title}>
+        <h1 className={Styles.title__text}>
+          Соберите бургер
+        </h1>
+      </section>
+      <section className={Styles.mainContainer__application}>
+        <DndProvider backend={HTML5Backend}>
           <BurgerIngredients />
           <BurgerConstructor />
-        </section>
-      </main>
-    </OrderContext.Provider>
+        </DndProvider>
+      </section>
+    </main>
   )
 });
 
