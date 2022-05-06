@@ -26,6 +26,9 @@ const DraggableConstructorElement = React.memo((props: {
   
   const dispatch = useDispatch();
 
+  const [dragFromTop, setDragFromTop] = React.useState(false);
+
+
   const [{ isDrag }, ref] = useDrag({
       type: "ingredient_active",
       item: {ingredient: props.ingredient, index: props.ingredientIndex},
@@ -34,11 +37,18 @@ const DraggableConstructorElement = React.memo((props: {
       })
   });
 
-  const [, dropTarget] = useDrop({
+  const [{ isHover }, dropTarget] = useDrop({
       accept: "ingredient_active",
       drop(item : {ingredient: IngredientType, index: number}) {
         handleUpdatePosition( item.ingredient, item.index )
       },
+      hover(item : {ingredient: IngredientType, index: number}, monitor){
+        if(item.index < props.ingredientIndex) setDragFromTop(true)
+        else setDragFromTop(false)
+      },
+      collect: monitor => ({
+        isHover: monitor.isOver({ shallow: true }),
+      })
   });
 
 
@@ -69,7 +79,17 @@ const DraggableConstructorElement = React.memo((props: {
         </div>
       </li> : 
       <li className={props.className} ref={dropTarget}>
-        <div className={Styles.constructorWrapper} ref={ref}>
+        <div 
+          className={
+            Styles.constructorWrapper + ' ' + 
+            (
+              isHover && !isDrag ? 
+              dragFromTop ? Styles.constructorWrapper_hover_top : Styles.constructorWrapper_hover_bottom : ''
+            ) + ' ' + 
+            (isDrag ? Styles.constructorWrapper_drag : '')
+          } 
+          ref={ref}
+        >
           <div className={Styles.controlElement}>
             <DragIcon type="primary" />
           </div>

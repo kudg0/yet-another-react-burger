@@ -18,7 +18,7 @@ const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/orders"!;
 
 export const submitOrderEnhance = ( objForServer : {ingredients : string[]} ) => {
   return ( dispatch : Dispatch ) => {
-    return new Promise ((resolve, reject) => {
+    return new Promise ((resolve) => {
       dispatch(orderRequest());
 
       fetch( apiUrl, {
@@ -41,13 +41,13 @@ export const submitOrderEnhance = ( objForServer : {ingredients : string[]} ) =>
             .catch( (error: Error) => {
               handleApiErrors(error);
 
-              dispatch(orderRequestFailed()); reject(error)
+              dispatch(orderRequestFailed());
             })
         })
         .catch( (error: Error) => {
           handleApiErrors(error);
 
-          dispatch(orderRequestFailed()); reject(error)
+          dispatch(orderRequestFailed());
         })
     })
   }

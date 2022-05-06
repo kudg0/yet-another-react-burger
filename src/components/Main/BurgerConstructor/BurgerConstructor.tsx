@@ -66,9 +66,6 @@ const BurgerConstructor = React.memo(() => {
 
   const showOrderDetails : (e: any) => void = React.useCallback((e) => {
     const target : HTMLElement = e.currentTarget!;
-    
-    target.style.pointerEvents = "none";
-
 
     const objForServer : {ingredients: string[]} = {
       ingredients: burger.ingredients.map( (activeIngredient : IngredientType) => activeIngredient._id)
@@ -76,12 +73,7 @@ const BurgerConstructor = React.memo(() => {
 
     dispatch( submitOrderEnhance( objForServer ) as any)
       .then( (response : Response) => {
-        target.style.pointerEvents = "";
-
         setOpenOrderDetails(true);
-      })
-      .catch( (err : Error) => {
-        target.style.pointerEvents = "";
       })
     
   }, [burger.ingredients, setOpenOrderDetails, dispatch]);
@@ -150,7 +142,7 @@ const BurgerConstructor = React.memo(() => {
         </ul>
 
 
-        <div className={Styles.burgerConstructorContainer__total}>
+        <div className={Styles.burgerConstructorContainer__total} style={{pointerEvents: request.pending ? "none" : 'auto'}}>
           <div className={Styles.total__price}>
             <span>
               {totalAmount.toLocaleString()}
