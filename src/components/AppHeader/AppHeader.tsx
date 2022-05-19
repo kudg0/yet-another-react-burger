@@ -1,7 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useSelector, shallowEqual } from 'react-redux';
 
 import { Logo, ProfileIcon, BurgerIcon, ListIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+
+
+import { ReduxStore } from './../../services/types/';
 
 
 import Styles from './appHeader.module.scss';
@@ -11,10 +15,12 @@ import Styles from './appHeader.module.scss';
 const AppHeader = React.memo(() => {
 
   const location = useLocation();
+  const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
 
 
   return (
     <header className={Styles.headerContainer}>
+      
       <nav className={Styles.navigationContainer}>
         <ul className={Styles.navigationContainer__nav}>
           <li 
@@ -51,23 +57,28 @@ const AppHeader = React.memo(() => {
       </nav>
       
       <div className={Styles.headerContainer__logo}>
-        <a>
+        <Link to='/'>
           <Logo />
-        </a>
+        </Link>
       </div>
       
       <div 
         className={
           Styles.profileContainer + ' ' + 
-          (location.pathname === '/profile' ? Styles.active : '')
+          ((location.pathname === '/profile' || location.pathname === '/login') ? Styles.active : '')
         }
       >
-        <Link to='/profile' className={Styles.profileContainer__link} >
+        <Link 
+          to={ user.request.success ? '/profile' : '/login' } 
+          className={Styles.profileContainer__link}
+        >
           <div className={Styles.link__icon}>
             <ProfileIcon type="primary"/>
           </div>
           <span className={Styles.link__text}>
-            Личный кабинет
+            {
+              user.request.success ? "Личный кабинет" : "Войти в аккаунт"
+            }
           </span>
         </Link>
       </div>

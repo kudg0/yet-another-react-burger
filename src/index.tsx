@@ -12,11 +12,12 @@ import App from './components/App/App';
 
 import { 
   Home, 
-  Profile, 
+  Profile,
+  Ingredients, 
   Orders,
   Login,
-  Ingredients,
   Register,
+  ForgotPassword,
   ResetPassword,
 } from './pages/';
 
@@ -39,7 +40,7 @@ root.render(
             element={<App />}
           >
             <Route 
-              index 
+              index
               element={<Home />}
             />
             <Route 
@@ -66,6 +67,10 @@ root.render(
             <Route 
               path='register'  
               element={<Register />}
+            />
+            <Route 
+              path='forgot-password'  
+              element={<ForgotPassword />}
             />
             <Route 
               path='reset-password'  

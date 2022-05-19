@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,30 +12,31 @@ import getCoords from './../../../../services/utils/helpers/getCoords';
 const Menu = React.forwardRef((
   props: {
     menuItems: {text: string, id: string, uuid: string}[], 
-    scollableContainer: HTMLDivElement | null, 
-    contentContainers: (HTMLDivElement  | null)[]
+    scollableContainerRef: React.RefObject<HTMLDivElement>, 
+    contentContainersRef: React.RefObject<HTMLDivElement[]>
   }, 
   ref
 ) => {
   
+  const location = useLocation();  
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( props.menuItems[0].id );
 
 
 
   const scrollToNeededSection = React.useCallback((sectionId: string) => {
-    if(!props.scollableContainer || !props.contentContainers) return ;
+    if(!props.scollableContainerRef.current || !props.contentContainersRef.current) return ;
 
 
     const neededRefs : (HTMLElement | null)[] = 
-      props.contentContainers.filter( (contentSectionRef : (HTMLElement | null)) => contentSectionRef!.getAttribute("id") === sectionId);
+          props.contentContainersRef.current.filter( (contentSectionRef : (HTMLElement | null)) => contentSectionRef!.getAttribute("id") === sectionId);
 
 
     const neededRef : HTMLElement =  neededRefs.shift()!,
-          valueForScroll : number = getCoords(neededRef, props.scollableContainer).top + props.scollableContainer.scrollTop; // Находим позицию нужной секции по отношению к странице
+          valueForScroll : number = getCoords(neededRef, props.scollableContainerRef.current).top + props.scollableContainerRef.current.scrollTop; // Находим позицию нужной секции по отношению к странице
 
 
-    props.scollableContainer.scrollTo(0, valueForScroll);
-  }, [props.scollableContainer, props.contentContainers]);
+    props.scollableContainerRef.current.scrollTo(0, valueForScroll);
+  }, [props.scollableContainerRef, props.contentContainersRef]);
 
 
   const changeActiveMenuItem : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
@@ -48,10 +50,10 @@ const Menu = React.forwardRef((
 
   React.useImperativeHandle(ref, () => ({
     handleScrollOfContent() {
-      if(!props.scollableContainer || !props.contentContainers) return ;
+      if(!props.scollableContainerRef.current || !props.contentContainersRef.current) return ;
 
       const activeSections : (HTMLElement | null)[] = 
-          props.contentContainers.filter( (scrollableContent__section : (HTMLElement | null)) => getCoords(scrollableContent__section!, props.scollableContainer!).top < 50);
+            props.contentContainersRef.current.filter( (scrollableContent__section : (HTMLElement | null)) => getCoords(scrollableContent__section!, props.scollableContainerRef.current!).top < 50);
 
       const activeSection : HTMLElement = activeSections.pop()!,
             activeSection__id : string = activeSection.getAttribute('id')!;

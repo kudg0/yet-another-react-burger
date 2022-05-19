@@ -100,8 +100,8 @@ const BurgerIngredients = React.memo(() => {
     <div className={Styles.burgerIngredientsContainer}>
       <Menu 
         menuItems={MENU_ITEMS!} 
-        scollableContainer={contentRef.current!} 
-        contentContainers={contentSectionsRef.current} 
+        scollableContainerRef={contentRef} 
+        contentContainersRef={contentSectionsRef} 
         ref={menuRef}
       />
 

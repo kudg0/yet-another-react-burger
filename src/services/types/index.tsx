@@ -19,6 +19,18 @@ export interface IngredientType {
     app: ReduxStore__App,
   }
   export interface ReduxStore__App {
+    user: {
+      id?: string,
+      name?: string,
+      email?: string,
+      accessToken?: string,
+      refreshToken?: string,
+      request: {
+        pending: boolean,
+        success: boolean,
+        failed: boolean
+      }
+    },
     ingredients: {
       data: IngredientType[],
       request: {

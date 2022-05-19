@@ -2,7 +2,9 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
+
 import { getIngredientsEnhance } from './../../services/enhances/getIngredientsEnhance';
+import { reLoginEnhance } from './../../services/enhances/reLoginEnhance';
 
 
 import AppHeader from '../AppHeader/AppHeader';
@@ -20,6 +22,7 @@ const App = React.memo(() => {
   
   React.useEffect( () => {
     dispatch(getIngredientsEnhance() as any);
+    dispatch(reLoginEnhance() as any);
   }, [dispatch]);
 
 
