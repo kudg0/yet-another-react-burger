@@ -1,11 +1,12 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
 import { getIngredientsEnhance } from './../../services/enhances/getIngredientsEnhance';
 
 
 import AppHeader from '../AppHeader/AppHeader';
-import Main from '../Main/Main';
+
 
 
 
@@ -25,7 +26,8 @@ const App = React.memo(() => {
   return (
     <div className={Styles.appContainer}>
       <AppHeader />
-      <Main />
+      
+      <Outlet />
     </div>
   )
 });
