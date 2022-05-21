@@ -8,22 +8,18 @@ import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-comp
 
 import { resetPasswordEnhance } from './../../../services/enhances/resetPasswordEnhance';
 
-import { ReduxStore } from './../../../services/types/';
+import { LocationType, ReduxStore } from './../../../services/types/';
 
 
 import Styles from './../auth.module.scss';
 
-type LocationProps = {
-  state: {
-    from: Location;
-  };
-};
+
 
 const ForgotPassword = React.memo( () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation() as unknown as LocationProps;
+  const location = useLocation() as LocationType;
 
   const { request, refreshToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
   
@@ -71,13 +67,6 @@ const ForgotPassword = React.memo( () => {
     
     navigate("/reset-password", { replace: true });
   }, [navigate, location])
-
-  
-  React.useEffect(() => {
-    if(refreshToken) return navigate("/");
-  }, [refreshToken, navigate]);
-
-
 
   return (
     <main className={Styles.authContainer}>

@@ -14,6 +14,7 @@ import { ReduxStore } from './../../../services/types/';
 import Styles from './../auth.module.scss';
 
 
+
 const ForgotPassword = React.memo( () => {
 
   const dispatch = useDispatch();
@@ -76,11 +77,6 @@ const ForgotPassword = React.memo( () => {
 
     isPasswordHide ? passwordInputRef.current.setAttribute("type", "text") : passwordInputRef.current.setAttribute("type", "password")
   }, [setIsPasswordHide, isPasswordHide]);
-
-
-  React.useEffect(() => {
-    if(refreshToken) return navigate("/");
-  }, [refreshToken, navigate]);
 
 
 

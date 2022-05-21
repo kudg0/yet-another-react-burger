@@ -14,6 +14,7 @@ import { ReduxStore } from './../../../services/types/';
 import Styles from './register.module.scss';
 
 
+
 const Register = React.memo( () => {
 
   const dispatch = useDispatch();
@@ -56,12 +57,6 @@ const Register = React.memo( () => {
 
     isPasswordHide ? passwordInputRef.current.setAttribute("type", "text") : passwordInputRef.current.setAttribute("type", "password")
   }, [setIsPasswordHide, isPasswordHide]);
-
-
-  React.useEffect(() => {
-    if(refreshToken) return navigate("/");
-  }, [refreshToken, navigate]);
-
 
 
   return (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,7 +19,7 @@ import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 
-import { IngredientType, ReduxStore } from './../../../services/types/';
+import { LocationType, IngredientType, ReduxStore } from './../../../services/types/';
 
 
 import checkApiResponse from './../../../services/utils/checkApiResponse';
@@ -30,10 +31,14 @@ import Styles from './burgerConstructor.module.scss';
 
 
 const BurgerConstructor = React.memo(() => {
+  
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation() as LocationType;
 
   const ingredients = useSelector( (store : ReduxStore) => store.app.ingredients, shallowEqual);
   const { orderId, totalAmount, burger, request } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
+  const { accessToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
 
   const [openOrderDetails, setOpenOrderDetails] = React.useState<boolean>(false);
   const [orderDetails, setOrderDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
@@ -65,6 +70,8 @@ const BurgerConstructor = React.memo(() => {
 
 
   const showOrderDetails : (e: any) => void = React.useCallback((e) => {
+    if(!accessToken) return navigate('/login', {state: {from: {pathname: location.pathname}}});
+    
     const target : HTMLElement = e.currentTarget!;
 
     const objForServer : {ingredients: string[]} = {
@@ -76,7 +83,7 @@ const BurgerConstructor = React.memo(() => {
         setOpenOrderDetails(true);
       })
     
-  }, [burger.ingredients, setOpenOrderDetails, dispatch]);
+  }, [burger.ingredients, setOpenOrderDetails, dispatch, accessToken, location.pathname, navigate]);
 
   const closeOrderDetails : () => void = React.useCallback(() => {
     setOpenOrderDetails(false);

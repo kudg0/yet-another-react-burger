@@ -28,6 +28,9 @@ const appSlice = createSlice({
         failed: false
       }
     },
+    clickedIngredient: {
+      isShow: false,
+    },
     order: {
       orderId: null,
       totalAmount: 0,
@@ -58,6 +61,7 @@ const appSlice = createSlice({
       state.ingredients.request.pending = false;
       state.ingredients.request.failed = true;
     },
+
     ingredientsIncreaseCounter: (state, action: PayloadAction<IngredientType>) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
         // Если уже была выбрана булка, убираем ее из выбранных
@@ -126,6 +130,19 @@ const appSlice = createSlice({
         ...tempIngredientsArr
       ];
     },
+
+    setClickedIngredient: (state, action: PayloadAction<{data: IngredientType}>) => {
+      state.clickedIngredient = {
+        isShow: true,
+        data: action.payload.data
+      }
+    },
+    removeClickedIngredient: (state) => {
+      state.clickedIngredient = {
+        isShow: false
+      }
+    },
+
     orderRequest: (state) => {
       state.order.request.pending = true
       state.order.request.failed = false;
@@ -142,6 +159,7 @@ const appSlice = createSlice({
       state.order.request.pending = false;
       state.order.request.failed = true;
     },
+
     loginRequest: (state) => {
       state.user.request.pending = true;
       state.user.request.failed = false;
@@ -164,7 +182,9 @@ const appSlice = createSlice({
     loginRequestFailed: (state) => {
       state.user.request.pending = false;
       state.user.request.failed = true;
+      state.user.request.success = false;
     },
+
     registerRequest: (state) => {
       state.user.request.pending = true;
       state.user.request.failed = false;
@@ -187,6 +207,50 @@ const appSlice = createSlice({
     registerRequestFailed: (state) => {
       state.user.request.pending = false;
       state.user.request.failed = true;
+      state.user.request.success = false;
+    },
+
+    changeUserDataRequest: (state) => {
+      state.user.request.pending = true;
+      state.user.request.failed = false;
+      state.user.request.success = false;
+    },
+    changeUserDataRequestSuccess: (state, action: PayloadAction<{email: string, name: string}>) => {
+      state.user = {
+        ...state.user,
+        name: action.payload.name,
+        email: action.payload.email,
+        request:{
+          pending: false,
+          success: true,
+          failed: false
+        }
+      }
+    },
+    changeUserDataRequestFailed: (state) => {
+      state.user.request.pending = false;
+      state.user.request.failed = true;
+      state.user.request.success = false;
+    },
+
+    logoutRequest: (state) => {
+      state.user.request.pending = true;
+      state.user.request.failed = false;
+      state.user.request.success = false;
+    },
+    logoutRequestSuccess: (state) => {
+      state.user = {
+        request:{
+          pending: false,
+          success: false,
+          failed: false
+        }
+      }
+    },
+    logoutRequestFailed: (state) => {
+      state.user.request.pending = false;
+      state.user.request.failed = true;
+      state.user.request.success = false;
     },
   },
 });
@@ -203,6 +267,8 @@ export const {
   ingredientsDecreaseCounter,
   ingredientsReset,
   ingredientUpdatePos,
+  setClickedIngredient,
+  removeClickedIngredient,
   orderRequest,
   orderRequestSuccess,
   orderRequestFailed,
@@ -212,6 +278,12 @@ export const {
   registerRequest,
   registerRequestSuccess,
   registerRequestFailed,
+  changeUserDataRequest,
+  changeUserDataRequestSuccess,
+  changeUserDataRequestFailed,
+  logoutRequest,
+  logoutRequestSuccess,
+  logoutRequestFailed,
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer

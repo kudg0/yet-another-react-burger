@@ -2,32 +2,34 @@ import { Dispatch } from 'redux';
 
 
 import { 
-  loginRequest,
-  loginRequestSuccess,
-  loginRequestFailed
+  changeUserDataRequest,
+  changeUserDataRequestSuccess,
+  changeUserDataRequestFailed
 } from './../slicers/appSlice';
+
+import { refreshTokens, reLoginEnhance } from './reLoginEnhance';
 
 
 import checkApiResponse from './../utils/checkApiResponse';
 import handleApiErrors from './../utils/handleApiErrors';
-  
+
 import { setCookie, getCookie } from './../utils/helpers/workWithCookie';
 
 
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/user"!;
-const apiRefreshToken : string = process.env.REACT_APP_API_BASE_URL + "/auth/token"!;
 
-export const reLoginEnhance = () => {
+export const updateUserDataEnhance = (formData: FormData) => {
   return async ( dispatch : Dispatch ) => {
-    let refreshToken = getCookie('refreshToken'),
-        accessToken = getCookie('accessToken');
 
-    
-    if(!refreshToken) return false;
+    let objForServer = Object.fromEntries(formData);
+    let accessToken = getCookie('accessToken'),
+        refreshToken = getCookie('refreshToken');
 
 
-    if(!accessToken){
+    if(!refreshToken) return;
+
+    if(!accessToken) {
       const data = await refreshTokens( refreshToken );
 
       if(!data.success) return false;
@@ -39,20 +41,20 @@ export const reLoginEnhance = () => {
       setCookie('accessToken', accessToken, 20);
     }
 
-
-    dispatch(loginRequest());
+    dispatch(changeUserDataRequest());
 
     fetch( apiUrl, {
-      method: 'GET',
+      method: 'PATCH',
       mode: 'cors',
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + accessToken
+        'Authorization': 'Bearer ' + accessToken
       },
       redirect: 'follow',
       referrerPolicy: 'no-referrer',
+      body: JSON.stringify(objForServer)
     })
       .then(response => {
         checkApiResponse(response)
@@ -66,42 +68,23 @@ export const reLoginEnhance = () => {
             if(!result.success) return Promise.reject(result);
             
             dispatch(
-              loginRequestSuccess({
-                accessToken: accessToken,
-                refreshToken: refreshToken,
+              changeUserDataRequestSuccess({ 
                 email: result.user.email,
                 name: result.user.name,
               })
             );
-                 
           })
           .catch( (error: Error) => {
             handleApiErrors(error);
 
-            dispatch(loginRequestFailed());
+            dispatch(changeUserDataRequestFailed());
           })
       })
       .catch( (error: Error) => {
         handleApiErrors(error);
 
-        dispatch(loginRequestFailed());
+        dispatch(changeUserDataRequestFailed());
       })
-  }
-}
 
-export async function refreshTokens( token : string ){
-  const response = await fetch( apiRefreshToken, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'no-referrer',
-    body: JSON.stringify({token})
-  });
-
-  return await response.json();
+  };
 }

@@ -14,6 +14,14 @@ export interface IngredientType {
   uuid: string;
 }
 
+
+export interface LocationType {
+  pathname: string;
+  state: {
+    from: Location;
+  };
+};
+
 // REDUX STORE
   export interface ReduxStore {
     app: ReduxStore__App,
@@ -38,6 +46,10 @@ export interface IngredientType {
         success: boolean,
         failed: boolean
       }
+    },
+    clickedIngredient: {
+      isShow: boolean,
+      data?: IngredientType
     },
     order: {
       totalAmount: number,

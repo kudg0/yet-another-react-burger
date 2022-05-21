@@ -1,9 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ingredientsIncreaseCounter } from './../../../services/slicers/appSlice';
+
+import {
+  removeClickedIngredient
+} from './../../../services/slicers/appSlice';
 
 
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -46,12 +51,11 @@ const MENU_ITEMS : {text: string, id: string, uuid: string}[] = [
 
 
 const BurgerIngredients = React.memo(() => {
-  const dispatch = useDispatch();
   
-  const {ingredients, order} = useSelector( (store : ReduxStore) => store.app, shallowEqual);
-
-  const [clickedIngredient, setClickedIngredient] = React.useState<IngredientType>({ _id: "", name: "", type: "", proteins: 0, fat: 0, carbohydrates: 0, calories: 0, price: 0, image: "", image_mobile: "", image_large: "", __v: 0, uuid: '' });
-  const [openIngredientDetails, setOpenIngredientDetails] = React.useState<boolean>(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  const { ingredients, order, clickedIngredient } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
 
   const menuRef = React.useRef<{handleScrollOfContent: () => void}>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -82,16 +86,13 @@ const BurgerIngredients = React.memo(() => {
 
     const target__id = e.currentTarget!.getAttribute("data-id")!;
 
-    const selectedIngredient : IngredientType = 
-      ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
-
-
-    setClickedIngredient(selectedIngredient); setOpenIngredientDetails(true);
-  }, [ingredients.data]);
+    navigate(`/ingredients/${target__id}`, {state: {from: {pathname: '/'}}})
+  }, [navigate]);
 
   const closeIngredientDetails : () => void = React.useCallback(() => {
-    setOpenIngredientDetails(false);
-  }, []);
+    dispatch( removeClickedIngredient() );
+    navigate(`/`, { replace: true })
+  }, [dispatch, navigate]);
 
 
 
@@ -196,8 +197,8 @@ const BurgerIngredients = React.memo(() => {
         }
       </section>
 
-      <Modal shouldShow={openIngredientDetails} closeModalCallback={closeIngredientDetails}>
-        <IngredientDetails ingredient={clickedIngredient}/>
+      <Modal shouldShow={clickedIngredient.isShow} closeModalCallback={closeIngredientDetails}>
+        <IngredientDetails ingredient={clickedIngredient.data!}/>
       </Modal>
     </div>
   )

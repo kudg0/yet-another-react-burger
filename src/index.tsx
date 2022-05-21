@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { LastLocationProvider } from 'react-router-last-location';
 
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -9,12 +9,16 @@ import { store } from './reduxDevToolsInit';
 
 
 import App from './components/App/App';
+import ProfileContainer from './components/ProfileContainer/ProfileContainer';
+
+import AuthRoute from './components/RouterProviders/AuthRoute/AuthRoute';
+import ProtectedRoute from './components/RouterProviders/ProtectedRoute/ProtectedRoute';
+
 
 import { 
   Home, 
-  Profile,
   Ingredients, 
-  Orders,
+  Feed,
   Login,
   Register,
   ForgotPassword,
@@ -39,43 +43,42 @@ root.render(
             path="/" 
             element={<App />}
           >
+
             <Route 
               index
               element={<Home />}
             />
+            
             <Route 
-              path='profile' 
-              element={<Profile />}
-            >
-              <Route 
-                path='orders'
-                element={<Orders />}
-              />
-                <Route 
-                  path=':id'
-                  element={<> </>}
-                />
-            </Route>
+              path='profile/*' 
+              element={<ProtectedRoute outlet={<ProfileContainer />} />}
+            />
+            <Route 
+              path='feed' 
+              element={<Feed />}
+            />
+
             <Route 
               path='ingredients/:id'  
               element={<Ingredients />}
             />
             <Route 
               path='login'  
-              element={<Login />}
+              element={<AuthRoute outlet={<Login />} />}
             />
             <Route 
               path='register'  
-              element={<Register />}
+              element={<AuthRoute outlet={<Register />} />}
             />
             <Route 
               path='forgot-password'  
-              element={<ForgotPassword />}
+              element={<AuthRoute outlet={<ForgotPassword />} />}
             />
             <Route 
               path='reset-password'  
-              element={<ResetPassword />}
+              element={<AuthRoute outlet={<ResetPassword />} />}
             />
+
           </Route>
         </Routes>
       </Router>

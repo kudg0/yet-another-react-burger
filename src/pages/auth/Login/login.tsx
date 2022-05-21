@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 
@@ -8,16 +8,18 @@ import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-comp
 
 import { loginEnhance } from './../../../services/enhances/loginEnhance';
 
-import { ReduxStore } from './../../../services/types/';
+import { LocationType, ReduxStore } from './../../../services/types/';
 
 
 import Styles from './../auth.module.scss';
+
 
 
 const Login = React.memo( () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation() as LocationType;
 
   const { request, refreshToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
   
@@ -55,11 +57,6 @@ const Login = React.memo( () => {
 
     isPasswordHide ? passwordInputRef.current.setAttribute("type", "text") : passwordInputRef.current.setAttribute("type", "password")
   }, [setIsPasswordHide, isPasswordHide]);
-
-
-  React.useEffect(() => {
-    if(refreshToken) return navigate("/");
-  }, [refreshToken, navigate]);
 
 
 

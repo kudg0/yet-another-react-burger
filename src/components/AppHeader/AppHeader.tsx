@@ -5,7 +5,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { Logo, ProfileIcon, BurgerIcon, ListIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { ReduxStore } from './../../services/types/';
+import { LocationType, ReduxStore } from './../../services/types/';
 
 
 import Styles from './appHeader.module.scss';
@@ -14,7 +14,7 @@ import Styles from './appHeader.module.scss';
 
 const AppHeader = React.memo(() => {
 
-  const location = useLocation();
+  const location = useLocation() as LocationType;
   const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
 
 
@@ -29,7 +29,11 @@ const AppHeader = React.memo(() => {
               (location.pathname === '/' ? Styles.active : '')
             }
           >
-            <Link to='/' className={Styles.item__link}>
+            <Link 
+              to='/' 
+              state={ {from: {pathname: location.pathname }} }
+              className={Styles.item__link}
+            >
               <div className={Styles.link__icon}>
                 <BurgerIcon type="primary"/>
               </div>
@@ -41,10 +45,14 @@ const AppHeader = React.memo(() => {
           <li 
             className={
               Styles.nav__item + ' ' + 
-              (location.pathname === '/profile/orders' ? Styles.active : '')
+              (location.pathname === '/feed' ? Styles.active : '')
             }
           >
-            <Link to='/profile/orders' className={Styles.item__link}>
+            <Link 
+              to='/feed' 
+              state={ {from: {pathname: location.pathname }} }
+              className={Styles.item__link}
+            >
               <div className={Styles.link__icon}>
                 <ListIcon type="primary"/>
               </div>
@@ -57,7 +65,10 @@ const AppHeader = React.memo(() => {
       </nav>
       
       <div className={Styles.headerContainer__logo}>
-        <Link to='/'>
+        <Link 
+          to='/'
+          state={ {from: {pathname: location.pathname }} }
+        >
           <Logo />
         </Link>
       </div>
@@ -65,7 +76,7 @@ const AppHeader = React.memo(() => {
       <div 
         className={
           Styles.profileContainer + ' ' + 
-          ((location.pathname === '/profile' || location.pathname === '/login') ? Styles.active : '')
+          ((location.pathname.includes('/profile') || location.pathname === '/login') ? Styles.active : '')
         }
       >
         <Link 
@@ -77,7 +88,7 @@ const AppHeader = React.memo(() => {
           </div>
           <span className={Styles.link__text}>
             {
-              user.request.success ? "Личный кабинет" : "Войти в аккаунт"
+              user.accessToken ? "Личный кабинет" : "Войти в аккаунт"
             }
           </span>
         </Link>
