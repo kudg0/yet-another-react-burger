@@ -127,6 +127,7 @@ const userSlice = createSlice({
         failed: true,
       }
     },
+
     logoutRequest: (state) => {
       state.request = {
         pending: true,
@@ -150,6 +151,14 @@ const userSlice = createSlice({
         failed: true,
       }
     },
+    
+    moveRequestToDefault: (state) => {
+      state.request = {
+        pending: false,
+        success: false,
+        failed: false,
+      }
+    }
   },
 });
 
@@ -161,18 +170,24 @@ export const {
   loginRequest,
   loginRequestSuccess,
   loginRequestFailed,
+
   registerRequest,
   registerRequestSuccess,
   registerRequestFailed,
+
   changeUserDataRequest,
   changeUserDataRequestSuccess,
   changeUserDataRequestFailed,
-  logoutRequest,
-  logoutRequestSuccess,
-  logoutRequestFailed,
+
   resetPasswordRequest,
   resetPasswordRequestSuccess,
   resetPasswordRequestFailed,
+
+  logoutRequest,
+  logoutRequestSuccess,
+  logoutRequestFailed,
+  
+  moveRequestToDefault
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer

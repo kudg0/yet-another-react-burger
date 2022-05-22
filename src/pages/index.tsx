@@ -1,5 +1,5 @@
 import Home from './home';
-import Feed from './Feed/feed';
+import Feed from './feed/feed';
 
 import Login from './auth/Login/login';
 import Register from './auth/Register/register';

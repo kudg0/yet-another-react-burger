@@ -19,7 +19,7 @@ const Logout = React.memo( () => {
   }, [dispatch])
 
 
-  return null;
+  return <Navigate to='/login' />;
 });
 
 

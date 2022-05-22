@@ -19,59 +19,67 @@ const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/login"!;
 
 export const loginEnhance = (formData: {email: string, password: string}) => {
   return ( dispatch : Dispatch ) => {
-    
-    dispatch(loginRequest());
+    return new Promise((resolve, reject) => {
+      
+      dispatch(loginRequest());
 
-    fetch( apiUrl, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: JSON.stringify(formData)
+      fetch( apiUrl, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(formData)
+      })
+        .then(response => {
+          checkApiResponse(response)
+            .then( (result : {
+              "success": boolean,
+              "accessToken": string,
+              "refreshToken": string,
+              "user": {
+                "email": string,
+                "name": string
+              }
+            }) => {
+              if(!result.success) return Promise.reject(result);
+
+              const accessToken = result.accessToken.split("Bearer ")[1];
+
+              setCookie('refreshToken', result.refreshToken);
+              setCookie('accessToken', accessToken, 20);
+              
+              
+              dispatch(
+                loginRequestSuccess({ 
+                  accessToken: accessToken,
+                  refreshToken: result.refreshToken,
+                  email: result.user.email,
+                  name: result.user.name,
+                })
+              );
+
+              resolve(result);
+            })
+            .catch( (error: Error) => {
+              handleApiErrors(error);
+
+              dispatch(loginRequestFailed());
+
+              reject(error);
+            })
+        })
+        .catch( (error: Error) => {
+          handleApiErrors(error);
+
+          dispatch(loginRequestFailed());
+
+          reject(error);
+        })
     })
-      .then(response => {
-        checkApiResponse(response)
-          .then( (result : {
-            "success": boolean,
-            "accessToken": string,
-            "refreshToken": string,
-            "user": {
-              "email": string,
-              "name": string
-            }
-          }) => {
-            if(!result.success) return Promise.reject(result);
-
-            const accessToken = result.accessToken.split("Bearer ")[1];
-
-            setCookie('refreshToken', result.refreshToken);
-            setCookie('accessToken', accessToken, 20);
-            
-            
-            dispatch(
-              loginRequestSuccess({ 
-                accessToken: accessToken,
-                refreshToken: result.refreshToken,
-                email: result.user.email,
-                name: result.user.name,
-              })
-            );
-          })
-          .catch( (error: Error) => {
-            handleApiErrors(error);
-
-            dispatch(loginRequestFailed());
-          })
-      })
-      .catch( (error: Error) => {
-        handleApiErrors(error);
-
-        dispatch(loginRequestFailed());
-      })
   }
 }

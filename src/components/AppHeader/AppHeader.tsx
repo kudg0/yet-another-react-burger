@@ -16,6 +16,7 @@ const AppHeader = React.memo(() => {
 
   const location = useLocation() as LocationType;
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  
   const { request } = user;
   const { accessToken } = user.data;
 
@@ -82,7 +83,7 @@ const AppHeader = React.memo(() => {
         }
       >
         <Link 
-          to={ request.success ? '/profile' : '/login' } 
+          to={ accessToken ? '/profile' : '/login' } 
           className={Styles.profileContainer__link}
         >
           <div className={Styles.link__icon}>
