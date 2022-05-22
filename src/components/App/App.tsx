@@ -3,15 +3,10 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 
-import { getIngredientsEnhance } from './../../services/enhances/getIngredientsEnhance';
-import { reLoginEnhance } from './../../services/enhances/reLoginEnhance';
-
-
+import { getIngredientsEnhance, reLoginEnhance } from './../../services/enhances/';
 
 
 import AppHeader from '../AppHeader/AppHeader';
-
-
 
 
 import Styles from './app.module.scss';

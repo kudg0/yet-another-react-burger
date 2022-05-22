@@ -11,8 +11,8 @@ const AuthRoute  = ({ outlet, ...rest } : any) => {
 
   const location = useLocation() as LocationType;
 
-  const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
-  const { request, accessToken } = user;
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { accessToken } = user.data;
 
 
   if(accessToken) {

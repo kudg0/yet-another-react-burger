@@ -5,13 +5,13 @@ import {
   loginRequest,
   loginRequestSuccess,
   loginRequestFailed
-} from './../slicers/appSlice';
+} from './../../slicers/userSlice';
 
 
-import checkApiResponse from './../utils/checkApiResponse';
-import handleApiErrors from './../utils/handleApiErrors';
+import checkApiResponse from './../../utils/checkApiResponse';
+import handleApiErrors from './../../utils/handleApiErrors';
 
-import { setCookie } from './../utils/helpers/workWithCookie';
+import { setCookie } from './../../utils/helpers/workWithCookie';
 
 
 

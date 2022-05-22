@@ -11,15 +11,8 @@ import {
 
 
 const appSlice = createSlice({
-  name: 'ingredients',
+  name: 'app',
   initialState: {
-    user: {
-      request: {
-        pending: false,
-        success: false,
-        failed: false,
-      }
-    },
     ingredients: {
       data: [],
       request: {
@@ -142,7 +135,6 @@ const appSlice = createSlice({
         isShow: false
       }
     },
-
     orderRequest: (state) => {
       state.order.request.pending = true
       state.order.request.failed = false;
@@ -158,99 +150,6 @@ const appSlice = createSlice({
     orderRequestFailed: (state) => {
       state.order.request.pending = false;
       state.order.request.failed = true;
-    },
-
-    loginRequest: (state) => {
-      state.user.request.pending = true;
-      state.user.request.failed = false;
-      state.user.request.success = false;
-    },
-    loginRequestSuccess: (state, action: PayloadAction<{accessToken?: string, refreshToken?: string, email: string, name: string}>) => {
-      state.user = {
-        ...state.user,
-        name: action.payload.name,
-        email: action.payload.email,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
-        request:{
-          pending: false,
-          success: true,
-          failed: false
-        }
-      }
-    },
-    loginRequestFailed: (state) => {
-      state.user.request.pending = false;
-      state.user.request.failed = true;
-      state.user.request.success = false;
-    },
-
-    registerRequest: (state) => {
-      state.user.request.pending = true;
-      state.user.request.failed = false;
-      state.user.request.success = false;
-    },
-    registerRequestSuccess: (state, action: PayloadAction<{accessToken: string, refreshToken: string, email: string, name: string}>) => {
-      state.user = {
-        ...state.user,
-        name: action.payload.name,
-        email: action.payload.email,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
-        request:{
-          pending: false,
-          success: true,
-          failed: false
-        }
-      }
-    },
-    registerRequestFailed: (state) => {
-      state.user.request.pending = false;
-      state.user.request.failed = true;
-      state.user.request.success = false;
-    },
-
-    changeUserDataRequest: (state) => {
-      state.user.request.pending = true;
-      state.user.request.failed = false;
-      state.user.request.success = false;
-    },
-    changeUserDataRequestSuccess: (state, action: PayloadAction<{email: string, name: string}>) => {
-      state.user = {
-        ...state.user,
-        name: action.payload.name,
-        email: action.payload.email,
-        request:{
-          pending: false,
-          success: true,
-          failed: false
-        }
-      }
-    },
-    changeUserDataRequestFailed: (state) => {
-      state.user.request.pending = false;
-      state.user.request.failed = true;
-      state.user.request.success = false;
-    },
-
-    logoutRequest: (state) => {
-      state.user.request.pending = true;
-      state.user.request.failed = false;
-      state.user.request.success = false;
-    },
-    logoutRequestSuccess: (state) => {
-      state.user = {
-        request:{
-          pending: false,
-          success: false,
-          failed: false
-        }
-      }
-    },
-    logoutRequestFailed: (state) => {
-      state.user.request.pending = false;
-      state.user.request.failed = true;
-      state.user.request.success = false;
     },
   },
 });
@@ -272,18 +171,6 @@ export const {
   orderRequest,
   orderRequestSuccess,
   orderRequestFailed,
-  loginRequest,
-  loginRequestSuccess,
-  loginRequestFailed,
-  registerRequest,
-  registerRequestSuccess,
-  registerRequestFailed,
-  changeUserDataRequest,
-  changeUserDataRequestSuccess,
-  changeUserDataRequestFailed,
-  logoutRequest,
-  logoutRequestSuccess,
-  logoutRequestFailed,
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer

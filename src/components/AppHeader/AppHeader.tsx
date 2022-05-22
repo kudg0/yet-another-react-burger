@@ -15,7 +15,9 @@ import Styles from './appHeader.module.scss';
 const AppHeader = React.memo(() => {
 
   const location = useLocation() as LocationType;
-  const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { request } = user;
+  const { accessToken } = user.data;
 
 
   return (
@@ -80,7 +82,7 @@ const AppHeader = React.memo(() => {
         }
       >
         <Link 
-          to={ user.request.success ? '/profile' : '/login' } 
+          to={ request.success ? '/profile' : '/login' } 
           className={Styles.profileContainer__link}
         >
           <div className={Styles.link__icon}>
@@ -88,7 +90,7 @@ const AppHeader = React.memo(() => {
           </div>
           <span className={Styles.link__text}>
             {
-              user.accessToken ? "Личный кабинет" : "Войти в аккаунт"
+              accessToken ? "Личный кабинет" : "Войти в аккаунт"
             }
           </span>
         </Link>

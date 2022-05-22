@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 
 import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { resetPasswordEnhance } from './../../../services/enhances/resetPasswordEnhance';
+import { resetPasswordEnhance } from './../../../services/enhances/';
 
 import { LocationType, ReduxStore } from './../../../services/types/';
 
@@ -21,7 +21,9 @@ const ForgotPassword = React.memo( () => {
   const navigate = useNavigate();
   const location = useLocation() as LocationType;
 
-  const { request, refreshToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
+
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { request } = user;
   
   const [isFailed, setIsFailed] = React.useState(false);
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
@@ -36,7 +38,7 @@ const ForgotPassword = React.memo( () => {
     
     setIsFailed(true); emailInputRef.current.focus();
 
-  }, [request, setIsFailed])
+  }, [request.failed, emailInputRef, setIsFailed])
 
 
 
@@ -64,9 +66,9 @@ const ForgotPassword = React.memo( () => {
     const from = location.state?.from?.pathname || '/';
 
     if(from !== '/forgot-password') return navigate("/forgot-password");
-    
-    navigate("/reset-password", { replace: true });
   }, [navigate, location])
+
+
 
   return (
     <main className={Styles.authContainer}>

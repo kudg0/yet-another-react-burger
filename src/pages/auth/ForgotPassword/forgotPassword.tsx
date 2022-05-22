@@ -6,7 +6,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { remindPasswordEnhance } from './../../../services/enhances/remindPasswordEnhance';
+import { remindPasswordEnhance } from './../../../services/enhances/';
 
 import { ReduxStore } from './../../../services/types/';
 
@@ -21,7 +21,8 @@ const ForgotPassword = React.memo( () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { request, refreshToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { request } = user;
   
   const [isFailed, setIsFailed] = React.useState(false);
   const [isFailedMessage, setIsFailedMessage] = React.useState("");
@@ -61,8 +62,7 @@ const ForgotPassword = React.memo( () => {
             from: {
               pathname: "/forgot-password"
             }
-          },
-          replace: true
+          }
         });
       })
       .catch( ( error: Error) => {

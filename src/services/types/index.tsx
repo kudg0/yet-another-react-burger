@@ -25,20 +25,9 @@ export interface LocationType {
 // REDUX STORE
   export interface ReduxStore {
     app: ReduxStore__App,
+    user: ReduxStore__User
   }
   export interface ReduxStore__App {
-    user: {
-      id?: string,
-      name?: string,
-      email?: string,
-      accessToken?: string,
-      refreshToken?: string,
-      request: {
-        pending: boolean,
-        success: boolean,
-        failed: boolean
-      }
-    },
     ingredients: {
       data: IngredientType[],
       request: {
@@ -63,6 +52,20 @@ export interface LocationType {
         success: boolean,
         failed: boolean
       }
+    }
+  }
+  export interface ReduxStore__User {
+    data: {
+      id?: string,
+      name?: string,
+      email?: string,
+      accessToken?: string,
+      refreshToken?: string,
+    }
+    request: {
+      pending: boolean,
+      success: boolean,
+      failed: boolean
     }
   }
 // END

@@ -1,5 +1,4 @@
 import Home from './home';
-import Ingredients from './ingredients';
 import Feed from './Feed/feed';
 
 import Login from './auth/Login/login';
@@ -12,7 +11,6 @@ import ResetPassword from './auth/ResetPassword/resetPassword';
 
 export { 
   Home,
-  Ingredients,
   Feed,
   Login,
   Register,

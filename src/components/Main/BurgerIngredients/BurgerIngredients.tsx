@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -55,7 +55,8 @@ const BurgerIngredients = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { ingredients, order, clickedIngredient } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
+  const { ingredients, order } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
+  const { id } = useParams<"id">();
 
   const menuRef = React.useRef<{handleScrollOfContent: () => void}>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -86,7 +87,11 @@ const BurgerIngredients = React.memo(() => {
 
     const target__id = e.currentTarget!.getAttribute("data-id")!;
 
-    navigate(`/ingredients/${target__id}`, {state: {from: {pathname: '/'}}})
+    navigate(`/ingredients/${target__id}`, { 
+      state: { 
+        backgroundLocation: location.pathname 
+      },
+    });
   }, [navigate]);
 
   const closeIngredientDetails : () => void = React.useCallback(() => {
@@ -197,9 +202,12 @@ const BurgerIngredients = React.memo(() => {
         }
       </section>
 
-      <Modal shouldShow={clickedIngredient.isShow} closeModalCallback={closeIngredientDetails}>
-        <IngredientDetails ingredient={clickedIngredient.data!}/>
-      </Modal>
+      {
+        id &&
+        <Modal closeModalCallback={closeIngredientDetails}>
+          <IngredientDetails />
+        </Modal>
+      }
     </div>
   )
 });

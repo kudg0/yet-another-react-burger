@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ingredientsIncreaseCounter } from './../../../services/slicers/appSlice';
-import { submitOrderEnhance } from './../../../services/enhances/submitOrderEnhance';
+
+import { submitOrderEnhance } from './../../../services/enhances/';
 
 
 import { useDrop } from 'react-dnd';
@@ -38,7 +39,7 @@ const BurgerConstructor = React.memo(() => {
 
   const ingredients = useSelector( (store : ReduxStore) => store.app.ingredients, shallowEqual);
   const { orderId, totalAmount, burger, request } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
-  const { accessToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
+  const { accessToken } = useSelector( (store : ReduxStore) => store.user.data, shallowEqual);
 
   const [openOrderDetails, setOpenOrderDetails] = React.useState<boolean>(false);
   const [orderDetails, setOrderDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
@@ -183,10 +184,13 @@ const BurgerConstructor = React.memo(() => {
           }
         </div>
       </section>
-
-      <Modal shouldShow={openOrderDetails} closeModalCallback={closeOrderDetails}>
-        <OrderDetails {...orderDetails}/>
-      </Modal>
+      
+      {
+        openOrderDetails &&
+        <Modal closeModalCallback={closeOrderDetails}>
+          <OrderDetails {...orderDetails}/>
+        </Modal>
+      }
     </>
   )
 });

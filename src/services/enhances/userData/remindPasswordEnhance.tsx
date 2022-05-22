@@ -1,13 +1,8 @@
 import { Dispatch } from 'redux';
 
 
-import { IngredientType } from './../../services/types/';
-
-
-import checkApiResponse from './../utils/checkApiResponse';
-import handleApiErrors from './../utils/handleApiErrors';
-
-import { setCookie } from './../utils/helpers/workWithCookie';
+import checkApiResponse from './../../utils/checkApiResponse';
+import handleApiErrors from './../../utils/handleApiErrors';
 
 
 

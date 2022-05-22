@@ -8,14 +8,14 @@ import {
   ingredientsRequest,
   ingredientsRequestSuccess,
   ingredientsRequestFailed
-} from './../slicers/appSlice';
+} from './../../slicers/appSlice';
 
 
-import { IngredientType } from './../../services/types/';
+import { IngredientType } from './../../../services/types/';
 
 
-import checkApiResponse from './../utils/checkApiResponse';
-import handleApiErrors from './../utils/handleApiErrors';
+import checkApiResponse from './../../utils/checkApiResponse';
+import handleApiErrors from './../../utils/handleApiErrors';
 
 
 

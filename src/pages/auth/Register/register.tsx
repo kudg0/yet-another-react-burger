@@ -6,7 +6,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { registerEnhance } from './../../../services/enhances/registerEnhance';
+import { registerEnhance } from './../../../services/enhances/';
 
 import { ReduxStore } from './../../../services/types/';
 
@@ -20,7 +20,8 @@ const Register = React.memo( () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { request, refreshToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { request } = user;
   
   const [isFailed, setIsFailed] = React.useState(false);
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
@@ -36,7 +37,7 @@ const Register = React.memo( () => {
     
     setIsFailed(request.failed); nameInputRef.current.focus();
 
-  }, [nameInputRef, request, setIsFailed])
+  }, [nameInputRef, request.failed, setIsFailed])
 
 
   const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void  = React.useCallback((e) => {

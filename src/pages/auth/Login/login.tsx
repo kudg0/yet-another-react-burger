@@ -6,7 +6,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { loginEnhance } from './../../../services/enhances/loginEnhance';
+import { loginEnhance } from './../../../services/enhances/';
 
 import { LocationType, ReduxStore } from './../../../services/types/';
 
@@ -21,7 +21,8 @@ const Login = React.memo( () => {
   const navigate = useNavigate();
   const location = useLocation() as LocationType;
 
-  const { request, refreshToken } = useSelector( (store : ReduxStore) => store.app.user, shallowEqual);
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { request } = user;
   
   const [isFailed, setIsFailed] = React.useState(false);
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
@@ -37,7 +38,7 @@ const Login = React.memo( () => {
     
     setIsFailed(true); emailInputRef.current.focus();
 
-  }, [request, setIsFailed])
+  }, [request.failed, emailInputRef, setIsFailed])
 
 
 

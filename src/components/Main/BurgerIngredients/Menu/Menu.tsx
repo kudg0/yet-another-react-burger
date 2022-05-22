@@ -26,7 +26,6 @@ const Menu = React.forwardRef((
   const scrollToNeededSection = React.useCallback((sectionId: string) => {
     if(!props.scollableContainerRef.current || !props.contentContainersRef.current) return ;
 
-
     const neededRefs : (HTMLElement | null)[] = 
           props.contentContainersRef.current.filter( (contentSectionRef : (HTMLElement | null)) => contentSectionRef!.getAttribute("id") === sectionId);
 
@@ -58,10 +57,7 @@ const Menu = React.forwardRef((
       const activeSection : HTMLElement = activeSections.pop()!,
             activeSection__id : string = activeSection.getAttribute('id')!;
 
-
-      // Меняем активный элемент в меню ингедиентов
-        setActiveMenuTab(activeSection__id)
-      // END
+      setActiveMenuTab(activeSection__id)
     }
   }));
 

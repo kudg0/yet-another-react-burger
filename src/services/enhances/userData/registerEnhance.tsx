@@ -5,13 +5,13 @@ import {
   registerRequest,
   registerRequestSuccess,
   registerRequestFailed
-} from './../slicers/appSlice';
+} from './../../slicers/userSlice';
 
 
-import checkApiResponse from './../utils/checkApiResponse';
-import handleApiErrors from './../utils/handleApiErrors';
+import checkApiResponse from './../../utils/checkApiResponse';
+import handleApiErrors from './../../utils/handleApiErrors';
 
-import { setCookie } from './../utils/helpers/workWithCookie';
+import { setCookie } from './../../utils/helpers/workWithCookie';
 
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/register"!;

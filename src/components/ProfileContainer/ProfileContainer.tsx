@@ -20,13 +20,13 @@ const ProfileContainer = React.memo( () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
-  const { request, accessToken } = user;
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { accessToken } = user.data;
 
 
   React.useEffect(() => {
     if(!accessToken) return navigate("/login");
-  }, [accessToken, request, navigate]);
+  }, [accessToken, navigate]);
 
 
   return (

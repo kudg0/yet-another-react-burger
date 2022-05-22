@@ -12,8 +12,8 @@ const ProtectedRoute  = ({ outlet, ...rest } : any) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
-  const { request, accessToken } = user;
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { accessToken } = user.data;
 
 
   const from = location.pathname.includes('logout') ? '/profile' : location.pathname; 

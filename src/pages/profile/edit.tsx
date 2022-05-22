@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 
-import { updateUserDataEnhance } from './../../services/enhances/updateUserDataEnhance';
+import { updateUserDataEnhance } from './../../services/enhances/';
 
 
 import { EditIcon, CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -19,31 +19,34 @@ const Edit = React.memo( () => {
 
   const dispatch = useDispatch();
 
-  const { user } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
-  const { request, accessToken } = user;
+  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const { request } = user;
+  const { accessToken } = user.data;
 
-  const [editData, setEditData] = React.useState<
-    {
+
+  const [editData, setEditData] = 
+    React.useState<{
       id: string, 
       placeholder: string, 
       value: string
     }[]>([
-    {
-      id: "name",
-      placeholder: "Имя",
-      value: ''
-    },
-    {
-      id: "email",
-      placeholder: "Логин",
-      value: ''
-    },
-    {
-      id: "password",
-      placeholder: "Пароль",
-      value: '*****'
-    },
-  ]);
+      {
+        id: "name",
+        placeholder: "Имя",
+        value: ''
+      },
+      {
+        id: "email",
+        placeholder: "Логин",
+        value: ''
+      },
+      {
+        id: "password",
+        placeholder: "Пароль",
+        value: '*****'
+      },
+    ]);
+
   const [inputsCanChanging, setInputsCanChanging] = React.useState<[boolean, boolean, boolean]>([false, false, false]);
   const [dataChanged, setDataChanged] = React.useState<boolean>(false);
 
@@ -57,12 +60,12 @@ const Edit = React.memo( () => {
       {
         id: "name",
         placeholder: "Имя",
-        value: user.name || ''
+        value: user.data.name || ''
       },
       {
         id: "email",
         placeholder: "Логин",
-        value: user.email || ''
+        value: user.data.email || ''
       },
       {
         id: "password",
@@ -72,16 +75,17 @@ const Edit = React.memo( () => {
     ];
 
     setEditData( newState );
-  }, [ setEditData, user.name, user.email ]);  
+  }, [ setEditData, user.data.name, user.data.email ]);  
+
 
   React.useEffect( () => {
     setDataChanged( 
       editData.filter( editInput => {
         if(editInput.id === 'password') return editInput.value.length === 0 ? false : editInput.value !== '*****';
-        return editInput.value !== user[editInput.id as 'name' | 'email']
+        return editInput.value !== user.data[editInput.id as 'name' | 'email']
       }).length > 0
     )
-  }, [ user, editData, setEditData ])
+  }, [ user.data, editData, setEditData ])
 
 
   const toggleCanChangeInput : (e : React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
@@ -132,7 +136,7 @@ const Edit = React.memo( () => {
   const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
     e.preventDefault();
 
-    if(user.request.pending) return false;
+    if(request.pending) return false;
 
     let target : HTMLFormElement = e.currentTarget,
         target__data : FormData = new FormData(target);
@@ -142,7 +146,7 @@ const Edit = React.memo( () => {
     for (let [key, val] of data__entries) {
       if(key === 'password' && val === '*****') target__data.delete( key );
 
-      if(user[key as 'name' | 'email'] === val) target__data.delete( key );
+      if(user.data[key as 'name' | 'email'] === val) target__data.delete( key );
     }
 
     if(Object.keys(Object.fromEntries(target__data)).length === 0) return false;
@@ -151,22 +155,22 @@ const Edit = React.memo( () => {
       .then( () => moveToDefaultState())
       .catch( () => moveToDefaultState());
 
-  }, [user, dispatch, moveToDefaultState]);
+  }, [request.pending, user.data, dispatch, moveToDefaultState]);
   
 
   const handleReset : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
     e.preventDefault();
-    if(user.request.pending) return false;
+    if(request.pending) return false;
 
     let newState = [ ...editData ];
 
-    newState[0].value = user.name || '';
-    newState[1].value = user.email || '';
+    newState[0].value = user.data.name || '';
+    newState[1].value = user.data.email || '';
     
     setEditData( newState );
     
     moveToDefaultState();
-  }, [user, setEditData, editData, moveToDefaultState]);
+  }, [request.pending, user.data, setEditData, editData, moveToDefaultState]);
 
 
 
