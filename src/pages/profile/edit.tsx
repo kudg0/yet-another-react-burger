@@ -5,10 +5,14 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { updateUserDataEnhance } from './../../services/enhances/';
 
 
-import { EditIcon, CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { ReduxStore } from './../../services/types/';
+import { 
+  ReduxStore,
+  FormDataType,
+  InputDataType
+} from './../../services/types/';
 
 
 import Styles from './edit.module.scss';
@@ -24,195 +28,211 @@ const Edit = React.memo( () => {
   const { accessToken } = user.data;
 
 
-  const [editData, setEditData] = 
-    React.useState<{
-      id: string, 
-      placeholder: string, 
-      value: string
-    }[]>([
-      {
-        id: "name",
-        placeholder: "Имя",
-        value: ''
-      },
-      {
-        id: "email",
-        placeholder: "Логин",
-        value: ''
-      },
-      {
-        id: "password",
-        placeholder: "Пароль",
-        value: '*****'
-      },
-    ]);
-
-  const [inputsCanChanging, setInputsCanChanging] = React.useState<[boolean, boolean, boolean]>([false, false, false]);
+  const [inputsSuccessChanging, setInputsSuccessChanging] = React.useState<boolean[]>([false, false, false]);
+  const [inputsCanBeChanged, setInputsCanBeChanged] = React.useState<boolean[]>([false, false, false]);
   const [dataChanged, setDataChanged] = React.useState<boolean>(false);
 
 
-  React.useEffect( () => {
-    let newState : {
-        id: string, 
-        placeholder: string, 
-        value: string
-      }[] = [ 
-      {
-        id: "name",
-        placeholder: "Имя",
-        value: user.data.name || ''
-      },
-      {
-        id: "email",
-        placeholder: "Логин",
-        value: user.data.email || ''
-      },
-      {
-        id: "password",
-        placeholder: "Пароль",
-        value: '*****'
+  const defaultValueForPassword = '**********';
+
+  const [formData, setFormData] = React.useState<FormDataType>([
+    {  
+      type: "text",
+      name: "name",
+      placeholder: "Имя",
+      value: user.data.name || '',
+    },
+    {  
+      type: "email",
+      name: "email",
+      placeholder: "Логин",
+      value: user.data.email || '',
+    },
+    {  
+      type: "password",
+      name: "password",
+      placeholder: "Пароль",
+      value: defaultValueForPassword,
+    },
+  ]);
+
+
+
+  /* 
+    Проверяем обновились какие-то данные в инпутах:
+      если обновились – отображаем контролы для сохранения/сброса изменений
+      если нет – не отображаем :)
+  */
+    React.useEffect( () => {
+      setDataChanged( 
+        formData.filter( editInput => {
+          return (
+            editInput.name === 'password' ?
+              editInput.value.length !== 0 ? 
+                editInput.value !== defaultValueForPassword : false :
+              editInput.value !== user.data[editInput.name as 'name' | 'email']
+          )
+        }).length > 0
+      )
+    }, [ user.data, formData, setDataChanged ])
+
+
+  /* 
+    Трекаем включение редактирования на инпуте пароля:
+      если начали изменять – удаляем у него value;
+      если отменили изменения – ставим дефолтное значение;
+  */
+    const changePasswordValueOnEdit = React.useCallback(( isCanBeChanged : boolean ) => {
+      const newDataState = [ ...formData ],
+            neededIndex = inputsCanBeChanged.length - 1;
+
+
+      if( isCanBeChanged ){
+        newDataState[ neededIndex ].value = '';
+      } else {
+        newDataState[ neededIndex ].value = defaultValueForPassword;
       }
-    ];
 
-    setEditData( newState );
-  }, [ setEditData, user.data.name, user.data.email ]);  
+      setFormData( newDataState );
 
-
-  React.useEffect( () => {
-    setDataChanged( 
-      editData.filter( editInput => {
-        if(editInput.id === 'password') return editInput.value.length === 0 ? false : editInput.value !== '*****';
-        return editInput.value !== user.data[editInput.id as 'name' | 'email']
-      }).length > 0
-    )
-  }, [ user.data, editData, setEditData ])
+    }, [ formData, setFormData, inputsCanBeChanged ]);
 
 
-  const toggleCanChangeInput : (e : React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
-    const target : HTMLElement = e.currentTarget!,
-        target__index : number = parseInt(target.getAttribute("data-index")!);
 
+  const movePasswordToDefaultState = React.useCallback(() => {
+    const newState = [ ...formData ].map( (dataInput: InputDataType) => {
+      return (
+        dataInput.name !== 'password' ? 
+          dataInput : {...dataInput, value: defaultValueForPassword}
+      )
+    });
 
-    let newState : [boolean, boolean, boolean] = [...inputsCanChanging];
-    newState[target__index] = !inputsCanChanging[target__index];
+    setFormData( newState ); setInputsCanBeChanged([false, false, false]);  
+  }, [ formData, setFormData, setInputsCanBeChanged ]);
 
-
-    setInputsCanChanging( newState );
-
-
-    let newDataState = [ ...editData ];
-    if(newState[target__index] && target__index === 2){
-      newDataState[2].value = '';
-    } else {
-      newDataState[2].value = '*****';
-    }
-
-    setEditData( newDataState );
-
-  }, [ editData, setEditData, setInputsCanChanging, inputsCanChanging]);
-
-
-  const moveToDefaultState = React.useCallback(() => {
-    let newState = [ ...editData ];
-
-    newState[2].value = '*****';
-
-    setEditData( newState ); setInputsCanChanging([false, false, false]);  
-  }, [setEditData, setInputsCanChanging, editData]);
-
-  const handleChangeOfInput : (e: React.ChangeEvent<HTMLInputElement>) => void = React.useCallback((e) => {
-    let target : HTMLInputElement = e.currentTarget,
-        target__value = target.value,
-        target__index : number = parseInt(target.getAttribute("data-index")!);
-
-
-    let newState = [ ...editData ];
-    newState[target__index].value = target__value;
-
-    setEditData( newState );
-  }, [setEditData, editData]);
-
-
-  const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
-    e.preventDefault();
-
-    if(request.pending) return false;
-
-    let target : HTMLFormElement = e.currentTarget,
-        target__data : FormData = new FormData(target);
-
-    const data__entries = Array.from(target__data.entries());
-
-    for (let [key, val] of data__entries) {
-      if(key === 'password' && val === '*****') target__data.delete( key );
-
-      if(user.data[key as 'name' | 'email'] === val) target__data.delete( key );
-    }
-
-    if(Object.keys(Object.fromEntries(target__data)).length === 0) return false;
-    
-    dispatch( updateUserDataEnhance(target__data) as any )
-      .then( () => moveToDefaultState())
-      .catch( () => moveToDefaultState());
-
-  }, [request.pending, user.data, dispatch, moveToDefaultState]);
   
+  const handleChangeOfInput : (e: React.ChangeEvent<HTMLInputElement>) => void = React.useCallback((e) => {
+    const target : HTMLInputElement = e.currentTarget,
+          target__name : string = target.name,
+          target__value : string = target.value;
 
+
+    const newFormData = [...formData].map( dataInput => {
+      return (
+        dataInput.name !== target__name ? 
+          dataInput : {
+            ...dataInput,
+            value: target__value
+          }
+      )
+    });
+
+    setFormData( newFormData );
+
+  }, [setFormData, formData]);
+
+
+  const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void  = React.useCallback((e) => {
+    e.preventDefault();
+    if(request.pending) return;
+
+
+    const dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
+      return (
+        dataInput.name !== 'password' ? 
+          dataInput.value === user.data[dataInput.name as 'name' | 'email'] ? 
+            prevValue : {...prevValue, [dataInput.name]: dataInput.value} :
+          dataInput.name === 'password' && dataInput.value === defaultValueForPassword ?
+            prevValue : {...prevValue, [dataInput.name]: dataInput.value}
+      )
+    }, {})
+
+
+    let isChangegData = [false, false, false];
+    
+    for(let name in dataFromForm) {
+      const selectedDataItem = formData.find( (dataInput: InputDataType) => dataInput.name === name);
+
+      if(!selectedDataItem) return;
+      const selectedDataItem__index = formData.indexOf(selectedDataItem);
+      if(selectedDataItem__index === -1) return;
+
+      isChangegData[selectedDataItem__index] = true;
+    }
+
+    dispatch( updateUserDataEnhance(dataFromForm) as any )
+      .then( () => {
+        movePasswordToDefaultState();
+
+        setInputsSuccessChanging(isChangegData);
+      })
+      .catch( () => movePasswordToDefaultState());
+  }, [request.pending, user.data, dispatch, formData, movePasswordToDefaultState]);
+
+  
   const handleReset : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
     e.preventDefault();
     if(request.pending) return false;
 
-    let newState = [ ...editData ];
 
-    newState[0].value = user.data.name || '';
-    newState[1].value = user.data.email || '';
+    const newState = [...formData].map((dataInput: InputDataType) => {
+      return (
+        dataInput.name !== 'password' ? 
+          {...dataInput, value: user.data[dataInput.name as 'name' | 'email'] || ''} : {...dataInput, value: defaultValueForPassword}
+      )
+    });
     
-    setEditData( newState );
-    
-    moveToDefaultState();
-  }, [request.pending, user.data, setEditData, editData, moveToDefaultState]);
+    setFormData( newState ); setInputsCanBeChanged([false, false, false])
+  }, [request.pending, user.data, formData, setFormData, setInputsCanBeChanged]);
 
 
 
   return (
+
     <form 
       className={Styles.editContainer}
-      onSubmit={handleSubmit}
-      onReset={handleReset}
+      onSubmit={ handleSubmit }
+      onReset={ handleReset }
+      style={{
+        pointerEvents: request.pending ? 'none' : 'auto'
+      }}
     >
       {
-        editData.map( (editInput : {id: string, placeholder: string, value: string}, editInputIndex) => {
-          return (
-            <label key={ editInput.id } className={Styles.editContainer__label} data-placeholder={ editInput.placeholder }>
-              <input 
-                type={ editInput.id }
-                name={ editInput.id }
-                value={ editInput.value }
-                data-index={editInputIndex}
-                {...(
-                  !inputsCanChanging[editInputIndex] && {readOnly: true}
-                )}
-                onChange={handleChangeOfInput}
-              />
-              <div 
-                className={Styles.label__icon} 
-                data-index={editInputIndex}
-                onClick={toggleCanChangeInput}
-              >
-                {
-                  !inputsCanChanging[editInputIndex] ?
-                    <div className={Styles.icon__edit}>
-                      <EditIcon type="primary" />
-                    </div> :
-                    <div className={Styles.icon__confirm}>
-                      <CloseIcon type="primary" />
-                    </div>
-                }
-              </div>
-            </label>
-          )
-        })
+        formData.map( (dataInput : InputDataType, dataInputIndex : number) => (
+          <label 
+            key={dataInput.name}
+            className={Styles.editContainer__label}
+          >
+          
+            <Input
+              type={ dataInput.type }
+              placeholder={ dataInput.placeholder }
+              onChange={ handleChangeOfInput }
+              icon={ inputsCanBeChanged[dataInputIndex] ? 'CloseIcon' : 'EditIcon' }
+              value={ dataInput.value }
+              name={ dataInput.name }
+              onIconClick={ 
+                dataInputIndex !== formData.length - 1 ? 
+                  () => {
+                    let newState = [...inputsCanBeChanged];
+                    newState.splice(dataInputIndex, 1, !inputsCanBeChanged[dataInputIndex]);
+                    setInputsCanBeChanged(newState);
+                  } : 
+                  () => {
+                    let newState = [...inputsCanBeChanged];
+                    newState.splice(dataInputIndex, 1, !inputsCanBeChanged[dataInputIndex]);
+                    setInputsCanBeChanged(newState);
+
+                    changePasswordValueOnEdit( !inputsCanBeChanged[dataInputIndex] );
+                  }
+              }
+              disabled={ !inputsCanBeChanged[dataInputIndex] }
+              success={ inputsSuccessChanging[dataInputIndex] }
+            />
+          </label>
+        ))
       }
+
       {
         dataChanged &&
         <div className={Styles.editContainer__controls}>
@@ -224,14 +244,12 @@ const Edit = React.memo( () => {
               Отмена
             </span>
           </button>
-          <button 
-            type='submit'
-            className={Styles.controls__button + ' ' + Styles.controls__button_submit}
+          <Button 
+            type="primary" 
+            size="medium"
           >
-            <span>
-              Сохранить
-            </span>
-          </button>
+            Сохранить
+          </Button>
         </div>
       }
     </form>

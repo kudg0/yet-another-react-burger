@@ -69,3 +69,13 @@ export interface LocationType {
     }
   }
 // END
+
+
+  export type FormDataType = InputDataType[];
+
+  export interface InputDataType {
+    type: "text" | "email" | "password",
+    name: string,
+    placeholder: string,
+    value: string,
+  }

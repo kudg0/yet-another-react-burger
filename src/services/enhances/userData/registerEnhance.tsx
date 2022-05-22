@@ -16,10 +16,9 @@ import { setCookie } from './../../utils/helpers/workWithCookie';
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/register"!;
 
-export const registerEnhance = (formData: FormData) => {
+export const registerEnhance = (formData: {name: string, email: string, password: string}) => {
   return ( dispatch : Dispatch ) => {
     return new Promise((resolve, reject) => {
-      let objForServer = Object.fromEntries(formData);
 
       dispatch(registerRequest());
 
@@ -33,7 +32,7 @@ export const registerEnhance = (formData: FormData) => {
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
-        body: JSON.stringify(objForServer)
+        body: JSON.stringify( formData )
       })
         .then(response => {
           checkApiResponse(response)

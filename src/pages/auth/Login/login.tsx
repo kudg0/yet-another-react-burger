@@ -3,15 +3,22 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 
-import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
 import { loginEnhance } from './../../../services/enhances/';
 
-import { LocationType, ReduxStore } from './../../../services/types/';
+import { 
+  LocationType, 
+  ReduxStore,
+  FormDataType,
+  InputDataType,
+} from './../../../services/types/';
 
 
 import Styles from './../auth.module.scss';
+
+
 
 
 
@@ -21,15 +28,30 @@ const Login = React.memo( () => {
   const navigate = useNavigate();
   const location = useLocation() as LocationType;
 
+
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
   const { request } = user;
   
+
   const [isFailed, setIsFailed] = React.useState(false);
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
 
   const emailInputRef = React.useRef<HTMLInputElement>(null);
-  const passwordInputRef = React.useRef<HTMLInputElement>(null);
 
+  const [formData, setFormData] = React.useState<FormDataType>([
+    {  
+      type: "email",
+      name: "email",
+      placeholder: "E-mail",
+      value: '',
+    },
+    {  
+      type: "password",
+      name: "password",
+      placeholder: "Пароль",
+      value: '',
+    },
+  ]);
 
 
 
@@ -41,23 +63,40 @@ const Login = React.memo( () => {
   }, [request.failed, emailInputRef, setIsFailed])
 
 
+  const handleChangeOfInput : (e: React.ChangeEvent<HTMLInputElement>) => void = React.useCallback((e) => {
+    const target : HTMLInputElement = e.currentTarget,
+        target__name : string = target.name,
+        target__value : string = target.value;
+
+
+    let newFormData = [...formData].map( dataInput => {
+      return (
+        dataInput.name !== target__name ? 
+          dataInput : {
+            ...dataInput,
+            value: target__value
+          }
+      )
+    });
+
+    setFormData( newFormData );
+    setIsFailed( false );
+
+  }, [setFormData, formData, setIsFailed]);
+
 
   const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void  = React.useCallback((e) => {
     e.preventDefault();
+    if(request.pending) return;
 
-    let form : HTMLFormElement = e.currentTarget,
-        formData = new FormData(form);
+    let dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
+      return (
+        {...prevValue, [dataInput.name]: dataInput.value}
+      )
+    }, {email: '', password: ''})
 
-    dispatch( loginEnhance(formData) as any)
-  }, [dispatch]);
-
-  const togglePasswordVisibility : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
-    if(!passwordInputRef.current) return;
-
-    setIsPasswordHide(!isPasswordHide);
-
-    isPasswordHide ? passwordInputRef.current.setAttribute("type", "text") : passwordInputRef.current.setAttribute("type", "password")
-  }, [setIsPasswordHide, isPasswordHide]);
+    dispatch( loginEnhance(dataFromForm) as any)
+  }, [request.pending, formData, dispatch]);
 
 
 
@@ -74,42 +113,43 @@ const Login = React.memo( () => {
             Styles.block__form + ' ' + 
             (isFailed ? Styles.block__form_failed : '')
           } 
-          onSubmit={handleSubmit}
+          onSubmit={ handleSubmit }
           style={{
             pointerEvents: request.pending ? 'none' : 'auto'
           }}
         >
-          <label className={Styles.form__input}>
-            <input 
-              name='email' 
-              type='email' 
-              placeholder="E-mail"
-              ref={emailInputRef}
-              onInput={() => setIsFailed(false)}
-              required
-            />
-          </label>
-          <label className={Styles.form__input}>
-            <input 
-              name='password' 
-              type='password' 
-              placeholder="Пароль"
-              ref={passwordInputRef}
-              onInput={() => setIsFailed(false)}
-              required
-            />
-            <div 
-              className={
-                Styles.input__show + ' ' + 
-                (isPasswordHide ? Styles.input__show_hide : '')
-              } 
-              onClick={togglePasswordVisibility}
-            >
-              <ShowIcon type="primary" />
-              <HideIcon type="primary" />
-            </div>
-          </label>
-        
+          {
+            formData.map( (dataInput : InputDataType) => (
+              <label 
+                key={dataInput.name}
+                className={Styles.form__input}
+              >
+                {
+                  dataInput.name === 'password' ?
+                  <Input
+                    type={ isPasswordHide ? dataInput.type : 'text' }
+                    placeholder={ dataInput.placeholder }
+                    onChange={ handleChangeOfInput }
+                    icon={ isPasswordHide ? 'ShowIcon' : 'HideIcon' }
+                    value={ dataInput.value }
+                    name={ dataInput.name }
+                    error={ isFailed }
+                    onIconClick={ () => setIsPasswordHide( !isPasswordHide ) }
+                  /> : 
+                  <Input
+                    type={ dataInput.type }
+                    placeholder={ dataInput.placeholder }
+                    onChange={ handleChangeOfInput }
+                    value={ dataInput.value }
+                    name={ dataInput.name }
+                    error={ isFailed }
+                    ref={emailInputRef}
+                  />
+                }
+              </label>
+            ))
+          }
+
           <label className={Styles.form__hint}>
             <span> 
               {
@@ -117,11 +157,9 @@ const Login = React.memo( () => {
               }
             </span>
           </label>
-          <button className={Styles.form__button}>
-            <span>
-              Войти
-            </span>
-          </button>
+          <Button type="primary" size="medium">
+            Войти
+          </Button>
         </form>
 
         <div className={Styles.block__addInfo}>

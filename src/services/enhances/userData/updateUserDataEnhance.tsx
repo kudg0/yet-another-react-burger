@@ -19,10 +19,9 @@ import { setCookie, getCookie } from './../../utils/helpers/workWithCookie';
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/user"!;
 
-export const updateUserDataEnhance = (formData: FormData) => {
+export const updateUserDataEnhance = (formData: {name?: string, email?: string, password?: string}) => {
   return async ( dispatch : Dispatch ) => {
 
-    let objForServer = Object.fromEntries(formData);
     let accessToken = getCookie('accessToken'),
         refreshToken = getCookie('refreshToken');
 
@@ -54,7 +53,7 @@ export const updateUserDataEnhance = (formData: FormData) => {
       },
       redirect: 'follow',
       referrerPolicy: 'no-referrer',
-      body: JSON.stringify(objForServer)
+      body: JSON.stringify(formData)
     })
       .then(response => {
         checkApiResponse(response)

@@ -17,57 +17,11 @@
       margin-bottom: 24px;
     }
 
-    &:after{
-      content: attr(data-placeholder) " ";
-
+    :global(.input__container){
       width: 100%;
 
-      position: absolute;
-      top: 8px; left: 24px;
-
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 1.5;
-
-      color: $text__color_sub;
-
-      z-index: 2;
-    }
-
-    .label__icon{
-      width: 72px; height: 100%;
-
-      position: absolute;
-      right: 0;
-
-      padding: 20px 24px;
-
-      cursor: pointer;
-
-      z-index: 3;
-    }
-
-
-    input{
-      width: 100%; height: 100%;
-      padding: 32px 24px 8px;
-
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 1.5;
-
-      color: $text__color_sub;
-
-      border-radius: 40px;
-      background: $background__color_input;
-
-      z-index: 1;
-
-      &[readonly]{
-        &:focus{
-          outline: none;
-          border: none;
-        }
+      :global(.input){
+        width: 100%;
       }
     }
   }  
@@ -94,6 +48,7 @@
 
       &_reset{
         padding: 16px 8px;
+        margin-right: 20px;
 
 
         span{
@@ -108,35 +63,6 @@
 
           &:hover{
             filter: grayscale(1);
-          }
-        // END
-      }
-      &_submit{
-        padding: 16px 40px;
-
-        margin-left: 20px;
-        
-        border-radius: 64px;
-
-
-        background: linear-gradient(63.18deg, #801AB3 0%, #4C4CFF 100%);
-
-
-        span{
-          color: $text__color_prior;
-        }
-
-
-        // ANIMATE
-          box-shadow: 0px 0px 16px 8px rgba(51, 51, 255, 0.25), 0px 0px 8px 8px rgba(51, 51, 255, 0.25);
-          filter: drop-shadow(0px 4px 32px rgba(51, 51, 255, 0.5));
-          
-          will-change: box-shadow, filter;
-          transition: .5s box-shadow, .5s filter;
-
-          &:hover{
-            box-shadow: 0px 0px 8px 4px rgba(51, 51, 255, 0.25), 0px 0px 4px 4px rgba(51, 51, 255, 0.25);
-            filter: drop-shadow(0px 2px 16px rgba(51, 51, 255, 0.5));
           }
         // END
       }

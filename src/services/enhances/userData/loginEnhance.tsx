@@ -17,10 +17,9 @@ import { setCookie } from './../../utils/helpers/workWithCookie';
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/login"!;
 
-export const loginEnhance = (formData: FormData) => {
+export const loginEnhance = (formData: {email: string, password: string}) => {
   return ( dispatch : Dispatch ) => {
-    let objForServer = Object.fromEntries(formData);
-
+    
     dispatch(loginRequest());
 
     fetch( apiUrl, {
@@ -33,7 +32,7 @@ export const loginEnhance = (formData: FormData) => {
       },
       redirect: 'follow',
       referrerPolicy: 'no-referrer',
-      body: JSON.stringify(objForServer)
+      body: JSON.stringify(formData)
     })
       .then(response => {
         checkApiResponse(response)

@@ -3,12 +3,16 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
 
-import { ShowIcon, HideIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
 import { remindPasswordEnhance } from './../../../services/enhances/';
 
-import { ReduxStore } from './../../../services/types/';
+import { 
+  ReduxStore,
+  FormDataType,
+  InputDataType,
+} from './../../../services/types/';
 
 
 import Styles from './../auth.module.scss';
@@ -26,11 +30,17 @@ const ForgotPassword = React.memo( () => {
   
   const [isFailed, setIsFailed] = React.useState(false);
   const [isFailedMessage, setIsFailedMessage] = React.useState("");
-  const [isPasswordHide, setIsPasswordHide] = React.useState(true);
 
   const emailInputRef = React.useRef<HTMLInputElement>(null);
-  const passwordInputRef = React.useRef<HTMLInputElement>(null);
 
+  const [formData, setFormData] = React.useState<FormDataType>([
+    {  
+      type: "email",
+      name: "email",
+      placeholder: "Укажите e-mail",
+      value: '',
+    }
+  ]);
 
 
 
@@ -43,13 +53,39 @@ const ForgotPassword = React.memo( () => {
 
 
 
+  const handleChangeOfInput : (e: React.ChangeEvent<HTMLInputElement>) => void = React.useCallback((e) => {
+    const target : HTMLInputElement = e.currentTarget,
+        target__name : string = target.name,
+        target__value : string = target.value;
+
+
+    let newFormData = [...formData].map( dataInput => {
+      return (
+        dataInput.name !== target__name ? 
+          dataInput : {
+            ...dataInput,
+            value: target__value
+          }
+      )
+    });
+
+    setFormData( newFormData );
+    setIsFailed( false );
+
+  }, [setFormData, formData, setIsFailed]);
+
+
   const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void  = React.useCallback((e) => {
     e.preventDefault();
+    if(request.pending) return;
 
-    let form : HTMLFormElement = e.currentTarget,
-        formData = new FormData(form);
+    let dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
+      return (
+        {...prevValue, [dataInput.name]: dataInput.value}
+      )
+    }, {email: ''})
 
-    dispatch( remindPasswordEnhance(formData) as any)
+    dispatch( remindPasswordEnhance( dataFromForm ) as any)
       .then( ( result: { 
         "success": boolean, 
         "message": string 
@@ -65,18 +101,8 @@ const ForgotPassword = React.memo( () => {
           }
         });
       })
-      .catch( ( error: Error) => {
-        setIsFailed(true); setIsFailedMessage( error.message )
-      })
-  }, [dispatch, navigate]);
-
-  const togglePasswordVisibility : (e: React.MouseEvent<HTMLElement>) => void = React.useCallback((e) => {
-    if(!passwordInputRef.current) return;
-
-    setIsPasswordHide(!isPasswordHide);
-
-    isPasswordHide ? passwordInputRef.current.setAttribute("type", "text") : passwordInputRef.current.setAttribute("type", "password")
-  }, [setIsPasswordHide, isPasswordHide]);
+      .catch( ( error: Error) => { setIsFailed(true); setIsFailedMessage(error.message) })
+  }, [request.pending, formData, dispatch, navigate, setIsFailed, setIsFailedMessage]);
 
 
 
@@ -88,6 +114,8 @@ const ForgotPassword = React.memo( () => {
             Восстановление пароля
           </span>
         </div>
+
+
         <form 
           className={
             Styles.block__form + ' ' + 
@@ -98,17 +126,27 @@ const ForgotPassword = React.memo( () => {
             pointerEvents: request.pending ? 'none' : 'auto'
           }}
         >
-          <label className={Styles.form__input}>
-            <input 
-              name='email' 
-              type='email' 
-              placeholder="Укажите e-mail"
-              ref={emailInputRef}
-              onInput={() => setIsFailed(false)}
-              required
-            />
-          </label>
-        
+          {
+            formData.map( (dataInput : InputDataType) => (
+              <label 
+                key={dataInput.name}
+                className={Styles.form__input}
+              >
+                {
+                  <Input
+                    type={ dataInput.type }
+                    placeholder={ dataInput.placeholder }
+                    onChange={ handleChangeOfInput }
+                    value={ dataInput.value }
+                    name={ dataInput.name }
+                    error={ isFailed }
+                    ref={ emailInputRef }
+                  />
+                }
+              </label>
+            ))
+          }
+
           <label className={Styles.form__hint}>
             <span> 
               {
@@ -116,11 +154,9 @@ const ForgotPassword = React.memo( () => {
               }
             </span>
           </label>
-          <button className={Styles.form__button}>
-            <span>
-              Восстановить
-            </span>
-          </button>
+          <Button type="primary" size="medium">
+            Восстановить
+          </Button>
         </form>
 
         <div className={Styles.block__addInfo}>

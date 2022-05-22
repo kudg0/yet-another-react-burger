@@ -2,9 +2,9 @@ import { Dispatch } from 'redux';
 
 
 import { 
-  loginRequest,
-  loginRequestSuccess,
-  loginRequestFailed
+  resetPasswordRequest,
+  resetPasswordRequestSuccess,
+  resetPasswordRequestFailed
 } from './../../slicers/userSlice';
 
 
@@ -18,11 +18,11 @@ import handleApiErrors from './../../utils/handleApiErrors';
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/password-reset/reset"!;
 
-export const resetPasswordEnhance = (formData: FormData) => {
+export const resetPasswordEnhance = (formData: {password: string, token: string}) => {
   return ( dispatch : Dispatch ) => {
     return new Promise((resolve, reject) => {
-      let objForServer = Object.fromEntries(formData);
 
+      dispatch(resetPasswordRequest());
 
       fetch( apiUrl, {
         method: 'POST',
@@ -33,7 +33,8 @@ export const resetPasswordEnhance = (formData: FormData) => {
           'Content-Type': 'application/json'
         },
         redirect: 'follow',
-        referrerPolicy: 'no-referrer'
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify( formData )
       })
         .then(response => {
           checkApiResponse(response)
@@ -42,19 +43,22 @@ export const resetPasswordEnhance = (formData: FormData) => {
               "message": string
             }) => {
               if(!result.success) return Promise.reject(result);
+              dispatch(resetPasswordRequestSuccess());
 
               return resolve(result);
             })
             .catch( (error: Error) => {
               handleApiErrors(error);
+              dispatch(resetPasswordRequestFailed());
 
-              return reject(Error);
+              return reject(error);
             })
         })
         .catch( (error: Error) => {
           handleApiErrors(error);
+          dispatch(resetPasswordRequestFailed());
 
-          return reject(Error);
+          return reject(error);
         })
     });
   }

@@ -21,9 +21,11 @@ const userSlice = createSlice({
   } as ReduxStore__User,
   reducers: {
     loginRequest: (state) => {
-      state.request.pending = true;
-      state.request.failed = false;
-      state.request.success = false;
+      state.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
     },
     loginRequestSuccess: (state, action: PayloadAction<{accessToken?: string, refreshToken?: string, email: string, name: string}>) => {
       state.data = {
@@ -40,15 +42,19 @@ const userSlice = createSlice({
       }
     },
     loginRequestFailed: (state) => {
-      state.request.pending = false;
-      state.request.failed = true;
-      state.request.success = false;
+      state.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
     },
 
     registerRequest: (state) => {
-      state.request.pending = true;
-      state.request.failed = false;
-      state.request.success = false;
+      state.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
     },
     registerRequestSuccess: (state, action: PayloadAction<{accessToken: string, refreshToken: string, email: string, name: string}>) => {
       state.data = {
@@ -65,15 +71,19 @@ const userSlice = createSlice({
       }
     },
     registerRequestFailed: (state) => {
-      state.request.pending = false;
-      state.request.failed = true;
-      state.request.success = false;
+      state.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
     },
 
     changeUserDataRequest: (state) => {
-      state.request.pending = true;
-      state.request.failed = false;
-      state.request.success = false;
+      state.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
     },
     changeUserDataRequestSuccess: (state, action: PayloadAction<{email: string, name: string}>) => {
       state.data = {
@@ -89,15 +99,40 @@ const userSlice = createSlice({
       }
     },
     changeUserDataRequestFailed: (state) => {
-      state.request.pending = false;
-      state.request.failed = true;
-      state.request.success = false;
+      state.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
     },
 
+    resetPasswordRequest: (state) => {
+      state.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
+    },
+    resetPasswordRequestSuccess: (state) => {
+      state.request = {
+        pending: false,
+        success: false,
+        failed: false
+      }
+    },
+    resetPasswordRequestFailed: (state) => {
+      state.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
+    },
     logoutRequest: (state) => {
-      state.request.pending = true;
-      state.request.failed = false;
-      state.request.success = false;
+      state.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
     },
     logoutRequestSuccess: (state) => {
       state.data = {};
@@ -109,9 +144,11 @@ const userSlice = createSlice({
       }
     },
     logoutRequestFailed: (state) => {
-      state.request.pending = false;
-      state.request.failed = true;
-      state.request.success = false;
+      state.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
     },
   },
 });
@@ -133,6 +170,9 @@ export const {
   logoutRequest,
   logoutRequestSuccess,
   logoutRequestFailed,
+  resetPasswordRequest,
+  resetPasswordRequestSuccess,
+  resetPasswordRequestFailed,
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer
