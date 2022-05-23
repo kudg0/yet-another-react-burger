@@ -4,19 +4,19 @@ import {useState, useCallback} from 'react';
 import { FormDataType } from './../types/';
 
 
-export function useFormAndValidation( 
+const useFormAndValidation =( 
   initValues? : any, 
   initSetValues? : React.Dispatch<React.SetStateAction<FormDataType>>
-) {
+) => {
+
   const [ values, setValues ] = useState({});
-  const [ errors, setErrors ] = useState({});
-  const [ isValid, setIsValid ] = useState(true);
+  const [ isFailed, setIsFailed ] = useState(false);
+
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target : HTMLInputElement = e.currentTarget;
     const {name, value} = target;
-    const assignedForm = target.closest('form');
 
     const newFormData = [...(initValues || values)].map( dataInput => {
       return (
@@ -29,18 +29,20 @@ export function useFormAndValidation(
     });
 
     initSetValues ? initSetValues(newFormData) : setValues(newFormData);
-    setErrors({...errors, [name]: e.target.validationMessage});
-
-    if(!assignedForm) return
-    setIsValid(assignedForm.checkValidity());
+      
+    setIsFailed(false);
   };
 
 
   const resetForm = useCallback((newValues = {}, newErrors = {}, newIsValid = false) => {
     initSetValues ? initSetValues(newValues) : setValues(newValues);
-    setErrors(newErrors);
-    setIsValid(newIsValid);
-  }, [setValues, setErrors, setIsValid, initSetValues]);
 
-  return { values, handleChange, errors, isValid, resetForm, setValues, setIsValid };
+    setIsFailed(false);
+  }, [setValues, setIsFailed, initSetValues]);
+
+
+
+  return { values, handleChange, isFailed, resetForm, setValues, setIsFailed };
 }
+
+export { useFormAndValidation };

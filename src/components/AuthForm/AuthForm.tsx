@@ -17,6 +17,9 @@ import {
   InputDataType,
 } from './../../services/types/';
 
+
+import { useFormAndValidation } from './../../services/hooks/useFormAndValidation';
+
 import Styles from './authForm.module.scss';
 
 
@@ -35,7 +38,9 @@ const AuthForm = React.memo((props: {
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
   const { request } = user;
 
-  const [isFailed, setIsFailed] = React.useState(false);
+
+  const { handleChange, isFailed, setIsFailed } = useFormAndValidation(props.formData, props.setFormData);
+
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
 
   const inputsRef = React.useRef<HTMLInputElement[]>([]);
@@ -51,7 +56,7 @@ const AuthForm = React.memo((props: {
     return () => {
       dispatch( moveRequestToDefault() ); setIsFailed(false);
     }
-  }, [inputsRef, dispatch]);
+  }, [inputsRef, dispatch, setIsFailed]);
 
   React.useEffect( () => {
     if(!request.failed || !inputsRef.current) return setIsFailed(false);
@@ -59,28 +64,6 @@ const AuthForm = React.memo((props: {
     setIsFailed(true); inputsRef.current[0].focus();
 
   }, [request.failed, inputsRef, setIsFailed])
-
-
-  const handleChangeOfInput : (e: React.ChangeEvent<HTMLInputElement>) => void = React.useCallback((e) => {
-    const target : HTMLInputElement = e.currentTarget,
-        target__name : string = target.name,
-        target__value : string = target.value;
-
-
-    let newFormData = [...props.formData].map( dataInput => {
-      return (
-        dataInput.name !== target__name ? 
-          dataInput : {
-            ...dataInput,
-            value: target__value
-          }
-      )
-    });
-
-    setIsFailed( false );
-    props.setFormData( newFormData );
-    
-  }, [ props, setIsFailed]);
 
 
   const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void  = React.useCallback((e) => {
@@ -96,6 +79,7 @@ const AuthForm = React.memo((props: {
     props.dispatchCallbackFn(dataFromForm)
     
   }, [request.pending, props]);
+
 
 
   return (
@@ -120,7 +104,7 @@ const AuthForm = React.memo((props: {
               <Input
                 type={ isPasswordHide ? dataInput.type : 'text' }
                 placeholder={ dataInput.placeholder }
-                onChange={ handleChangeOfInput }
+                onChange={ handleChange }
                 icon={ isPasswordHide ? 'ShowIcon' : 'HideIcon' }
                 value={ dataInput.value }
                 name={ dataInput.name }
@@ -133,7 +117,7 @@ const AuthForm = React.memo((props: {
               <Input
                 type={ dataInput.type }
                 placeholder={ dataInput.placeholder }
-                onChange={ handleChangeOfInput }
+                onChange={ handleChange }
                 value={ dataInput.value }
                 name={ dataInput.name }
                 error={ isFailed }

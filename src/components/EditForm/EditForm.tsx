@@ -17,6 +17,9 @@ import {
   InputDataType,
 } from './../../services/types/';
 
+
+import { useFormAndValidation } from './../../services/hooks/useFormAndValidation';
+
 import Styles from './editForm.module.scss';
 
 
@@ -34,7 +37,8 @@ const EditForm = React.memo((props: {
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
   const { request } = user;
 
-  const [isFailed, setIsFailed] = React.useState(false);
+
+  const { handleChange, isFailed, setIsFailed } = useFormAndValidation(props.formData, props.setFormData);
   
   const [inputsSuccessChanging, setInputsSuccessChanging] = React.useState<boolean[]>([false, false, false]);
   const [inputsCanBeChanged, setInputsCanBeChanged] = React.useState<boolean[]>([false, false, false]);
@@ -54,7 +58,7 @@ const EditForm = React.memo((props: {
     return () => {
       dispatch( moveRequestToDefault() ); setIsFailed(false);
     }
-  }, [inputsRef, dispatch]);
+  }, [inputsRef, dispatch, setIsFailed]);
 
   React.useEffect( () => {
     if(!request.failed || !inputsRef.current) return setIsFailed(false);
@@ -79,7 +83,7 @@ const EditForm = React.memo((props: {
           )
         }).length > 0
       )
-    }, [ user.data, props.formData, setDataChanged ])
+    }, [ user.data, props.defaultValueForPassword, props.formData, setDataChanged ])
 
   /* 
     Трекаем включение редактирования на инпуте пароля:
@@ -115,28 +119,6 @@ const EditForm = React.memo((props: {
 
 
 
-  const handleChangeOfInput : (e: React.ChangeEvent<HTMLInputElement>) => void = React.useCallback((e) => {
-    const target : HTMLInputElement = e.currentTarget,
-        target__name : string = target.name,
-        target__value : string = target.value;
-
-
-    let newFormData = [...props.formData].map( dataInput => {
-      return (
-        dataInput.name !== target__name ? 
-          dataInput : {
-            ...dataInput,
-            value: target__value
-          }
-      )
-    });
-
-    setIsFailed( false );
-    props.setFormData( newFormData );
-    
-  }, [ props, setIsFailed]);
-
-
   const handleSubmit : (e: React.FormEvent<HTMLFormElement>) => void  = React.useCallback((e) => {
     e.preventDefault();
     if(request.pending) return;
@@ -169,7 +151,7 @@ const EditForm = React.memo((props: {
 
     props.dispatchCallbackFn(dataFromForm)
     
-  }, [request.pending, props, movePasswordToDefaultState, setInputsSuccessChanging]);
+  }, [request.pending, props, movePasswordToDefaultState, user.data, setInputsSuccessChanging]);
 
 
   const handleReset : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
@@ -213,7 +195,7 @@ const EditForm = React.memo((props: {
               <Input
                 type={ dataInput.type }
                 placeholder={ dataInput.placeholder }
-                onChange={ handleChangeOfInput }
+                onChange={ handleChange }
                 icon={ inputsCanBeChanged[dataInputIndex] ? 'CloseIcon' : 'EditIcon' }
                 value={ dataInput.value }
                 name={ dataInput.name }
