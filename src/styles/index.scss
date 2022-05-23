@@ -40,6 +40,11 @@ body {
   &::-webkit-scrollbar-thumb {
     background: rgba(133, 133, 173, 1);
   }
+
+  button, input{
+    border: none;
+    background: none;
+  }
 }
 
 code {

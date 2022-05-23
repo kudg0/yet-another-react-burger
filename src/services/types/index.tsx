@@ -14,9 +14,18 @@ export interface IngredientType {
   uuid: string;
 }
 
+
+export interface LocationType {
+  pathname: string;
+  state: {
+    from: Location;
+  };
+};
+
 // REDUX STORE
   export interface ReduxStore {
     app: ReduxStore__App,
+    user: ReduxStore__User
   }
   export interface ReduxStore__App {
     ingredients: {
@@ -26,6 +35,10 @@ export interface IngredientType {
         success: boolean,
         failed: boolean
       }
+    },
+    clickedIngredient: {
+      isShow: boolean,
+      data?: IngredientType
     },
     order: {
       totalAmount: number,
@@ -41,4 +54,28 @@ export interface IngredientType {
       }
     }
   }
+  export interface ReduxStore__User {
+    data: {
+      id?: string,
+      name?: string,
+      email?: string,
+      accessToken?: string,
+      refreshToken?: string,
+    }
+    request: {
+      pending: boolean,
+      success: boolean,
+      failed: boolean
+    }
+  }
 // END
+
+
+  export type FormDataType = InputDataType[];
+
+  export interface InputDataType {
+    type: "text" | "email" | "password",
+    name: string,
+    placeholder: string,
+    value: string,
+  }

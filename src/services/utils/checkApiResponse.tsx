@@ -1,5 +1,5 @@
-const checkApiResponse = (response : Response) => {
-  if(!response.ok) return Promise.reject(response.ok);
+const checkApiResponse = async (response : Response) => {
+  if(!response.ok) return Promise.reject(await response.json());
 
   return response.json()
 }

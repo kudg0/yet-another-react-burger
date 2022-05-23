@@ -11,7 +11,7 @@ import {
 
 
 const appSlice = createSlice({
-  name: 'ingredients',
+  name: 'app',
   initialState: {
     ingredients: {
       data: [],
@@ -20,6 +20,9 @@ const appSlice = createSlice({
         success: false,
         failed: false
       }
+    },
+    clickedIngredient: {
+      isShow: false,
     },
     order: {
       orderId: null,
@@ -37,18 +40,29 @@ const appSlice = createSlice({
   } as ReduxStore__App,
   reducers: {
     ingredientsRequest: (state) => {
-      state.ingredients.request.pending = true
+      state.ingredients.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
     },
     ingredientsRequestSuccess: (state, action: PayloadAction<IngredientType[]>) => {
-      state.ingredients.request.pending = false;
-      state.ingredients.request.success = true;
-
       state.ingredients.data = action.payload;
+
+      state.ingredients.request = {
+        pending: false,
+        success: true,
+        failed: false,
+      }
     },
     ingredientsRequestFailed: (state) => {
-      state.ingredients.request.pending = false;
-      state.ingredients.request.failed = true;
+      state.ingredients.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
     },
+
     ingredientsIncreaseCounter: (state, action: PayloadAction<IngredientType>) => {
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
         // Если уже была выбрана булка, убираем ее из выбранных
@@ -68,7 +82,7 @@ const appSlice = createSlice({
       state.order.burger.ingredients.push({...action.payload, uuid: uuidv4(), __v: action.payload.__v + 1})
 
       
-      state.order.totalAmount = state.order.burger.ingredients
+      state.order.totalAmount = [...state.order.burger.ingredients]
         .reduce((acc: number, ingredient : IngredientType) => 
           acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
         , 0)
@@ -86,9 +100,8 @@ const appSlice = createSlice({
         ingredient : { ...ingredient, __v: --ingredient.__v}
       ).filter( (ingredient : IngredientType) => ingredient.__v !== 0);
 
-      // Переписать логику удаления ингедиента
-      
-      state.order.totalAmount = state.order.burger.ingredients
+
+      state.order.totalAmount = [...state.order.burger.ingredients]
         .reduce((acc: number, ingredient : IngredientType) => 
           acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
         , 0)
@@ -98,38 +111,74 @@ const appSlice = createSlice({
         return { ...ingredient, __v: 0}
       })
 
-      state.order.totalAmount =  0;
-      state.order.burger.ingredients = [];
+      state.order = {
+        ...state.order,
+        totalAmount:  0,
+        burger: {
+          ...state.order.burger,
+          ingredients: []
+        }
+      }
     },
     ingredientUpdatePos: (state, action: PayloadAction<{currentItem: IngredientType, currentItemIndex: number, toNeededItemIndex: number}>) => {
-      let tempIngredientsArr = [...state.order.burger.ingredients]
+      let ingredientsWithoutBun = [...state.order.burger.ingredients]
         .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun");
       
-      tempIngredientsArr.splice(
+      ingredientsWithoutBun.splice(
         action.payload.toNeededItemIndex < action.payload.currentItemIndex ? action.payload.toNeededItemIndex : action.payload.toNeededItemIndex + 1, 
         0, action.payload.currentItem);
-      tempIngredientsArr.splice(
+      
+      ingredientsWithoutBun.splice(
         action.payload.toNeededItemIndex < action.payload.currentItemIndex ? 
         action.payload.currentItemIndex + 1 : action.payload.currentItemIndex, 1);
 
+
       state.order.burger.ingredients = [
-        ...state.order.burger.ingredients.filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun"), 
-        ...tempIngredientsArr
+        ...[...state.order.burger.ingredients].filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun"), 
+        ...ingredientsWithoutBun
       ];
     },
+
+    setClickedIngredient: (state, action: PayloadAction<{data: IngredientType}>) => {
+      state.clickedIngredient = {
+        isShow: true,
+        data: action.payload.data
+      }
+    },
+    removeClickedIngredient: (state) => {
+      state.clickedIngredient = {
+        isShow: false
+      }
+    },
     orderRequest: (state) => {
-      state.order.request.pending = true
+      state.order.request = {
+        pending: true,
+        success: false,
+        failed: false,
+      }
     },
     orderRequestSuccess: (state, action: PayloadAction<{orderId: number, name: string}>) => {
-      state.order.request.pending = false;
-      state.order.request.success = true;
+      state.order = {
+        ...state.order,
+        orderId: action.payload.orderId,
+        burger: {
+          ...state.order.burger,
+          name: action.payload.name,
+        }
+      }
 
-      state.order.orderId = action.payload.orderId;
-      state.order.burger.name = action.payload.name;
+      state.order.request = {
+        pending: false,
+        success: true,
+        failed: false,
+      }
     },
     orderRequestFailed: (state) => {
-      state.order.request.pending = false;
-      state.order.request.failed = true;
+      state.order.request = {
+        pending: false,
+        success: false,
+        failed: true,
+      }
     },
   },
 });
@@ -146,6 +195,8 @@ export const {
   ingredientsDecreaseCounter,
   ingredientsReset,
   ingredientUpdatePos,
+  setClickedIngredient,
+  removeClickedIngredient,
   orderRequest,
   orderRequestSuccess,
   orderRequestFailed,

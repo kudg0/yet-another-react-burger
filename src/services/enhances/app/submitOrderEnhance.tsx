@@ -6,11 +6,11 @@ import {
   orderRequestSuccess,
   orderRequestFailed,
   ingredientsReset
-} from './../slicers/appSlice';
+} from './../../slicers/appSlice';
 
 
-import checkApiResponse from './../utils/checkApiResponse';
-import handleApiErrors from './../utils/handleApiErrors';
+import checkApiResponse from './../../utils/checkApiResponse';
+import handleApiErrors from './../../utils/handleApiErrors';
 
 
 
