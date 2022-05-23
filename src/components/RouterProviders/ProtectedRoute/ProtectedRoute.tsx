@@ -1,9 +1,11 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 
 
 import { LocationType, ReduxStore } from './../../../services/types/';
+
+import { getCookie } from './../../../services/utils/helpers/workWithCookie';
 
 
 
@@ -13,8 +15,7 @@ const ProtectedRoute  = ({ outlet, ...rest } : any) => {
 
 
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
-  const { accessToken } = user.data;
-
+  const accessToken = user.data.accessToken || getCookie('accessToken');
 
   const from = location.pathname.includes('logout') ? '/profile' : location.pathname; 
 
