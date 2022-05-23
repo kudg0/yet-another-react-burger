@@ -62,12 +62,12 @@
   }
 
 
-  &.block__form_failed{
-    .form__input{
+  &_failed{
+    .formContainer__input{
 
       animation: shakeInput 1s linear;
     }
-    .form__hint{
+    .formContainer__hint{
       height: 30px;
 
       opacity: 1;
