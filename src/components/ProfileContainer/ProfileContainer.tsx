@@ -2,9 +2,9 @@ import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 
 
-import Orders from './../../pages/profile/orders';
-import Edit from './../../pages/profile/edit';
-import Logout from './../../pages/profile/logout';
+import Orders from './../../pages/Profile/orders';
+import Edit from './../../pages/Profile/edit';
+import Logout from './../../pages/Profile/logout';
 
 
 import Styles from './profileContainer.module.scss';
