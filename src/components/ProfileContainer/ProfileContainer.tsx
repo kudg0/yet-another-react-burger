@@ -1,9 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-
-
-import { ReduxStore } from './../../services/types/';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 
 
 import Orders from './../../pages/profile/orders';
@@ -17,16 +13,8 @@ import Styles from './profileContainer.module.scss';
 
 const ProfileContainer = React.memo( () => {
   
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
-  const { accessToken } = user.data;
-
-
-  React.useEffect(() => {
-    if(!accessToken) return navigate("/login");
-  }, [accessToken, navigate]);
 
 
   return (

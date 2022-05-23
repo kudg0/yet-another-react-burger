@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 
@@ -43,13 +43,8 @@ const ForgotPassword = React.memo( () => {
     },
   ]);
 
+  const from = location.state?.from?.pathname || '/';
 
-
-  React.useEffect(() => {
-    const from = location.state?.from?.pathname || '/';
-
-    if(from !== '/forgot-password') return navigate("/forgot-password");
-  }, [navigate, location]);
   
 
   const dispatcherHelper = React.useCallback((dataFromForm) => {
@@ -68,6 +63,14 @@ const ForgotPassword = React.memo( () => {
   }, [dispatch, navigate, setFailedMessage]);
 
 
+
+
+  if(from !== '/forgot-password') return (
+     <Navigate 
+       to={"/forgot-password"}
+       replace={true}
+     />
+  )
 
   return (
     <main className={Styles.authContainer}>

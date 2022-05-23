@@ -11,15 +11,21 @@ const AuthRoute  = ({ outlet, ...rest } : any) => {
 
   const location = useLocation() as LocationType;
 
+
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
   const { accessToken } = user.data;
 
 
-  if(accessToken) {
-    const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || '/';
 
-    return <Navigate to={{ pathname: from }} state={{from: {pathname: location.pathname}}} />
-  }
+
+
+  if(accessToken) return (
+    <Navigate 
+      to={{ pathname: from }} 
+      state={{from: {pathname: location.pathname}}} 
+    />
+  )
 
   return outlet;
 }
