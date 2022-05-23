@@ -11,7 +11,9 @@ import {
 import checkApiResponse from './../../utils/checkApiResponse';
 import handleApiErrors from './../../utils/handleApiErrors';
 
-import { setCookie } from './../../utils/helpers/workWithCookie';
+
+import { setLocalStorageWithExpiry } from './../../utils/helpers/workWithLocalStorage';
+
 
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/register"!;
@@ -49,8 +51,9 @@ export const registerEnhance = (formData: {name: string, email: string, password
               
               const accessToken = result.accessToken.split("Bearer ")[1];
 
-              setCookie('refreshToken', result.refreshToken);
-              setCookie('accessToken', accessToken, 20);
+              
+              setLocalStorageWithExpiry('refreshToken', result.refreshToken, (1440 * 7));
+              setLocalStorageWithExpiry('accessToken', accessToken, 20);
 
 
               dispatch(

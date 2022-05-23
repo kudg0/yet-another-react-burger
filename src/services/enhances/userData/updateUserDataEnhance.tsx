@@ -7,13 +7,15 @@ import {
   changeUserDataRequestFailed
 } from './../../slicers/userSlice';
 
-import { refreshTokens, reLoginEnhance } from './reLoginEnhance';
+import { reLoginEnhance } from './reLoginEnhance';
+import { refreshTokens } from './utils/refreshTokens';
 
 
 import checkApiResponse from './../../utils/checkApiResponse';
 import handleApiErrors from './../../utils/handleApiErrors';
 
-import { setCookie, getCookie } from './../../utils/helpers/workWithCookie';
+
+import { setLocalStorageWithExpiry, getLocalStorageWithExpiry } from './../../utils/helpers/workWithLocalStorage';
 
 
 
@@ -22,8 +24,8 @@ const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/user"!;
 export const updateUserDataEnhance = (formData: {name?: string, email?: string, password?: string}) => {
   return async ( dispatch : Dispatch ) => {
 
-    let accessToken = getCookie('accessToken'),
-        refreshToken = getCookie('refreshToken');
+    let refreshToken = getLocalStorageWithExpiry('refreshToken'),
+        accessToken = getLocalStorageWithExpiry('accessToken');
 
 
     if(!refreshToken) return;
@@ -33,11 +35,8 @@ export const updateUserDataEnhance = (formData: {name?: string, email?: string, 
 
       if(!data.success) return false;
       
-      refreshToken = data.refreshToken;
-      accessToken = data.accessToken.split("Bearer ")[1];
-
-      setCookie('refreshToken', refreshToken);
-      setCookie('accessToken', accessToken, 20);
+      refreshToken = data.refreshToken; 
+      accessToken = data.accessToken;
     }
 
     dispatch(changeUserDataRequest());

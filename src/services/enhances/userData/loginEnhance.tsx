@@ -11,7 +11,8 @@ import {
 import checkApiResponse from './../../utils/checkApiResponse';
 import handleApiErrors from './../../utils/handleApiErrors';
 
-import { setCookie } from './../../utils/helpers/workWithCookie';
+
+import { setLocalStorageWithExpiry } from './../../utils/helpers/workWithLocalStorage';
 
 
 
@@ -50,8 +51,9 @@ export const loginEnhance = (formData: {email: string, password: string}) => {
 
               const accessToken = result.accessToken.split("Bearer ")[1];
 
-              setCookie('refreshToken', result.refreshToken);
-              setCookie('accessToken', accessToken, 20);
+
+              setLocalStorageWithExpiry('refreshToken', result.refreshToken, (1440 * 7));
+              setLocalStorageWithExpiry('accessToken', accessToken, 20);
               
               
               dispatch(

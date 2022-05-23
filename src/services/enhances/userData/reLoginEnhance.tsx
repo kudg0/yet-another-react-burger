@@ -10,18 +10,21 @@ import {
 
 import checkApiResponse from './../../utils/checkApiResponse';
 import handleApiErrors from './../../utils/handleApiErrors';
+
+import { refreshTokens } from './utils/refreshTokens';
   
-import { setCookie, getCookie } from './../../utils/helpers/workWithCookie';
+  
+import { setLocalStorageWithExpiry, getLocalStorageWithExpiry } from './../../utils/helpers/workWithLocalStorage';
 
 
 
 const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/user"!;
-const apiRefreshToken : string = process.env.REACT_APP_API_BASE_URL + "/auth/token"!;
 
 export const reLoginEnhance = () => {
   return async ( dispatch : Dispatch ) => {
-    let refreshToken = getCookie('refreshToken'),
-        accessToken = getCookie('accessToken');
+    
+    let refreshToken = getLocalStorageWithExpiry('refreshToken'),
+        accessToken = getLocalStorageWithExpiry('accessToken');
 
     
     if(!refreshToken) return false;
@@ -33,10 +36,7 @@ export const reLoginEnhance = () => {
       if(!data.success) return false;
       
       refreshToken = data.refreshToken;
-      accessToken = data.accessToken.split("Bearer ")[1];
-
-      setCookie('refreshToken', refreshToken);
-      setCookie('accessToken', accessToken, 20);
+      accessToken = data.accessToken;
     }
 
 
@@ -87,21 +87,4 @@ export const reLoginEnhance = () => {
         dispatch(loginRequestFailed());
       })
   }
-}
-
-export async function refreshTokens( token : string ){
-  const response = await fetch( apiRefreshToken, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'no-referrer',
-    body: JSON.stringify({token})
-  });
-
-  return await response.json();
 }

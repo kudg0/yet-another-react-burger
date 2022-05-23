@@ -11,7 +11,8 @@ import {
 import checkApiResponse from './../../utils/checkApiResponse';
 import handleApiErrors from './../../utils/handleApiErrors';
   
-import { deleteCookie, getCookie } from './../../utils/helpers/workWithCookie';
+
+import { getLocalStorageWithExpiry, deleteLocalStorageWithExpiry } from './../../utils/helpers/workWithLocalStorage';
 
 
 
@@ -19,7 +20,7 @@ const apiUrl : string = process.env.REACT_APP_API_BASE_URL + "/auth/logout"!;
 
 export const logoutEnhance = () => {
   return async ( dispatch : Dispatch ) => {
-    let refreshToken = getCookie('refreshToken');
+    let refreshToken = getLocalStorageWithExpiry('refreshToken');
     
     if(!refreshToken) return false;
 
@@ -29,7 +30,7 @@ export const logoutEnhance = () => {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
-      credentials: 'same-origin',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -48,8 +49,8 @@ export const logoutEnhance = () => {
             dispatch( logoutRequestSuccess() );
              
 
-            deleteCookie("refreshToken");
-            deleteCookie("accessToken");
+            deleteLocalStorageWithExpiry("refreshToken");
+            deleteLocalStorageWithExpiry("accessToken");
           })
           .catch( (error: Error) => {
             handleApiErrors(error);
