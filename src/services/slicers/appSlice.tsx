@@ -64,39 +64,50 @@ const appSlice = createSlice({
     },
 
     ingredientsIncreaseCounter: (state, action: PayloadAction<IngredientType>) => {
+      // Не даем выбрать больше 10 позиций соуса/начинки
+      if ((action.payload.type === 'main' || action.payload.type === 'sauce') && action.payload.__v > 9) return;
+
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
         // Если уже была выбрана булка, убираем ее из выбранных
         if(ingredient._id !== action.payload._id && action.payload.type === 'bun' && ingredient.type === 'bun') {
           ingredient.__v = 0;
         } 
 
-        return ingredient._id !== action.payload._id ? 
-          ingredient : ( action.payload.type === 'bun' && action.payload.__v !== 0) ? 
-          ingredient : ( (action.payload.type === 'main' || action.payload.type === 'sauce') && action.payload.__v > 9) ? 
-          ingredient : { ...ingredient, __v: ++ingredient.__v};
-      })
+        return (
+          ingredient._id !== action.payload._id ?
+            ingredient : (action.payload.type === 'bun' && action.payload.__v !== 0) ?
+              ingredient : { ...ingredient, __v: ingredient.__v + 1 }
+        );
+      });;
 
+
+      // Если выбрали другую булку, убираем ее из активного ордера
       state.order.burger.ingredients = [...state.order.burger.ingredients]
         .filter( (ingredient : IngredientType) => action.payload.type === 'bun' ? ingredient.type !== 'bun' : true);
 
-      state.order.burger.ingredients.push({...action.payload, uuid: uuidv4(), __v: action.payload.__v + 1})
-
+      state.order.burger.ingredients.push({
+        ...action.payload,
+        uuid: uuidv4(),
+        __v: action.payload.__v + 1
+      });
       
-      state.order.totalAmount = [...state.order.burger.ingredients]
-        .reduce((acc: number, ingredient : IngredientType) => 
-          acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
-        , 0)
+      state.order.totalAmount = 
+        [...state.order.burger.ingredients].reduce((acc: number, ingredient: IngredientType) => {
+          return (
+            acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
+          )
+        }, 0);
     },
     ingredientsDecreaseCounter: (state, action: PayloadAction<IngredientType>) => {
+      if (action.payload.__v === 0) return;
+      
       state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => 
         ingredient._id !== action.payload._id ? 
-        ingredient : action.payload.__v === 0 ? 
         ingredient : { ...ingredient, __v: --ingredient.__v}
       )
 
       state.order.burger.ingredients = [...state.order.burger.ingredients].map( (ingredient : IngredientType) => 
         ingredient._id !== action.payload._id ? 
-        ingredient : action.payload.__v === 0 ? 
         ingredient : { ...ingredient, __v: --ingredient.__v}
       ).filter( (ingredient : IngredientType) => ingredient.__v !== 0);
 
