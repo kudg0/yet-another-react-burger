@@ -40,7 +40,7 @@ const nutritionalValues = [
 ];
 
 
-const IngredientDetails = React.memo(() => {
+const IngredientDetails: React.FunctionComponent = React.memo(() => {
 
     const location = useLocation() as LocationType;
     const state = location.state as { backgroundLocation?: Location };

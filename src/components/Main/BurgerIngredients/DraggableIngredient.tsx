@@ -8,16 +8,22 @@ import { IngredientType, ReduxStore } from './../../../services/types/';
 
 
 
-const DraggableIngredient = React.memo((props: {
-  children: React.ReactNode, 
-  ingredientData: IngredientType,
-  className: string,
-  onClick: (e : React.MouseEvent<HTMLElement>) => void
+interface IDraggabelIngredientComponent {
+  ingredientData: IngredientType;
+  className: string;
+  onClick: (e: React.MouseEvent<HTMLElement>) => void;
+}
+
+const DraggableIngredient: React.FunctionComponent<IDraggabelIngredientComponent> = React.memo(({
+  children, 
+  ingredientData,
+  className,
+  onClick,
 }) => {
 
   const [{ isDrag }, ref] = useDrag({
       type: "ingredient",
-      item: { id: props.ingredientData._id },
+      item: { id: ingredientData._id },
       collect: monitor => ({
         isDrag: monitor.isDragging()
       })
@@ -26,8 +32,8 @@ const DraggableIngredient = React.memo((props: {
 
   return (
     
-    <li ref={ref} data-id={props.ingredientData._id} className={props.className} onClick={props.onClick}>
-      {props.children}
+    <li ref={ref} data-id={ingredientData._id} className={className} onClick={onClick}>
+      {children}
     </li>
   );
 });

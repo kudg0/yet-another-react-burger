@@ -11,12 +11,15 @@ import Styles from './modal.module.scss';
 
 
 
-const modalRoot : HTMLElement = document.getElementById("root__modal")!;
+const modalRoot: HTMLElement = document.getElementById("root__modal")!;
 
+interface IModalComponent {
+  closeModalCallback?: () => void;
+}
 
-const Modal = React.memo((props: {
-  children: React.ReactNode, 
-  closeModalCallback?: () => void
+const Modal: React.FunctionComponent<IModalComponent> = React.memo(({
+  children,
+  closeModalCallback,
 }) => {
 
   const navigate = useNavigate();
@@ -38,22 +41,22 @@ const Modal = React.memo((props: {
     let nameOfKey = e.key;
 
     nameOfKey === "Escape" ? 
-      props['closeModalCallback'] ? props.closeModalCallback() : closeModal() : false;
-  }, [props, closeModal]);
+      closeModalCallback ? closeModalCallback() : closeModal() : false;
+  }, [closeModalCallback, closeModal]);
 
 
   
   return ReactDOM.createPortal(
     <div className={Styles.modalContainer} onKeyDown={handleKeyPress} tabIndex={-1} ref={modalRef}>
       <div className={Styles.modalContainer__block}>
-        {props.children}
+        {children}
 
-        <div className={Styles.modalContainer__close} onClick={props.closeModalCallback || closeModal}>
+        <div className={Styles.modalContainer__close} onClick={closeModalCallback || closeModal}>
           <CloseIcon type="primary" />
         </div>
       </div>
       
-      <ModalOverlay closeModalCallback={props.closeModalCallback || closeModal} />
+      <ModalOverlay closeModalCallback={closeModalCallback || closeModal} />
     </div>,
     modalRoot
   )

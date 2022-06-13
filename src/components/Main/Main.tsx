@@ -14,7 +14,7 @@ import Styles from './main.module.scss';
 
 
 
-const Main = React.memo(() => {
+const Main: React.FunctionComponent = React.memo(() => {
   
   return (
     <main className={Styles.mainContainer}>

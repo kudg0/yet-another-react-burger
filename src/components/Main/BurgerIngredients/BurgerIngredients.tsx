@@ -50,7 +50,7 @@ const MENU_ITEMS : {text: string, id: string, uuid: string}[] = [
 ];
 
 
-const BurgerIngredients = React.memo(() => {
+const BurgerIngredients: React.FunctionComponent = React.memo(() => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();

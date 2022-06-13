@@ -12,7 +12,7 @@ import Styles from './appHeader.module.scss';
 
 
 
-const AppHeader = React.memo(() => {
+const AppHeader: React.FunctionComponent = React.memo(() => {
 
   const location = useLocation() as LocationType;
   const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);

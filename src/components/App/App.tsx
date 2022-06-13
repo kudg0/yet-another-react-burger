@@ -13,7 +13,7 @@ import Styles from './app.module.scss';
 
 
 
-const App = React.memo(() => {
+const App: React.FunctionComponent = React.memo(() => {
   
   const dispatch = useDispatch();
 

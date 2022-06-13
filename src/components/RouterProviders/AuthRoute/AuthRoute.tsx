@@ -9,7 +9,7 @@ import { getCookie } from './../../../services/utils/helpers/workWithCookie';
 
 
 
-const AuthRoute  = ({ outlet, ...rest } : any) => {
+const AuthRoute = ({ outlet, ...rest } : any) => {
 
   const location = useLocation() as LocationType;
 

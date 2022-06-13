@@ -9,6 +9,7 @@ import Styles from './menu.module.scss';
 import getCoords from './../../../../services/utils/helpers/getCoords';
 
 
+
 const Menu = React.forwardRef((
   props: {
     menuItems: {text: string, id: string, uuid: string}[], 
@@ -20,7 +21,6 @@ const Menu = React.forwardRef((
   
   const location = useLocation();  
   const [activeMenuTab, setActiveMenuTab] = React.useState<string>( props.menuItems[0].id );
-
 
 
   const scrollToNeededSection = React.useCallback((sectionId: string) => {
