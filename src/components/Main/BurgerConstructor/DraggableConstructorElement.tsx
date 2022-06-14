@@ -17,11 +17,18 @@ import Styles from './draggableConstructorElement.module.scss';
 
 
 
-const DraggableConstructorElement = React.memo((props: {
-  className: string,
-  ingredient: IngredientType,
-  ingredientIndex: number,
-  type?: "top" | "bottom"
+interface IDraggableConstructorElementComponent {
+  className: string;
+  ingredient: IngredientType;
+  ingredientIndex: number;
+  type?: "top" | "bottom";
+}
+
+const DraggableConstructorElement: React.FunctionComponent<IDraggableConstructorElementComponent> = React.memo(({
+  className,
+  ingredient,
+  ingredientIndex,
+  type,
 }) => {
   
   const dispatch = useDispatch();
@@ -31,7 +38,7 @@ const DraggableConstructorElement = React.memo((props: {
 
   const [{ isDrag }, ref] = useDrag({
       type: "ingredient_active",
-      item: {ingredient: props.ingredient, index: props.ingredientIndex},
+      item: {ingredient: ingredient, index: ingredientIndex},
       collect: monitor => ({
         isDrag: monitor.isDragging()
       })
@@ -43,7 +50,7 @@ const DraggableConstructorElement = React.memo((props: {
         handleUpdatePosition( item.ingredient, item.index )
       },
       hover(item : {ingredient: IngredientType, index: number}, monitor){
-        if(item.index < props.ingredientIndex) setDragFromTop(true)
+        if(item.index < ingredientIndex) setDragFromTop(true)
         else setDragFromTop(false)
       },
       collect: monitor => ({
@@ -53,32 +60,32 @@ const DraggableConstructorElement = React.memo((props: {
 
 
   const handleUpdatePosition = React.useCallback(( newItem: IngredientType, newItemIndex: number ) => {
-    dispatch(ingredientUpdatePos({currentItem: newItem, currentItemIndex: newItemIndex, toNeededItemIndex: props.ingredientIndex}))
-  }, [dispatch, props.ingredientIndex])
+    dispatch(ingredientUpdatePos({currentItem: newItem, currentItemIndex: newItemIndex, toNeededItemIndex: ingredientIndex}))
+  }, [dispatch, ingredientIndex])
   const deleteIngredient = React.useCallback(() => {
-    dispatch(ingredientsDecreaseCounter(props.ingredient));
-  }, [dispatch, props.ingredient]);
+    dispatch(ingredientsDecreaseCounter(ingredient));
+  }, [dispatch, ingredient]);
   
 
 
   return (
 
-    props.type ?
-      <li className={props.className}>
+    type ?
+      <li className={className}>
         <div className={Styles.constructorWrapper} >
           <ConstructorElement
-            type={props.type}
+            type={type}
             text={
-              props.ingredient.name + (props.type === 'top' ? ' (верх)' : ' (низ)')
+              ingredient.name + (type === 'top' ? ' (верх)' : ' (низ)')
             }
             isLocked={true}
-            price={props.ingredient.price}
-            thumbnail={props.ingredient.image_mobile}
+            price={ingredient.price}
+            thumbnail={ingredient.image_mobile}
             handleClose={deleteIngredient}
           /> 
         </div>
       </li> : 
-      <li className={props.className} ref={dropTarget}>
+      <li className={className} ref={dropTarget}>
         <div 
           className={
             Styles.constructorWrapper + ' ' + 
@@ -94,9 +101,9 @@ const DraggableConstructorElement = React.memo((props: {
             <DragIcon type="primary" />
           </div>
           <ConstructorElement
-            text={props.ingredient.name}
-            price={props.ingredient.price}
-            thumbnail={props.ingredient.image_mobile}
+            text={ingredient.name}
+            price={ingredient.price}
+            thumbnail={ingredient.image_mobile}
             handleClose={deleteIngredient}
           />
         </div>

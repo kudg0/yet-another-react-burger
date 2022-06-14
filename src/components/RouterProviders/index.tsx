@@ -23,7 +23,7 @@ import IngredientDetails from './../Modals/IngredientDetails/IngredientDetails';
 
 
 
-const RoutingProvider = React.memo(() => {
+const RoutingProvider: React.FunctionComponent = React.memo(() => {
 
   const location = useLocation();
   const state = location.state as { backgroundLocation?: Location };

@@ -24,12 +24,20 @@ import Styles from './authForm.module.scss';
 
 
 
-const AuthForm = React.memo((props: {
-  dispatchCallbackFn: (dataFromForm : {name?: string, email?: string, password?: string}) => void,
-  formData: FormDataType,
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>,
-  failedMessage: string,
-  textOnButton: string
+interface IAuthFormComponent {
+  dispatchCallbackFn: (dataFromForm: { name?: string, email?: string, password?: string }) => void;
+  formData: FormDataType;
+  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
+  failedMessage: string;
+  textOnButton: string;
+}
+
+const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({ 
+  dispatchCallbackFn,  
+  formData,
+  setFormData,
+  failedMessage,
+  textOnButton,
 }) => {
 
   const dispatch = useDispatch();
@@ -39,7 +47,7 @@ const AuthForm = React.memo((props: {
   const { request } = user;
 
 
-  const { handleChange, isFailed, setIsFailed } = useFormAndValidation(props.formData, props.setFormData);
+  const { handleChange, isFailed, setIsFailed } = useFormAndValidation(formData, setFormData);
 
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
 
@@ -70,15 +78,15 @@ const AuthForm = React.memo((props: {
     e.preventDefault();
     if(request.pending) return;
 
-    let dataFromForm = [...props.formData].reduce( (prevValue, dataInput: InputDataType) => {
+    let dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
       return (
         {...prevValue, [dataInput.name]: dataInput.value}
       )
     }, {})
 
-    props.dispatchCallbackFn(dataFromForm)
+    dispatchCallbackFn(dataFromForm)
     
-  }, [request.pending, props]);
+  }, [request.pending, dispatchCallbackFn, formData]);
 
 
 
@@ -94,7 +102,7 @@ const AuthForm = React.memo((props: {
       }}
     >
       {
-        props.formData.map( (dataInput : InputDataType, dataInputIndex: number) => (
+        formData.map( (dataInput : InputDataType, dataInputIndex: number) => (
           <label 
             key={dataInput.name}
             className={Styles.formContainer__input}
@@ -133,12 +141,12 @@ const AuthForm = React.memo((props: {
       <label className={Styles.formContainer__hint}>
         <span> 
           {
-            isFailed && props.failedMessage
+            isFailed && failedMessage
           }
         </span>
       </label>
       <Button type="primary" size="medium">
-        { props.textOnButton }
+        { textOnButton }
       </Button>
     </form>
   );

@@ -11,7 +11,7 @@ import Styles from './profileContainer.module.scss';
 
 
 
-const ProfileContainer = React.memo( () => {
+const ProfileContainer: React.FunctionComponent = React.memo(() => {
   
   const location = useLocation();
 

@@ -31,7 +31,7 @@ import Styles from './burgerConstructor.module.scss';
 
 
 
-const BurgerConstructor = React.memo(() => {
+const BurgerConstructor: React.FunctionComponent = React.memo(() => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();

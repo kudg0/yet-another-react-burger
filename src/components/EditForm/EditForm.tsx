@@ -24,11 +24,18 @@ import Styles from './editForm.module.scss';
 
 
 
-const EditForm = React.memo((props: {
-  dispatchCallbackFn: (dataFromForm : {name?: string, email?: string, password?: string}) => void,
-  formData: FormDataType,
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>,
-  defaultValueForPassword: string
+interface IEditFormComponent {
+  dispatchCallbackFn: (dataFromForm: { name?: string, email?: string, password?: string }) => void;
+  formData: FormDataType;
+  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
+  defaultValueForPassword: string;
+}
+
+const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
+  dispatchCallbackFn,
+  formData,
+  setFormData,
+  defaultValueForPassword,
 }) => {
 
   const dispatch = useDispatch();
@@ -38,7 +45,7 @@ const EditForm = React.memo((props: {
   const { request } = user;
 
 
-  const { handleChange, isFailed, setIsFailed } = useFormAndValidation(props.formData, props.setFormData);
+  const { handleChange, isFailed, setIsFailed } = useFormAndValidation(formData, setFormData);
   
   const [inputsSuccessChanging, setInputsSuccessChanging] = React.useState<boolean[]>([false, false, false]);
   const [inputsCanBeChanged, setInputsCanBeChanged] = React.useState<boolean[]>([false, false, false]);
@@ -74,16 +81,16 @@ const EditForm = React.memo((props: {
   */
     React.useEffect( () => {
       setDataChanged( 
-        props.formData.filter( editInput => {
+        formData.filter( editInput => {
           return (
             editInput.name === 'password' ?
               editInput.value.length !== 0 ? 
-                editInput.value !== props.defaultValueForPassword : false :
+                editInput.value !== defaultValueForPassword : false :
               editInput.value !== user.data[editInput.name as 'name' | 'email']
           )
         }).length > 0
       )
-    }, [ user.data, props.defaultValueForPassword, props.formData, setDataChanged ])
+    }, [ user.data, defaultValueForPassword, formData, setDataChanged ])
 
   /* 
     Трекаем включение редактирования на инпуте пароля:
@@ -91,31 +98,31 @@ const EditForm = React.memo((props: {
       если отменили изменения – ставим дефолтное значение;
   */
     const changePasswordValueOnEdit = React.useCallback(( isCanBeChanged : boolean ) => {
-      const newDataState = [ ...props.formData ],
+      const newDataState = [ ...formData ],
             neededIndex = inputsCanBeChanged.length - 1;
 
 
       if( isCanBeChanged ){
         newDataState[ neededIndex ].value = '';
       } else {
-        newDataState[ neededIndex ].value = props.defaultValueForPassword;
+        newDataState[ neededIndex ].value = defaultValueForPassword;
       }
 
-      props.setFormData( newDataState );
+      setFormData( newDataState );
 
-    }, [ props, inputsCanBeChanged ]);
+    }, [inputsCanBeChanged, defaultValueForPassword, formData, setFormData]);
 
 
   const movePasswordToDefaultState = React.useCallback(() => {
-    const newState = [ ...props.formData ].map( (dataInput: InputDataType) => {
+    const newState = [ ...formData ].map( (dataInput: InputDataType) => {
       return (
         dataInput.name !== 'password' ? 
-          dataInput : {...dataInput, value: props.defaultValueForPassword}
+          dataInput : {...dataInput, value: defaultValueForPassword}
       )
     });
 
-    props.setFormData( newState ); setInputsCanBeChanged([false, false, false]);  
-  }, [ props, setInputsCanBeChanged ]);
+    setFormData( newState ); setInputsCanBeChanged([false, false, false]);  
+  }, [setInputsCanBeChanged, defaultValueForPassword, formData, setFormData]);
 
 
 
@@ -123,12 +130,12 @@ const EditForm = React.memo((props: {
     e.preventDefault();
     if(request.pending) return;
 
-    const dataFromForm = [...props.formData].reduce( (prevValue, dataInput: InputDataType) => {
+    const dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
       return (
         dataInput.name !== 'password' ? 
           dataInput.value === user.data[dataInput.name as 'name' | 'email'] ? 
             prevValue : {...prevValue, [dataInput.name]: dataInput.value} :
-          dataInput.name === 'password' && dataInput.value === props.defaultValueForPassword ?
+          dataInput.name === 'password' && dataInput.value === defaultValueForPassword ?
             prevValue : {...prevValue, [dataInput.name]: dataInput.value}
       )
     }, {})
@@ -136,10 +143,10 @@ const EditForm = React.memo((props: {
     let isChangegData = [false, false, false];
     
     for(let name in dataFromForm) {
-      const selectedDataItem = [...props.formData].find( (dataInput: InputDataType) => dataInput.name === name);
+      const selectedDataItem = [...formData].find( (dataInput: InputDataType) => dataInput.name === name);
 
       if(!selectedDataItem) return;
-      const selectedDataItem__index = [...props.formData].indexOf(selectedDataItem);
+      const selectedDataItem__index = [...formData].indexOf(selectedDataItem);
       if(selectedDataItem__index === -1) return;
 
       isChangegData[selectedDataItem__index] = true;
@@ -149,9 +156,9 @@ const EditForm = React.memo((props: {
     setInputsSuccessChanging(isChangegData);
 
 
-    props.dispatchCallbackFn(dataFromForm)
+    dispatchCallbackFn(dataFromForm)
     
-  }, [request.pending, props, movePasswordToDefaultState, user.data, setInputsSuccessChanging]);
+  }, [request.pending, movePasswordToDefaultState, user.data, setInputsSuccessChanging, defaultValueForPassword, dispatchCallbackFn, formData]);
 
 
   const handleReset : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
@@ -159,17 +166,17 @@ const EditForm = React.memo((props: {
     if(request.pending) return false;
 
 
-    const newState = [...props.formData].map((dataInput: InputDataType) => {
+    const newState = [...formData].map((dataInput: InputDataType) => {
       return (
         dataInput.name !== 'password' ? 
-          {...dataInput, value: user.data[dataInput.name as 'name' | 'email'] || ''} : {...dataInput, value: props.defaultValueForPassword}
+          {...dataInput, value: user.data[dataInput.name as 'name' | 'email'] || ''} : {...dataInput, value: defaultValueForPassword}
       )
     });
 
-    props.setFormData(newState);
+    setFormData(newState);
     
     setInputsCanBeChanged([false, false, false])
-  }, [request.pending, user.data, props, setInputsCanBeChanged]);
+  }, [request.pending, user.data, setInputsCanBeChanged, defaultValueForPassword, formData, setFormData]);
 
 
 
@@ -186,7 +193,7 @@ const EditForm = React.memo((props: {
       }}
     >
       {
-        props.formData.map( (dataInput : InputDataType, dataInputIndex: number) => (
+        formData.map( (dataInput : InputDataType, dataInputIndex: number) => (
           <label 
             key={dataInput.name}
             className={Styles.formContainer__input}
@@ -201,7 +208,7 @@ const EditForm = React.memo((props: {
                 name={ dataInput.name }
                 error={ isFailed }
                 onIconClick={ 
-                dataInputIndex !== props.formData.length - 1 ? 
+                dataInputIndex !== formData.length - 1 ? 
                   () => {
                     let newState = [...inputsCanBeChanged];
                     newState.splice(dataInputIndex, 1, !inputsCanBeChanged[dataInputIndex]);

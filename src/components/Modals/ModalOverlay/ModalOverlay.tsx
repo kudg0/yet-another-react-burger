@@ -5,12 +5,16 @@ import Styles from './modalOverlay.module.scss';
 
 
 
-const ModalOverlay = React.memo((props: {
+interface IModalOverlayComponent {
   closeModalCallback: () => void
+}
+
+const ModalOverlay: React.FunctionComponent<IModalOverlayComponent> = React.memo(({
+  closeModalCallback,
 }) => {
 
   return (
-    <div className={Styles.modalOverlay} onClick={props.closeModalCallback} />
+    <div className={Styles.modalOverlay} onClick={closeModalCallback} />
   )
 })
 

@@ -12,9 +12,14 @@ import Styles from './orderDetails.module.scss';
 
 
 
-const OfferInfo = React.memo((props: {
+interface IOfferInfoComponent {
   id: number,
-  name: string 
+  name: string
+}
+
+const OfferInfo: React.FunctionComponent<IOfferInfoComponent> = React.memo(({
+  id,
+  name,
 }) => {
  
   return (
@@ -22,10 +27,10 @@ const OfferInfo = React.memo((props: {
     <div className={Styles.offerDetails}>
       <div className={Styles.offerDetails__id}>
         <span className={Styles.id__title}>
-          {props.id}
+          {id}
         </span>
         <span className={Styles.id__subtitle}>
-          {props.name}
+          {name}
         </span>
       </div>
       <div className={Styles.offerDetails__info}>
