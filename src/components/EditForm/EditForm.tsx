@@ -25,14 +25,14 @@ import Styles from './editForm.module.scss';
 
 
 interface IEditFormComponent {
-  dispatchCallbackFn: (dataFromForm: { name?: string, email?: string, password?: string }) => void;
+  dispatchCallbackFn: (dataFromForm: { name?: string, email?: string, password?: string }) => void,
   formData: FormDataType;
   setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
   defaultValueForPassword: string;
-}
+};
 
 const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
-  dispatchCallbackFn,
+  dispatchCallbackFn, 
   formData,
   setFormData,
   defaultValueForPassword,
@@ -110,7 +110,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
 
       setFormData( newDataState );
 
-    }, [inputsCanBeChanged, defaultValueForPassword, formData, setFormData]);
+    }, [ defaultValueForPassword, formData, setFormData, inputsCanBeChanged ]);
 
 
   const movePasswordToDefaultState = React.useCallback(() => {
@@ -122,7 +122,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
     });
 
     setFormData( newState ); setInputsCanBeChanged([false, false, false]);  
-  }, [setInputsCanBeChanged, defaultValueForPassword, formData, setFormData]);
+  }, [defaultValueForPassword, formData, setFormData, setInputsCanBeChanged]);
 
 
 
@@ -158,7 +158,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
 
     dispatchCallbackFn(dataFromForm)
     
-  }, [request.pending, movePasswordToDefaultState, user.data, setInputsSuccessChanging, defaultValueForPassword, dispatchCallbackFn, formData]);
+  }, [ defaultValueForPassword, formData, dispatchCallbackFn, request.pending, movePasswordToDefaultState, user.data, setInputsSuccessChanging]);
 
 
   const handleReset : (e: React.FormEvent<HTMLFormElement>) => void = React.useCallback((e) => {
@@ -176,7 +176,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
     setFormData(newState);
     
     setInputsCanBeChanged([false, false, false])
-  }, [request.pending, user.data, setInputsCanBeChanged, defaultValueForPassword, formData, setFormData]);
+  }, [ defaultValueForPassword, formData, setFormData, request.pending, user.data, setInputsCanBeChanged ]);
 
 
 
