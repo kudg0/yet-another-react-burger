@@ -21,7 +21,7 @@ import Modal from './../../Modals/Modal';
 import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
 
 
-import { IngredientType, ReduxStore } from './../../../services/types/';
+import { IIngredientType, IReduxStore } from './../../../services/types/';
 
 
 import LazyLoadPicture from './../../../services/utils/LazyLoad/';
@@ -55,7 +55,7 @@ const BurgerIngredients: React.FunctionComponent = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { ingredients, order } = useSelector( (store : ReduxStore) => store.app, shallowEqual);
+  const { ingredients, order } = useSelector( (store : IReduxStore) => store.app, shallowEqual);
   const { id } = useParams<"id">();
 
   const menuRef = React.useRef<{handleScrollOfContent: () => void}>(null);
@@ -75,7 +75,7 @@ const BurgerIngredients: React.FunctionComponent = React.memo(() => {
     const target : HTMLElement = e.currentTarget!,
           target__id : string = target.getAttribute("data-id")!;
 
-    const selectedIngredient : IngredientType = ingredients.data.filter( (ingredient : IngredientType) => ingredient._id === target__id ).shift()!;
+    const selectedIngredient : IIngredientType = ingredients.data.filter( (ingredient : IIngredientType) => ingredient._id === target__id ).shift()!;
 
 
     dispatch(ingredientsIncreaseCounter(selectedIngredient))
@@ -140,8 +140,8 @@ const BurgerIngredients: React.FunctionComponent = React.memo(() => {
                 <ul className={Styles.section__items}>
                   {
                     ingredients.data && ingredients.data.length > 0 && 
-                    ingredients.data.filter( (ingredient: IngredientType) => ingredient.type === MENU_ITEM.id)
-                    .map( (ingredient: IngredientType, item__index: number) => {
+                    ingredients.data.filter( (ingredient: IIngredientType) => ingredient.type === MENU_ITEM.id)
+                    .map( (ingredient: IIngredientType, item__index: number) => {
                       return (
                         <DraggableIngredient 
                           key={ingredient.uuid} 

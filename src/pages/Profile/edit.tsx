@@ -9,9 +9,9 @@ import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-component
 
 
 import { 
-  ReduxStore,
-  FormDataType,
-  InputDataType
+  IReduxStore,
+  TFormDataType,
+  IInputDataType
 } from './../../services/types/';
 
 
@@ -26,14 +26,14 @@ const Edit = React.memo( () => {
 
   const dispatch = useDispatch();
 
-  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const user = useSelector( (store : IReduxStore) => store.user, shallowEqual);
   const { request } = user;
 
 
 
   const defaultValueForPassword = '**********';
 
-  const [formData, setFormData] = React.useState<FormDataType>([
+  const [formData, setFormData] = React.useState<TFormDataType>([
     {  
       type: "text",
       name: "name",
@@ -56,7 +56,7 @@ const Edit = React.memo( () => {
 
 
   React.useEffect(() => {
-    const newState = [...formData].map( (dataInput: InputDataType) => {
+    const newState = [...formData].map( (dataInput: IInputDataType) => {
       return (
         dataInput.name === 'password' ? 
           {...dataInput} : {...dataInput, value: user.data[dataInput.name as 'name' | 'email'] || dataInput.value}

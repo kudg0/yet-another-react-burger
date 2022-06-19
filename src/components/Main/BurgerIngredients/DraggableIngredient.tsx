@@ -4,12 +4,12 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 
 
-import { IngredientType, ReduxStore } from './../../../services/types/';
+import { IIngredientType, IReduxStore } from './../../../services/types/';
 
 
 
 interface IDraggabelIngredientComponent {
-  ingredientData: IngredientType;
+  ingredientData: IIngredientType;
   className: string;
   onClick: (e: React.MouseEvent<HTMLElement>) => void;
 }

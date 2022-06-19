@@ -5,7 +5,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { Logo, ProfileIcon, BurgerIcon, ListIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 
-import { LocationType, ReduxStore } from './../../services/types/';
+import { ILocationType, IReduxStore } from './../../services/types/';
 
 
 import Styles from './appHeader.module.scss';
@@ -14,8 +14,8 @@ import Styles from './appHeader.module.scss';
 
 const AppHeader: React.FunctionComponent = React.memo(() => {
 
-  const location = useLocation() as LocationType;
-  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const location = useLocation() as ILocationType;
+  const user = useSelector( (store : IReduxStore) => store.user, shallowEqual);
   
   const { request } = user;
   const { accessToken } = user.data;

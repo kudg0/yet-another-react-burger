@@ -11,10 +11,10 @@ import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-component
 
 
 import { 
-  LocationType, 
-  ReduxStore,
-  FormDataType,
-  InputDataType,
+  ILocationType, 
+  IReduxStore,
+  TFormDataType,
+  IInputDataType,
 } from './../../services/types/';
 
 
@@ -26,8 +26,8 @@ import Styles from './editForm.module.scss';
 
 interface IEditFormComponent {
   dispatchCallbackFn: (dataFromForm: { name?: string, email?: string, password?: string }) => void,
-  formData: FormDataType;
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
+  formData: TFormDataType;
+  setFormData: React.Dispatch<React.SetStateAction<TFormDataType>>;
   defaultValueForPassword: string;
 };
 
@@ -41,7 +41,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
   const dispatch = useDispatch();
 
 
-  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const user = useSelector( (store : IReduxStore) => store.user, shallowEqual);
   const { request } = user;
 
 
@@ -114,7 +114,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
 
 
   const movePasswordToDefaultState = React.useCallback(() => {
-    const newState = [ ...formData ].map( (dataInput: InputDataType) => {
+    const newState = [ ...formData ].map( (dataInput: IInputDataType) => {
       return (
         dataInput.name !== 'password' ? 
           dataInput : {...dataInput, value: defaultValueForPassword}
@@ -130,7 +130,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
     e.preventDefault();
     if(request.pending) return;
 
-    const dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
+    const dataFromForm = [...formData].reduce( (prevValue, dataInput: IInputDataType) => {
       return (
         dataInput.name !== 'password' ? 
           dataInput.value === user.data[dataInput.name as 'name' | 'email'] ? 
@@ -143,7 +143,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
     let isChangegData = [false, false, false];
     
     for(let name in dataFromForm) {
-      const selectedDataItem = [...formData].find( (dataInput: InputDataType) => dataInput.name === name);
+      const selectedDataItem = [...formData].find( (dataInput: IInputDataType) => dataInput.name === name);
 
       if(!selectedDataItem) return;
       const selectedDataItem__index = [...formData].indexOf(selectedDataItem);
@@ -166,7 +166,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
     if(request.pending) return false;
 
 
-    const newState = [...formData].map((dataInput: InputDataType) => {
+    const newState = [...formData].map((dataInput: IInputDataType) => {
       return (
         dataInput.name !== 'password' ? 
           {...dataInput, value: user.data[dataInput.name as 'name' | 'email'] || ''} : {...dataInput, value: defaultValueForPassword}
@@ -193,7 +193,7 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
       }}
     >
       {
-        formData.map( (dataInput : InputDataType, dataInputIndex: number) => (
+        formData.map( (dataInput : IInputDataType, dataInputIndex: number) => (
           <label 
             key={dataInput.name}
             className={Styles.formContainer__input}

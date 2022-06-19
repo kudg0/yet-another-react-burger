@@ -20,7 +20,7 @@ import Modal from './../../Modals/Modal';
 import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 
-import { LocationType, IngredientType, ReduxStore } from './../../../services/types/';
+import { ILocationType, IIngredientType, IReduxStore } from './../../../services/types/';
 
 
 import checkApiResponse from './../../../services/utils/checkApiResponse';
@@ -35,11 +35,11 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation() as LocationType;
+  const location = useLocation() as ILocationType;
 
-  const ingredients = useSelector( (store : ReduxStore) => store.app.ingredients, shallowEqual);
-  const { orderId, totalAmount, burger, request } = useSelector( (store : ReduxStore) => store.app.order, shallowEqual);
-  const { accessToken } = useSelector( (store : ReduxStore) => store.user.data, shallowEqual);
+  const ingredients = useSelector( (store : IReduxStore) => store.app.ingredients, shallowEqual);
+  const { orderId, totalAmount, burger, request } = useSelector( (store : IReduxStore) => store.app.order, shallowEqual);
+  const { accessToken } = useSelector( (store : IReduxStore) => store.user.data, shallowEqual);
 
   const [openOrderDetails, setOpenOrderDetails] = React.useState<boolean>(false);
   const [orderDetails, setOrderDetails] = React.useState<{ id: number, name: string }>( {id: 0, name: ''} )
@@ -62,8 +62,8 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
 
 
   const handleIncreaseCounter = React.useCallback(( ingredientId : string ) => {
-    const selectedIngredient : IngredientType = ingredients.data
-      .filter( (ingredient : IngredientType) => ingredient._id === ingredientId ).shift()!;
+    const selectedIngredient : IIngredientType = ingredients.data
+      .filter( (ingredient : IIngredientType) => ingredient._id === ingredientId ).shift()!;
 
 
     dispatch(ingredientsIncreaseCounter(selectedIngredient))
@@ -76,7 +76,7 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
     const target : HTMLElement = e.currentTarget!;
 
     const objForServer : {ingredients: string[]} = {
-      ingredients: burger.ingredients.map( (activeIngredient : IngredientType) => activeIngredient._id)
+      ingredients: burger.ingredients.map( (activeIngredient : IIngredientType) => activeIngredient._id)
     }
 
     dispatch( submitOrderEnhance( objForServer ) as any)
@@ -99,8 +99,8 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
         <ul className={Styles.burgerConstructorContainer__header}>
           {
             burger.ingredients
-              .filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
-              .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+              .filter( (activeIngredient: IIngredientType) => activeIngredient.type === "bun")
+              .map( (activeIngredient: IIngredientType, activeIngredient__index: number) => {
                 return (
                   <DraggableConstructorElement 
                     key={activeIngredient.uuid} 
@@ -117,8 +117,8 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
         <ul className={Styles.burgerConstructorContainer__main}>
           {
             burger.ingredients
-              .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun")
-              .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+              .filter( (activeIngredient: IIngredientType) => activeIngredient.type !== "bun")
+              .map( (activeIngredient: IIngredientType, activeIngredient__index: number) => {
                 return (
                   <DraggableConstructorElement 
                     key={activeIngredient.uuid} 
@@ -134,8 +134,8 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
         <ul className={Styles.burgerConstructorContainer__footer}>
           {
             burger.ingredients
-              .filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun")
-              .map( (activeIngredient: IngredientType, activeIngredient__index: number) => {
+              .filter( (activeIngredient: IIngredientType) => activeIngredient.type === "bun")
+              .map( (activeIngredient: IIngredientType, activeIngredient__index: number) => {
                 return (
                   <DraggableConstructorElement 
                     key={activeIngredient.uuid} 
@@ -161,8 +161,8 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
           </div>
           {
             (
-              burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0 &&
-              burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0
+              burger.ingredients.filter( (activeIngredient : IIngredientType) => activeIngredient.type === "bun").length > 0 &&
+              burger.ingredients.filter( (activeIngredient : IIngredientType) => activeIngredient.type === "main").length > 0
             ) ?
             <div className={Styles.total__button}>
               <Button type="primary" size="medium" onClick={showOrderDetails}>
@@ -175,8 +175,8 @@ const BurgerConstructor: React.FunctionComponent = React.memo(() => {
             <div className={Styles.total__button + " " + Styles.total__button_disabled} >
               <Button type="primary" size="medium">
                 {
-                  (burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "bun").length > 0) ? 
-                  "Осталось выбрать начинку 🥓" : burger.ingredients.filter( (activeIngredient : IngredientType) => activeIngredient.type === "main").length > 0 ? 
+                  (burger.ingredients.filter( (activeIngredient : IIngredientType) => activeIngredient.type === "bun").length > 0) ? 
+                  "Осталось выбрать начинку 🥓" : burger.ingredients.filter( (activeIngredient : IIngredientType) => activeIngredient.type === "main").length > 0 ? 
                   "Осталось выбрать булку 🥯" : "Выберите булку и начинку 🍔"
                 }
               </Button>

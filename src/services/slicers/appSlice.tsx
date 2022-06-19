@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 import { 
-  IngredientType, 
-  ReduxStore__App
+  IIngredientType, 
+  IReduxStore__App
 } from './../types/';
 
 
@@ -37,7 +37,7 @@ const appSlice = createSlice({
         failed: false
       }
     }
-  } as ReduxStore__App,
+  } as IReduxStore__App,
   reducers: {
     ingredientsRequest: (state) => {
       state.ingredients.request = {
@@ -46,7 +46,7 @@ const appSlice = createSlice({
         failed: false,
       }
     },
-    ingredientsRequestSuccess: (state, action: PayloadAction<IngredientType[]>) => {
+    ingredientsRequestSuccess: (state, action: PayloadAction<IIngredientType[]>) => {
       state.ingredients.data = action.payload;
 
       state.ingredients.request = {
@@ -63,11 +63,11 @@ const appSlice = createSlice({
       }
     },
 
-    ingredientsIncreaseCounter: (state, action: PayloadAction<IngredientType>) => {
+    ingredientsIncreaseCounter: (state, action: PayloadAction<IIngredientType>) => {
       // Не даем выбрать больше 10 позиций соуса/начинки
       if ((action.payload.type === 'main' || action.payload.type === 'sauce') && action.payload.__v > 9) return;
 
-      state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
+      state.ingredients.data = [...state.ingredients.data].map( (ingredient : IIngredientType) => {
         // Если уже была выбрана булка, убираем ее из выбранных
         if(ingredient._id !== action.payload._id && action.payload.type === 'bun' && ingredient.type === 'bun') {
           ingredient.__v = 0;
@@ -83,7 +83,7 @@ const appSlice = createSlice({
 
       // Если выбрали другую булку, убираем ее из активного ордера
       state.order.burger.ingredients = [...state.order.burger.ingredients]
-        .filter( (ingredient : IngredientType) => action.payload.type === 'bun' ? ingredient.type !== 'bun' : true);
+        .filter( (ingredient : IIngredientType) => action.payload.type === 'bun' ? ingredient.type !== 'bun' : true);
 
       state.order.burger.ingredients.push({
         ...action.payload,
@@ -92,33 +92,33 @@ const appSlice = createSlice({
       });
       
       state.order.totalAmount = 
-        [...state.order.burger.ingredients].reduce((acc: number, ingredient: IngredientType) => {
+        [...state.order.burger.ingredients].reduce((acc: number, ingredient: IIngredientType) => {
           return (
             acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
           )
         }, 0);
     },
-    ingredientsDecreaseCounter: (state, action: PayloadAction<IngredientType>) => {
+    ingredientsDecreaseCounter: (state, action: PayloadAction<IIngredientType>) => {
       if (action.payload.__v === 0) return;
       
-      state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => 
+      state.ingredients.data = [...state.ingredients.data].map( (ingredient : IIngredientType) => 
         ingredient._id !== action.payload._id ? 
         ingredient : { ...ingredient, __v: --ingredient.__v}
       )
 
-      state.order.burger.ingredients = [...state.order.burger.ingredients].map( (ingredient : IngredientType) => 
+      state.order.burger.ingredients = [...state.order.burger.ingredients].map( (ingredient : IIngredientType) => 
         ingredient._id !== action.payload._id ? 
         ingredient : { ...ingredient, __v: --ingredient.__v}
-      ).filter( (ingredient : IngredientType) => ingredient.__v !== 0);
+      ).filter( (ingredient : IIngredientType) => ingredient.__v !== 0);
 
 
       state.order.totalAmount = [...state.order.burger.ingredients]
-        .reduce((acc: number, ingredient : IngredientType) => 
+        .reduce((acc: number, ingredient : IIngredientType) => 
           acc + (ingredient.price + (ingredient.type === 'bun' ? ingredient.price : 0))
         , 0)
     },
     ingredientsReset: (state) => {
-      state.ingredients.data = [...state.ingredients.data].map( (ingredient : IngredientType) => {
+      state.ingredients.data = [...state.ingredients.data].map( (ingredient : IIngredientType) => {
         return { ...ingredient, __v: 0}
       })
 
@@ -131,9 +131,9 @@ const appSlice = createSlice({
         }
       }
     },
-    ingredientUpdatePos: (state, action: PayloadAction<{currentItem: IngredientType, currentItemIndex: number, toNeededItemIndex: number}>) => {
+    ingredientUpdatePos: (state, action: PayloadAction<{currentItem: IIngredientType, currentItemIndex: number, toNeededItemIndex: number}>) => {
       let ingredientsWithoutBun = [...state.order.burger.ingredients]
-        .filter( (activeIngredient: IngredientType) => activeIngredient.type !== "bun");
+        .filter( (activeIngredient: IIngredientType) => activeIngredient.type !== "bun");
       
       ingredientsWithoutBun.splice(
         action.payload.toNeededItemIndex < action.payload.currentItemIndex ? action.payload.toNeededItemIndex : action.payload.toNeededItemIndex + 1, 
@@ -145,12 +145,12 @@ const appSlice = createSlice({
 
 
       state.order.burger.ingredients = [
-        ...[...state.order.burger.ingredients].filter( (activeIngredient: IngredientType) => activeIngredient.type === "bun"), 
+        ...[...state.order.burger.ingredients].filter( (activeIngredient: IIngredientType) => activeIngredient.type === "bun"), 
         ...ingredientsWithoutBun
       ];
     },
 
-    setClickedIngredient: (state, action: PayloadAction<{data: IngredientType}>) => {
+    setClickedIngredient: (state, action: PayloadAction<{data: IIngredientType}>) => {
       state.clickedIngredient = {
         isShow: true,
         data: action.payload.data

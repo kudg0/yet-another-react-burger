@@ -1,12 +1,12 @@
 import {useState, useCallback} from 'react';
 
 
-import { FormDataType } from './../types/';
+import { TFormDataType } from './../types/';
 
 
 const useFormAndValidation =( 
   initValues? : any, 
-  initSetValues? : React.Dispatch<React.SetStateAction<FormDataType>>
+  initSetValues? : React.Dispatch<React.SetStateAction<TFormDataType>>
 ) => {
 
   const [ values, setValues ] = useState({});

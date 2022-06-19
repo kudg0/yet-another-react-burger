@@ -8,7 +8,7 @@ import {
 } from './../../slicers/userSlice';
 
 
-import { IngredientType } from './../../../services/types/';
+import { IIngredientType } from './../../../services/types/';
 
 
 import checkApiResponse from './../../utils/checkApiResponse';

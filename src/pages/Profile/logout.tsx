@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { logoutEnhance } from './../../services/enhances/';
 
-import { LocationType } from './../../services/types/';
+import { ILocationType } from './../../services/types/';
 
 
 

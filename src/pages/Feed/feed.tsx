@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 
-import { LocationType } from './../../services/types/'
+import { ILocationType } from './../../services/types/'
 
 
 import Styles from './feed.module.scss';
@@ -11,7 +11,7 @@ import Styles from './feed.module.scss';
 
 const Feed = React.memo( () => {
 
-  const location = useLocation() as LocationType;
+  const location = useLocation() as ILocationType;
   const from = location.state?.from?.pathname || '/';
 
 

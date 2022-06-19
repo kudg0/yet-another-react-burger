@@ -11,10 +11,10 @@ import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-component
 
 
 import { 
-  LocationType, 
-  ReduxStore,
-  FormDataType,
-  InputDataType,
+  ILocationType, 
+  IReduxStore,
+  TFormDataType,
+  IInputDataType,
 } from './../../services/types/';
 
 
@@ -26,8 +26,8 @@ import Styles from './authForm.module.scss';
 
 interface IAuthFormComponent {
   dispatchCallbackFn: (dataFromForm: { name?: string, email?: string, password?: string }) => void;
-  formData: FormDataType;
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
+  formData: TFormDataType;
+  setFormData: React.Dispatch<React.SetStateAction<TFormDataType>>;
   failedMessage: string;
   textOnButton: string;
 }
@@ -43,7 +43,7 @@ const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({
   const dispatch = useDispatch();
 
 
-  const user = useSelector( (store : ReduxStore) => store.user, shallowEqual);
+  const user = useSelector( (store : IReduxStore) => store.user, shallowEqual);
   const { request } = user;
 
 
@@ -78,7 +78,7 @@ const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({
     e.preventDefault();
     if(request.pending) return;
 
-    let dataFromForm = [...formData].reduce( (prevValue, dataInput: InputDataType) => {
+    let dataFromForm = [...formData].reduce( (prevValue, dataInput: IInputDataType) => {
       return (
         {...prevValue, [dataInput.name]: dataInput.value}
       )
@@ -102,7 +102,7 @@ const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({
       }}
     >
       {
-        formData.map( (dataInput : InputDataType, dataInputIndex: number) => (
+        formData.map( (dataInput : IInputDataType, dataInputIndex: number) => (
           <label 
             key={dataInput.name}
             className={Styles.formContainer__input}

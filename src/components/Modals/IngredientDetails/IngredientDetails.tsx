@@ -11,7 +11,7 @@ import {
 import Modal from './../Modal';
 
 
-import { IngredientType, LocationType, ReduxStore } from './../../../services/types/';
+import { IIngredientType, ILocationType, IReduxStore } from './../../../services/types/';
 
 
 import LazyLoadPicture from './../../../services/utils/LazyLoad/';
@@ -42,18 +42,18 @@ const nutritionalValues = [
 
 const IngredientDetails: React.FunctionComponent = React.memo(() => {
 
-    const location = useLocation() as LocationType;
+    const location = useLocation() as ILocationType;
     const state = location.state as { backgroundLocation?: Location };
 
-    const ingredients = useSelector( (store : ReduxStore) => store.app.ingredients.data, shallowEqual);
+    const ingredients = useSelector( (store : IReduxStore) => store.app.ingredients.data, shallowEqual);
 
-    const [selectedIngredient, setSelectedIngredient] = React.useState<IngredientType | null>(null)
+    const [selectedIngredient, setSelectedIngredient] = React.useState<IIngredientType | null>(null)
     const { id } = useParams<"id">();
 
 
 
     React.useEffect(() => {
-      const neededIngredient = ingredients.filter( (ingredient : IngredientType) => ingredient._id === id ).shift()!;
+      const neededIngredient = ingredients.filter( (ingredient : IIngredientType) => ingredient._id === id ).shift()!;
       
       if(!neededIngredient) return;
       setSelectedIngredient( neededIngredient )
@@ -94,7 +94,7 @@ const IngredientDetails: React.FunctionComponent = React.memo(() => {
                     {nutritionalValue.name}
                   </span>
                   <span className={Styles.detail__prop}>
-                    {selectedIngredient[nutritionalValue.id as keyof IngredientType]}
+                    {selectedIngredient[nutritionalValue.id as keyof IIngredientType]}
                   </span>
                 </div>
               )

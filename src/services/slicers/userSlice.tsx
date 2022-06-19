@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 import { 
-  ReduxStore__User
+  IReduxStore__User
 } from './../types/';
 
 
@@ -18,7 +18,7 @@ const userSlice = createSlice({
       success: false,
       failed: false,
     }
-  } as ReduxStore__User,
+  } as IReduxStore__User,
   reducers: {
     loginRequest: (state) => {
       state.request = {

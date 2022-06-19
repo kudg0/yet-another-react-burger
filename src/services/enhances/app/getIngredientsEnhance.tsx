@@ -11,7 +11,7 @@ import {
 } from './../../slicers/appSlice';
 
 
-import { IngredientType } from './../../../services/types/';
+import { IIngredientType } from './../../../services/types/';
 
 
 import checkApiResponse from './../../utils/checkApiResponse';
@@ -29,10 +29,10 @@ export const getIngredientsEnhance = () => {
     fetch( apiUrl )
       .then(response => {
         checkApiResponse(response)
-          .then( (result : {success: boolean, data: IngredientType[]}) => {
+          .then( (result : {success: boolean, data: IIngredientType[]}) => {
             if(!result.success) return Promise.reject(result);
 
-            result.data = result.data.map( (ingredient: IngredientType) => {return {...ingredient, uuid: uuidv4()} });
+            result.data = result.data.map( (ingredient: IIngredientType) => {return {...ingredient, uuid: uuidv4()} });
 
             dispatch(ingredientsRequestSuccess(result.data));
           })

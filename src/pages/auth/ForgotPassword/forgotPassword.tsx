@@ -7,8 +7,8 @@ import { remindPasswordEnhance } from './../../../services/enhances/';
 
 
 import { 
-  LocationType, 
-  FormDataType,
+  ILocationType, 
+  TFormDataType,
 } from './../../../services/types/';
 
 
@@ -26,7 +26,7 @@ const ForgotPassword = React.memo( () => {
 
   const [failedMessage, setFailedMessage] = React.useState("");
 
-  const [formData, setFormData] = React.useState<FormDataType>([
+  const [formData, setFormData] = React.useState<TFormDataType>([
     {  
       type: "email",
       name: "email",

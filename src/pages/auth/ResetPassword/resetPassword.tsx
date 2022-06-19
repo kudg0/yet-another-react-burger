@@ -7,8 +7,8 @@ import { resetPasswordEnhance } from './../../../services/enhances/';
 
 
 import { 
-  LocationType, 
-  FormDataType,
+  ILocationType, 
+  TFormDataType,
 } from './../../../services/types/';
 
 
@@ -22,13 +22,13 @@ const ForgotPassword = React.memo( () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation() as LocationType;
+  const location = useLocation() as ILocationType;
 
 
   const [failedMessage, setFailedMessage] = React.useState("");
 
 
-  const [formData, setFormData] = React.useState<FormDataType>([
+  const [formData, setFormData] = React.useState<TFormDataType>([
     {  
       type: "password",
       name: "password",

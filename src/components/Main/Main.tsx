@@ -7,7 +7,7 @@ import { DndProvider } from 'react-dnd';
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
-import { IngredientType } from './../../services/types/';
+import { IIngredientType } from './../../services/types/';
 
 
 import Styles from './main.module.scss';

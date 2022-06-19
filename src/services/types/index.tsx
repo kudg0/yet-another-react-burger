@@ -1,4 +1,4 @@
-export interface IngredientType {
+export interface IIngredientType {
   _id: string;
   name: string;
   type: string;
@@ -15,7 +15,7 @@ export interface IngredientType {
 }
 
 
-export interface LocationType {
+export interface ILocationType {
   pathname: string;
   state: {
     from: Location;
@@ -23,13 +23,13 @@ export interface LocationType {
 };
 
 // REDUX STORE
-  export interface ReduxStore {
-    app: ReduxStore__App,
-    user: ReduxStore__User
+  export interface IReduxStore {
+    app: IReduxStore__App,
+    user: IReduxStore__User
   }
-  export interface ReduxStore__App {
+  export interface IReduxStore__App {
     ingredients: {
-      data: IngredientType[],
+      data: IIngredientType[],
       request: {
         pending: boolean,
         success: boolean,
@@ -38,14 +38,14 @@ export interface LocationType {
     },
     clickedIngredient: {
       isShow: boolean,
-      data?: IngredientType
+      data?: IIngredientType
     },
     order: {
       totalAmount: number,
       orderId: number | null,
       burger: {
         name: string | null,
-        ingredients: IngredientType[]
+        ingredients: IIngredientType[]
       },
       request: {
         pending: boolean,
@@ -54,7 +54,7 @@ export interface LocationType {
       }
     }
   }
-  export interface ReduxStore__User {
+  export interface IReduxStore__User {
     data: {
       id?: string,
       name?: string,
@@ -71,9 +71,9 @@ export interface LocationType {
 // END
 
 
-  export type FormDataType = InputDataType[];
+  export type TFormDataType = IInputDataType[];
 
-  export interface InputDataType {
+  export interface IInputDataType {
     type: "text" | "email" | "password",
     name: string,
     placeholder: string,
