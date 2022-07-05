@@ -1,9 +1,12 @@
 import React from 'react';
+
 import { useNavigate } from 'react-router-dom';
+
+// Redux
 import { useDispatch } from 'react-redux';
+import { logoutEnhance } from './../../services/redux/enhances/';
 
-import { logoutEnhance } from './../../services/enhances/';
-
+// Types
 import { ILocationType } from './../../services/types/';
 
 

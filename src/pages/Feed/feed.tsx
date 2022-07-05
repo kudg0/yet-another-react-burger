@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-
+// Types
 import { ILocationType } from './../../services/types/'
 
-
+// Styles
 import Styles from './feed.module.scss';
 
 

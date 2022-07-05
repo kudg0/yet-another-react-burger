@@ -1,11 +1,14 @@
 import React from 'react';
+
 import { Navigate, useLocation } from 'react-router-dom';
+
 import { useSelector, shallowEqual } from 'react-redux';
 
-
+// Types
 import { ILocationType, IReduxStore } from './../../../services/types/';
 
-import { getCookie } from './../../../services/utils/helpers/workWithCookie';
+// Helpers
+import { getLocalStorageWithExpiry } from './../../../services/utils/helpers/workWithLocalStorage';
 
 
 
@@ -19,7 +22,7 @@ const ProtectedRoute: React.FunctionComponent<IProtectedRouteComponent> = React.
 
 
   const user = useSelector((store: IReduxStore) => store.user, shallowEqual);
-  const accessToken = user.data.accessToken || getCookie('accessToken');
+  const accessToken = user.data.accessToken || getLocalStorageWithExpiry('accessToken');
 
   const from = location.pathname.includes('logout') ? '/profile' : location.pathname;
 

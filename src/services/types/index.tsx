@@ -15,6 +15,16 @@ export interface IIngredientType {
 }
 
 
+export type TFormDataType = IInputDataType[];
+
+export interface IInputDataType {
+  type: "text" | "email" | "password",
+  name: string,
+  placeholder: string,
+  value: string,
+}
+
+
 export interface ILocationType {
   pathname: string;
   state: {
@@ -22,60 +32,7 @@ export interface ILocationType {
   };
 };
 
+
 // REDUX STORE
-  export interface IReduxStore {
-    app: IReduxStore__App,
-    user: IReduxStore__User
-  }
-  export interface IReduxStore__App {
-    ingredients: {
-      data: IIngredientType[],
-      request: {
-        pending: boolean,
-        success: boolean,
-        failed: boolean
-      }
-    },
-    clickedIngredient: {
-      isShow: boolean,
-      data?: IIngredientType
-    },
-    order: {
-      totalAmount: number,
-      orderId: number | null,
-      burger: {
-        name: string | null,
-        ingredients: IIngredientType[]
-      },
-      request: {
-        pending: boolean,
-        success: boolean,
-        failed: boolean
-      }
-    }
-  }
-  export interface IReduxStore__User {
-    data: {
-      id?: string,
-      name?: string,
-      email?: string,
-      accessToken?: string,
-      refreshToken?: string,
-    }
-    request: {
-      pending: boolean,
-      success: boolean,
-      failed: boolean
-    }
-  }
-// END
+export type { IReduxStore, IReduxStore__App, IReduxStore__User } from './redux';
 
-
-  export type TFormDataType = IInputDataType[];
-
-  export interface IInputDataType {
-    type: "text" | "email" | "password",
-    name: string,
-    placeholder: string,
-    value: string,
-  }

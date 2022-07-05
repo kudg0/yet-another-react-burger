@@ -1,19 +1,20 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+// Redux
 import { useDispatch } from 'react-redux';
+import { registerEnhance } from './../../../services/redux/enhances/';
 
-
-import { registerEnhance } from './../../../services/enhances/';
-
-
+// Types
 import { 
   ILocationType, 
   TFormDataType,
 } from './../../../services/types/';
 
+// Components
+import AuthForm from './../../../components/Forms/Auth/AuthForm';
 
-import AuthForm from './../../../components/AuthForm/AuthForm';
-
+// Styles
 import Styles from './../auth.module.scss';
 
 

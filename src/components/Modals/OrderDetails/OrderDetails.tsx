@@ -1,13 +1,15 @@
 import React from 'react';
 
+// Ya imports
 import {CheckMarkIcon} from '@ya.praktikum/react-developer-burger-ui-components';
 
-
+// Components
 import Modal from './../Modal';
 
-
+// Helpers
 import getRandomInt from './../../../services/utils/helpers/getRandomInt';
 
+// Styles
 import Styles from './orderDetails.module.scss';
 
 

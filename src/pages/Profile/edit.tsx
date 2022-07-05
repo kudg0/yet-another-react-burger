@@ -1,23 +1,23 @@
 import React from 'react';
+
+// Redux
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { updateUserDataEnhance } from './../../services/redux/enhances/';
 
-
-import { updateUserDataEnhance } from './../../services/enhances/';
-
-
+// Ya imports
 import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 
-
+// Types
 import { 
   IReduxStore,
   TFormDataType,
   IInputDataType
 } from './../../services/types/';
 
+// Components
+import EditForm from './../../components/Forms/Edit/EditForm';
 
-import EditForm from './../../components/EditForm/EditForm';
-
-
+// Styles
 import Styles from './edit.module.scss';
 
 

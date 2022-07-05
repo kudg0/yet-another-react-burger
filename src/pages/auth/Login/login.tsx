@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+// Redux
 import { useDispatch } from 'react-redux';
-
-
-import { loginEnhance } from './../../../services/enhances/';
+import { loginEnhance } from './../../../services/redux/enhances/';
 
 
 import { 
@@ -11,9 +11,10 @@ import {
   TFormDataType,
 } from './../../../services/types/';
 
+// Components
+import AuthForm from './../../../components/Forms/Auth/AuthForm';
 
-import AuthForm from './../../../components/AuthForm/AuthForm';
-
+// Styles
 import Styles from './../auth.module.scss';
 
 

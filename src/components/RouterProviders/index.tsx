@@ -1,14 +1,8 @@
 import React from 'react';
+
 import { Routes, Route, useLocation } from 'react-router-dom';
 
-
-import App from './../App/App';
-import ProfileContainer from './..//ProfileContainer/ProfileContainer';
-
-import AuthRoute from './..//RouterProviders/AuthRoute/AuthRoute';
-import ProtectedRoute from './../RouterProviders/ProtectedRoute/ProtectedRoute';
-
-
+// Pages
 import { 
   Home, 
   Feed,
@@ -17,6 +11,13 @@ import {
   ForgotPassword,
   ResetPassword,
 } from './../../pages/';
+
+// Components
+import App from './../App/App';
+import ProfileContent from './..//ProfileContent/ProfileContent';
+
+import AuthRoute from './..//RouterProviders/AuthRoute/AuthRoute';
+import ProtectedRoute from './../RouterProviders/ProtectedRoute/ProtectedRoute';
 
 import Modal from './../Modals/Modal';
 import IngredientDetails from './../Modals/IngredientDetails/IngredientDetails';
@@ -49,7 +50,7 @@ const RoutingProvider: React.FunctionComponent = React.memo(() => {
           
           <Route 
             path='profile/*' 
-            element={<ProtectedRoute outlet={<ProfileContainer />} />}
+            element={<ProtectedRoute outlet={<ProfileContent />} />}
           />
           <Route 
             path='feed' 

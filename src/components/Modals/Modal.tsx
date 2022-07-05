@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 
+// YA imports
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
-
+// Components
 import ModalOverlay from './ModalOverlay/ModalOverlay';
 
+// Styles
 import Styles from './modal.module.scss';
 
 

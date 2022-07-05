@@ -2,20 +2,21 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
 
-
+// Redux
 import {
   setClickedIngredient,
-} from './../../../services/slicers/appSlice';
+} from './../../../services/redux/slicers/appSlice';
 
-
+// Components
 import Modal from './../Modal';
 
-
+// Types
 import { IIngredientType, ILocationType, IReduxStore } from './../../../services/types/';
 
+// Helpers
+import LazyLoadPicture from './../../LazyLoad/';
 
-import LazyLoadPicture from './../../../services/utils/LazyLoad/';
-
+// Styles
 import Styles from './ingredientDetails.module.scss';
 
 

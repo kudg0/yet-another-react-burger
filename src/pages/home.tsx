@@ -1,12 +1,15 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
+// Redux
+import { useDispatch } from 'react-redux';
 import {
   removeClickedIngredient
-} from './../services/slicers/appSlice';
+} from './../services/redux/slicers/appSlice';
 
-import Main from './../components/Main/Main';
+// Components
+import Main from './../components/App/Main/Main';
+
 
 
 const Home = React.memo( () => {

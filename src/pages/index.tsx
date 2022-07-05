@@ -1,3 +1,4 @@
+// Pages
 import Home from './home';
 import Feed from './Feed/feed';
 

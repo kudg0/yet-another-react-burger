@@ -1,14 +1,15 @@
 import React from 'react';
+
 import { Outlet, useLocation } from 'react-router-dom';
+
+// Redux
 import { useDispatch } from 'react-redux';
+import { getIngredientsEnhance, reLoginEnhance } from './../../services/redux/enhances/';
 
+// Components
+import Header from './Header/Header';
 
-import { getIngredientsEnhance, reLoginEnhance } from './../../services/enhances/';
-
-
-import AppHeader from '../AppHeader/AppHeader';
-
-
+// Styles
 import Styles from './app.module.scss';
 
 
@@ -26,7 +27,7 @@ const App: React.FunctionComponent = React.memo(() => {
 
   return (
     <div className={Styles.appContainer}>
-      <AppHeader />
+      <Header />
       <Outlet />
     </div>
   )

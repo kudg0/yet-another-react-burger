@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
-import { store } from './reduxDevToolsInit';
+import { store } from './services/redux/store';
 
 
 import RoutingProvider from './components/RouterProviders/'
