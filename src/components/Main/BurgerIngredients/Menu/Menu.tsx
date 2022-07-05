@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 // Helpers
-import getCoords from './../../../../../services/utils/helpers/getCoords';
+import getCoords from './../../../../services/utils/helpers/getCoords';
 
 // Styles
 import Styles from './menu.module.scss';

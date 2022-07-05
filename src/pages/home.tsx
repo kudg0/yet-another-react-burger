@@ -8,7 +8,7 @@ import {
 } from './../services/redux/slicers/appSlice';
 
 // Components
-import Main from './../components/App/Main/Main';
+import Main from './../components/Main/Main';
 
 
 

@@ -4,13 +4,13 @@ import { useDrag, useDrop } from 'react-dnd';
 
 // Redux
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { ingredientsDecreaseCounter, ingredientUpdatePos } from './../../../../services/redux/slicers/appSlice';
+import { ingredientsDecreaseCounter, ingredientUpdatePos } from './../../../services/redux/slicers/appSlice';
 
 // Ya imports
 import { ConstructorElement, Button, DragIcon, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 // Types
-import { IIngredientType } from './../../../../services/types/';
+import { IIngredientType } from './../../../services/types/';
 
 // Styles
 import Styles from './draggableConstructorElement.module.scss';

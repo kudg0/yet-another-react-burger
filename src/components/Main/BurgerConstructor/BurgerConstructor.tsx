@@ -7,9 +7,9 @@ import { useDrop } from 'react-dnd';
 
 // Redux
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { ingredientsIncreaseCounter } from './../../../../services/redux/slicers/appSlice';
+import { ingredientsIncreaseCounter } from './../../../services/redux/slicers/appSlice';
 
-import { submitOrderEnhance } from './../../../../services/redux/enhances/';
+import { submitOrderEnhance } from './../../../services/redux/enhances/';
 
 
 
@@ -19,15 +19,15 @@ import { Button, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-co
 
 // Components
 import DraggableConstructorElement from './DraggableConstructorElement';
-import Modal from './../../../Modals/Modal';
-import OrderDetails from './../../../Modals/OrderDetails/OrderDetails';
+import Modal from './../../Modals/Modal';
+import OrderDetails from './../../Modals/OrderDetails/OrderDetails';
 
 // Types
-import { ILocationType, IIngredientType, IReduxStore } from './../../../../services/types/';
+import { ILocationType, IIngredientType, IReduxStore } from './../../../services/types/';
 
 // Helpers
-import checkApiResponse from './../../../../services/utils/checkApiResponse';
-import handleApiErrors from './../../../../services/utils/handleApiErrors';
+import checkApiResponse from './../../../services/utils/checkApiResponse';
+import handleApiErrors from './../../../services/utils/handleApiErrors';
 
 // Styles
 import Styles from './burgerConstructor.module.scss';

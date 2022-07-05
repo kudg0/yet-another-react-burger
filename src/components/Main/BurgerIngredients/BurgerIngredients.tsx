@@ -6,11 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Redux
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { ingredientsIncreaseCounter } from './../../../../services/redux/slicers/appSlice';
+import { ingredientsIncreaseCounter } from './../../../services/redux/slicers/appSlice';
 
 import {
   removeClickedIngredient
-} from './../../../../services/redux/slicers/appSlice';
+} from './../../../services/redux/slicers/appSlice';
 
 // Ya imports
 import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -19,14 +19,14 @@ import { Counter, CurrencyIcon, InfoIcon } from '@ya.praktikum/react-developer-b
 import Menu from './Menu/Menu';
 import DraggableIngredient from './DraggableIngredient';
 
-import Modal from './../../../Modals/Modal';
-import IngredientDetails from './../../../Modals/IngredientDetails/IngredientDetails';
+import Modal from './../../Modals/Modal';
+import IngredientDetails from './../../Modals/IngredientDetails/IngredientDetails';
 
 // Types
-import { IIngredientType, IReduxStore } from './../../../../services/types/';
+import { IIngredientType, IReduxStore } from './../../../services/types/';
 
 // Helpers
-import LazyLoadPicture from './../../../LazyLoad/';
+import LazyLoadPicture from './../../LazyLoad/';
 
 // Styles
 import Styles from './burgerIngredients.module.scss';

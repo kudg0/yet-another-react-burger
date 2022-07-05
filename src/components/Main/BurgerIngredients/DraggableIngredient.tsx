@@ -3,7 +3,7 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 
 // Types
-import { IIngredientType, IReduxStore } from './../../../../services/types/';
+import { IIngredientType, IReduxStore } from './../../../services/types/';
 
 
 

@@ -9,7 +9,7 @@ import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
 import BurgerConstructor from './BurgerConstructor/BurgerConstructor';
 
 // Types
-import { IIngredientType } from './../../../services/types/';
+import { IIngredientType } from './../../services/types/';
 
 // Styles
 import Styles from './main.module.scss';
