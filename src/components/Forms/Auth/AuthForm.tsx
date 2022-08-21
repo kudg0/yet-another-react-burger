@@ -11,7 +11,6 @@ import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-component
 
 // Types
 import { 
-  ILocationType, 
   IReduxStore,
   TFormDataType,
   IInputDataType,
@@ -33,7 +32,7 @@ interface IAuthFormComponent {
   textOnButton: string;
 }
 
-const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({ 
+const AuthForm: React.FC<IAuthFormComponent> = ({ 
   dispatchCallbackFn,  
   formData,
   setFormData,
@@ -43,17 +42,14 @@ const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({
 
   const dispatch = useDispatch();
 
-
   const user = useSelector( (store : IReduxStore) => store.user, shallowEqual);
   const { request } = user;
-
 
   const { handleChange, isFailed, setIsFailed } = useFormAndValidation(formData, setFormData);
 
   const [isPasswordHide, setIsPasswordHide] = React.useState(true);
 
   const inputsRef = React.useRef<HTMLInputElement[]>([]);
-
 
 
   React.useEffect(() => {
@@ -151,6 +147,6 @@ const AuthForm: React.FunctionComponent<IAuthFormComponent> = React.memo(({
       </Button>
     </form>
   );
-})
+};
 
-export default AuthForm;
+export default React.memo(AuthForm);

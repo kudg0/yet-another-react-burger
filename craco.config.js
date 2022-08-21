@@ -10,8 +10,8 @@ module.exports = {
             plugin: sassResourcesLoader,
             options: {
                 resources: [
-                  "./src/styles/utils/_variables.scss",  
-                  "./src/styles/utils/_mixins.scss"
+                  "./src/assets/styles/utils/_variables.scss",  
+                  "./src/assets/styles/utils/_mixins.scss"
                 ]
             },
         },

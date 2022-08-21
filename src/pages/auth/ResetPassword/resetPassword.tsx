@@ -18,16 +18,13 @@ import AuthForm from './../../../components/Forms/Auth/AuthForm';
 import Styles from './../auth.module.scss';
 
 
-
-const ForgotPassword = React.memo( () => {
+const ForgotPassword: React.FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation() as ILocationType;
 
-
   const [failedMessage, setFailedMessage] = React.useState("");
-
 
   const [formData, setFormData] = React.useState<TFormDataType>([
     {  
@@ -46,7 +43,6 @@ const ForgotPassword = React.memo( () => {
 
   const from = location.state?.from?.pathname || '/';
 
-  
 
   const dispatcherHelper = React.useCallback((dataFromForm) => {
 
@@ -62,8 +58,6 @@ const ForgotPassword = React.memo( () => {
       })
       .catch( (error : any) => { setFailedMessage(error.message) })
   }, [dispatch, navigate, setFailedMessage]);
-
-
 
 
   if(from !== '/forgot-password') return (
@@ -101,6 +95,6 @@ const ForgotPassword = React.memo( () => {
       </section>
     </main>
   );
-})
+};
 
-export default ForgotPassword;
+export default React.memo(ForgotPassword);

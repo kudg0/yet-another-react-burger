@@ -11,7 +11,6 @@ import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-component
 
 // Types
 import { 
-  ILocationType, 
   IReduxStore,
   TFormDataType,
   IInputDataType,
@@ -32,7 +31,7 @@ interface IEditFormComponent {
   defaultValueForPassword: string;
 };
 
-const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
+const EditForm: React.FC<IEditFormComponent> = ({
   dispatchCallbackFn, 
   formData,
   setFormData,
@@ -40,7 +39,6 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
 }) => {
 
   const dispatch = useDispatch();
-
 
   const user = useSelector( (store : IReduxStore) => store.user, shallowEqual);
   const { request } = user;
@@ -252,6 +250,6 @@ const EditForm: React.FunctionComponent<IEditFormComponent> = React.memo(({
       }
     </form>
   );
-})
+};
 
-export default EditForm;
+export default React.memo(EditForm);

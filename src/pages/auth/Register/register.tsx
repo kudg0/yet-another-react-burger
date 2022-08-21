@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Redux
 import { useDispatch } from 'react-redux';
@@ -7,7 +7,6 @@ import { registerEnhance } from './../../../services/redux/enhances/';
 
 // Types
 import { 
-  ILocationType, 
   TFormDataType,
 } from './../../../services/types/';
 
@@ -18,11 +17,9 @@ import AuthForm from './../../../components/Forms/Auth/AuthForm';
 import Styles from './../auth.module.scss';
 
 
-
-const Register = React.memo( () => {
+const Register: React.FC = () => {
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
 
   const [failedMessage, setFailedMessage] = React.useState("");
@@ -49,12 +46,10 @@ const Register = React.memo( () => {
   ]);
 
 
-
   const dispatcherHelper = React.useCallback((dataFromForm) => {
     dispatch( registerEnhance(dataFromForm) as any)
       .catch((error: Error) => setFailedMessage(error.message))
   }, [dispatch, setFailedMessage])
-
 
 
   return (
@@ -85,6 +80,6 @@ const Register = React.memo( () => {
       </section>
     </main>
   );
-})
+};
 
-export default Register;
+export default React.memo(Register);

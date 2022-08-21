@@ -1,22 +1,25 @@
-.feedContainer{
+.feedContainer {
   display: flex;
+  flex-direction: column;
   align-items: center;
 
-  margin-top: 180px;
+  width: 100%;
 
-  .feedContainer__text{
-    margin-right: 8px;
+  margin-top: 40px;
 
-    font-size: 16px;
-    line-height: 24px;
+  
+  .feedContainer__header {
+    width: 1240px;
 
-    color: $text__color_sub;
+    margin-bottom: 20px;
   }
 
-  .feedContainer__link{
-    font-size: 16px;
-    line-height: 24px;
-    
-    color: $color_accent;
+  .feedContainer__content {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 600px 580px;
+    grid-gap: 60px;
+
+    width: 100%;
   }
 }

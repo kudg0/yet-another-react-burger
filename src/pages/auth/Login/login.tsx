@@ -1,13 +1,11 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Redux
 import { useDispatch } from 'react-redux';
 import { loginEnhance } from './../../../services/redux/enhances/';
 
-
 import { 
-  ILocationType, 
   TFormDataType,
 } from './../../../services/types/';
 
@@ -18,11 +16,9 @@ import AuthForm from './../../../components/Forms/Auth/AuthForm';
 import Styles from './../auth.module.scss';
 
 
-
-const Login = React.memo( () => {
+const Login: React.FC = () => {
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
 
   const [failedMessage, setFailedMessage] = React.useState("");
@@ -43,12 +39,10 @@ const Login = React.memo( () => {
   ]);
 
 
-
   const dispatcherHelper = React.useCallback((dataFromForm) => {
     dispatch( loginEnhance(dataFromForm) as any)
       .catch( ( error: Error) => { setFailedMessage(error.message) })
   }, [dispatch, setFailedMessage])
-
 
 
   return (
@@ -64,7 +58,7 @@ const Login = React.memo( () => {
           dispatchCallbackFn={dispatcherHelper}
           formData={formData}
           setFormData={setFormData}
-          failedMessage={"Неверные данные для входа"}
+          failedMessage={failedMessage}
           textOnButton={"Войти"}
         />
 
@@ -87,6 +81,6 @@ const Login = React.memo( () => {
       </section>
     </main>
   );
-})
+};
 
-export default Login;
+export default React.memo(Login);

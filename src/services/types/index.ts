@@ -14,6 +14,15 @@ export interface IIngredientType {
   uuid: string;
 }
 
+export interface IOrderType {
+  _id: string;
+  status: "done";
+  number: number;
+  createdAt: Date;
+  updatedAt: Date;
+  ingredients: IIngredientType[];
+}
+
 
 export type TFormDataType = IInputDataType[];
 
@@ -28,7 +37,8 @@ export interface IInputDataType {
 export interface ILocationType {
   pathname: string;
   state: {
-    from: Location;
+    from?: Location;
+    backgroundLocation?: string;
   };
 };
 

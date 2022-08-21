@@ -3,14 +3,22 @@ import React from 'react';
 import { useInView } from 'react-intersection-observer';
 
 
-
-const LazyLoadPicture = React.memo((props: {
+interface LazyLoadPictureProps {
   imageMobile?: string, 
   imageLarge?: string, 
   image: string, 
   width: number, 
   height: number,
   alt: string, 
+}
+
+const LazyLoadPicture: React.FC<LazyLoadPictureProps> = ({
+  alt,
+  width,
+  height,
+  image,
+  imageLarge,
+  imageMobile,
 }) => {
 
   const { ref, inView, entry } = useInView({
@@ -22,40 +30,40 @@ const LazyLoadPicture = React.memo((props: {
     <picture 
       ref={ref}
       style={{ 
-        width: props.width + 'px', 
-        height: props.height + 'px' 
+        width: width + 'px', 
+        height: height + 'px' 
       }}
     >
       {
         inView && 
         <>
           {
-            props.imageLarge && 
+            imageLarge && 
             <source 
-              srcSet={props.image} 
+              srcSet={image} 
               media="(min-width: 1440px)" 
             />
           }
           { 
-            props.imageMobile && 
+            imageMobile && 
             <source 
-              srcSet={props.image} 
+              srcSet={image} 
               media="(max-width: 768px)"
             />
           }
           <source 
-            srcSet={props.image}
+            srcSet={image}
           />
           <img
-            srcSet={props.image}
-            width={props.width}
-            height={props.height}
-            alt={props.alt}
+            srcSet={image}
+            width={width}
+            height={height}
+            alt={alt}
           />
         </>
       }
     </picture>
   )
-});
+};
 
-export default LazyLoadPicture;
+export default React.memo(LazyLoadPicture);

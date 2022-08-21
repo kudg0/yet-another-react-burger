@@ -1,20 +1,18 @@
-import {useState, useCallback} from 'react';
-
+import React from 'react';
 
 import { TFormDataType } from './../types/';
 
 
-const useFormAndValidation =( 
+const useFormAndValidation = ( 
   initValues? : any, 
   initSetValues? : React.Dispatch<React.SetStateAction<TFormDataType>>
 ) => {
 
-  const [ values, setValues ] = useState({});
-  const [ isFailed, setIsFailed ] = useState(false);
+  const [ values, setValues ] = React.useState({});
+  const [ isFailed, setIsFailed ] = React.useState(false);
 
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = React.useCallback<(e: React.ChangeEvent<HTMLInputElement>) => void>((e) => {
     const target : HTMLInputElement = e.currentTarget;
     const {name, value} = target;
 
@@ -31,15 +29,14 @@ const useFormAndValidation =(
     initSetValues ? initSetValues(newFormData) : setValues(newFormData);
       
     setIsFailed(false);
-  };
+  }, [initValues, initSetValues, setValues, setIsFailed]);
 
 
-  const resetForm = useCallback((newValues = {}, newErrors = {}, newIsValid = false) => {
+  const resetForm = React.useCallback<(newValues?: TFormDataType) => void>((newValues = {} as TFormDataType) => {
     initSetValues ? initSetValues(newValues) : setValues(newValues);
 
     setIsFailed(false);
   }, [setValues, setIsFailed, initSetValues]);
-
 
 
   return { values, handleChange, isFailed, resetForm, setValues, setIsFailed };

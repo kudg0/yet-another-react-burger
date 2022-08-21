@@ -1,14 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 
 // Redux
-import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Types
 import { 
   IIngredientType, 
   IReduxStore__App
 } from './../../types/';
-
 
 
 const appSlice = createSlice({

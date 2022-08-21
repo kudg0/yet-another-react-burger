@@ -1,7 +1,9 @@
 .profileContainer{
-  display: flex;
+  display: grid;
+  grid-template-columns: 320px 840px;
+  grid-gap: 60px;
+
   justify-content: center;
-  align-items: flex-start;
 
   width: 100%;
 
@@ -11,11 +13,6 @@
   .profileContainer__menu{
     display: flex;
     flex-direction: column;
-
-    width: 320px;
-
-    margin-right: 60px;
-
 
     .menu__items{
       display: flex;
@@ -79,8 +76,6 @@
     justify-content: flex-start;
     align-items: flex-start;
 
-    width: 480px;
-
-    
+    width: 100%;
   }
 }

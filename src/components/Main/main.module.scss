@@ -1,0 +1,41 @@
+.mainContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  width: 1240px;
+
+  margin-top: 40px;
+
+
+  .mainContainer__title{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    width: auto;
+
+    margin-bottom: 20px;
+
+
+    .title__text{
+      font-style: normal;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1;
+
+      color: $text__color_prior;
+    }    
+  }
+
+  .mainContainer__application{
+    display: grid;
+    grid-template-columns: 600px 590px;
+    grid-gap: 10px;
+    
+    justify-content: center;
+
+    width: 100%;
+  }
+}

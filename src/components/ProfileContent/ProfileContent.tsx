@@ -1,20 +1,40 @@
 import React from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 
 // Components
-import Orders from './../../pages/Profile/orders';
-import Edit from './../../pages/Profile/edit';
-import Logout from './../../pages/Profile/logout';
+import OrdersContent from './OrdersContent/OrdersContent';
+import EditContent from './EditContent/EditContent';
+import LogoutContent from './LogoutContent/LogoutContent';
+import ProtectedRoute from './../../helpers/RouterProviders/ProtectedRoute/ProtectedRoute';
+import FeedOrderDetails from './../Modals/FeedOrderDetails/FeedOrderDetails';
+import Modal from './../Modals/Modal';
+
+// Types
+import { ILocationType } from '../../services/types';
 
 // Styles
 import Styles from './profileContent.module.scss';
 
 
-
-const ProfileContent: React.FunctionComponent = React.memo(() => {
+const ProfileContent: React.FC = () => {
   
-  const location = useLocation();
+  const location = useLocation() as ILocationType;
+  const navigate = useNavigate()
 
+
+  React.useEffect(() => {
+
+    if(location.pathname.startsWith("/profile/orders/") && !location.state?.backgroundLocation) {
+      const locationPaths = location.pathname.split("/");
+      const orderId = locationPaths[locationPaths.length - 1];
+
+      navigate(`/feed/${ orderId }`, { 
+          state: { 
+              from: location.pathname,
+          },
+      });
+    }
+  }, [])
 
 
   return (
@@ -37,7 +57,7 @@ const ProfileContent: React.FunctionComponent = React.memo(() => {
               to='/profile/orders' 
               className={
                 Styles.item__link + ' ' + 
-                (location.pathname === '/profile/orders' ? Styles.item__link_active : '')
+                (location.pathname.includes('/profile/orders') ? Styles.item__link_active : '')
               }
             >
               История заказов
@@ -63,7 +83,7 @@ const ProfileContent: React.FunctionComponent = React.memo(() => {
             </span>
           }
           {
-            location.pathname === '/profile/orders' &&
+            location.pathname.includes('/profile/orders') &&
             <span>
               В этом разделе вы можете<br/>
               просмотреть свою историю заказов
@@ -72,24 +92,35 @@ const ProfileContent: React.FunctionComponent = React.memo(() => {
         </div>
       </div>
       <div className={Styles.profileContainer__content}>
-
         <Routes>
           <Route 
             path='/'
-            element={<Edit />}
+            element={<EditContent />}
           />
+
           <Route 
             path='orders'
-            element={<Orders />}
+            element={<OrdersContent />}
           />
+
           <Route 
             path='logout'
-            element={<Logout />}
+            element={<LogoutContent />}
           />
         </Routes>
+        {
+          location.state?.backgroundLocation && (
+            <Routes>
+              <Route 
+                path='orders/:id' 
+                element={<Modal> <ProtectedRoute outlet={<FeedOrderDetails />} /> </Modal>}
+              />
+            </Routes>
+          )
+        }
       </div>
     </section>
   );
-});
+};
 
-export default ProfileContent;
+export default React.memo(ProfileContent);
