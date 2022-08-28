@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import { store } from './services/redux/store';
 
 
-import RoutingProvider from './helpers/RouterProviders'
+import RoutingProvider from './helpers/RoutingProvider'
 
 
 import './assets/styles/index.scss';

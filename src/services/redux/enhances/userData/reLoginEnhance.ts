@@ -8,6 +8,9 @@ import {
 
 import { refreshTokens } from './utils/refreshTokens';
 
+// Enhances 
+import { wsSocketEnhance } from './../';
+
 // Helpers
 import checkApiResponse from './../../../utils/checkApiResponse';
 import handleApiErrors from './../../../utils/handleApiErrors';
@@ -37,8 +40,10 @@ export const reLoginEnhance = () => {
       accessToken = data.accessToken;
     }
 
+    dispatch(wsSocketEnhance({ isUserWs: true, type: "WS_CONNECTION_CLOSE" }) as any);
 
     dispatch(loginRequest());
+
 
     fetch( apiUrl, {
       method: 'GET',
@@ -71,6 +76,8 @@ export const reLoginEnhance = () => {
                 name: result.user.name,
               })
             );
+
+            dispatch(wsSocketEnhance({ isUserWs: true, type: "WS_CONNECTION_START" }) as any);
                  
           })
           .catch( (error: Error) => {

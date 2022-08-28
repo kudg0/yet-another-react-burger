@@ -22,7 +22,7 @@ import Styles from './ingredientDetails.module.scss';
 
 const nutritionalValues = [
   {
-    name: "Калории,ккал",
+    name: "Калории, ккал",
     id: "calories"
   },
   {

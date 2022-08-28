@@ -1,4 +1,6 @@
 // Redux
+import { wsSocketEnhance } from './wsSocket/wsSocketEnhance';
+
 import { getIngredientsEnhance } from './app/getIngredientsEnhance';
 import { submitOrderEnhance } from './app/submitOrderEnhance';
 
@@ -15,6 +17,7 @@ import { updateUserDataEnhance } from './userData/updateUserDataEnhance';
 
 
 export {
+  wsSocketEnhance,
   getIngredientsEnhance,
   submitOrderEnhance,
   loginEnhance,

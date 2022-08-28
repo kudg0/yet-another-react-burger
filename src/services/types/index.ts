@@ -14,13 +14,16 @@ export interface IIngredientType {
   uuid: string;
 }
 
+
 export interface IOrderType {
   _id: string;
-  status: "done";
+  name: string;
+  status: "done" | "created" | "pending";
   number: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   ingredients: IIngredientType[];
+  totalAmount: number;
 }
 
 
@@ -44,5 +47,5 @@ export interface ILocationType {
 
 
 // REDUX STORE
-export type { IReduxStore, IReduxStore__App, IReduxStore__User } from './redux';
+export type { IReduxStore, IReduxStore__App, IReduxStore__User, IWsMessagePayload } from './redux';
 

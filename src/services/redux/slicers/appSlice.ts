@@ -6,7 +6,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // Types
 import { 
   IIngredientType, 
-  IReduxStore__App
+  IReduxStore__App,
+  IWsMessagePayload
 } from './../../types/';
 
 
@@ -33,6 +34,24 @@ const appSlice = createSlice({
       },
       request: {
         pending: false,
+        success: false,
+        failed: false
+      }
+    },
+    orders: {
+      data: [],
+      total: 0,
+      totalToday: 0, 
+      request: {
+        success: false,
+        failed: false
+      }
+    },
+    feed: {
+      data: [],
+      total: 0,
+      totalToday: 0, 
+      request: {
         success: false,
         failed: false
       }
@@ -191,6 +210,113 @@ const appSlice = createSlice({
         failed: true,
       }
     },
+    ordersRequestSuccess: (state, action: PayloadAction<{}>) => {
+      state.orders.request = {
+        success: true,
+        failed: false,
+      }
+    },
+    ordersRequestError: (state, action: PayloadAction<{}>) => {
+      state.orders.request = {
+        success: false,
+        failed: true,
+      }
+    },
+    ordersRequestMessage: (state, action: PayloadAction<IWsMessagePayload>) => {
+
+      const sortedOrderState = state.orders.data?.sort((a, b) => b.number - a.number);
+      const sortedOrderPayload = action.payload.orders?.sort((a, b) => b.number - a.number);
+      if (
+        !!sortedOrderState.length && !!sortedOrderPayload.length &&
+        sortedOrderPayload[0]._id === sortedOrderState[0]._id &&
+        sortedOrderPayload[0].status === sortedOrderState[0].status
+      ) return;
+
+      const ordersWithIngredients = sortedOrderPayload.map((order) => {
+        let totalAmount = 0;
+
+        const orderIngredients = order.ingredients.map(orderIngredientId => {
+          const neededIngredient = state.ingredients.data.find(ingredient => ingredient._id === orderIngredientId)!;
+          totalAmount += neededIngredient.price;
+
+          return neededIngredient;
+        });
+
+        return {
+          ...order,
+          totalAmount,
+          ingredients: orderIngredients || [],
+        }
+      });
+
+      state.orders = {
+        ...state.orders,
+        data: ordersWithIngredients,
+        total: action.payload.total,
+        totalToday: action.payload.totalToday,
+      }
+
+    },
+    ordersRequestClosed: (state, action: PayloadAction<{}>) => {
+      state.orders.request = {
+        success: false,
+        failed: false,
+      }
+    },
+    feedRequestSuccess: (state, action: PayloadAction<{}>) => {
+      state.feed.request = {
+        success: true,
+        failed: false,
+      }
+
+    },
+    feedRequestError: (state, action: PayloadAction<{}>) => {
+      state.feed.request = {
+        success: true,
+        failed: false,
+      }
+    },
+    feedRequestMessage: (state, action: PayloadAction<IWsMessagePayload>) => {
+
+      const sortedOrderState = state.feed.data?.sort((a, b) => b.number - a.number);
+      const sortedOrderPayload = action.payload.orders?.sort((a, b) => b.number - a.number);
+      if (
+        !!sortedOrderState.length && !!sortedOrderPayload.length &&
+        sortedOrderPayload[0]._id === sortedOrderState[0]._id &&
+        sortedOrderPayload[0].status === sortedOrderState[0].status
+      ) return;
+
+      const ordersWithIngredients = sortedOrderPayload.slice(0, 10).map((order) => {
+        let totalAmount = 0;
+
+        const orderIngredients = order.ingredients.map(orderIngredientId => {
+          const neededIngredient = state.ingredients.data.find(ingredient => ingredient._id === orderIngredientId)!;
+
+          totalAmount += neededIngredient.price;
+
+          return neededIngredient;
+        });
+
+        return {
+          ...order,
+          totalAmount,
+          ingredients: orderIngredients || [],
+        }
+      });
+
+      state.feed = {
+        ...state.feed,
+        data: ordersWithIngredients,
+        total: action.payload.total,
+        totalToday: action.payload.totalToday,
+      }
+    },
+    feedRequestClosed: (state, action: PayloadAction<{}>) => {
+      state.feed.request = {
+        success: false,
+        failed: false,
+      }
+    },
   },
 });
 
@@ -211,6 +337,14 @@ export const {
   orderRequest,
   orderRequestSuccess,
   orderRequestFailed,
+  ordersRequestSuccess,
+  ordersRequestError,
+  ordersRequestMessage,
+  ordersRequestClosed,
+  feedRequestSuccess,
+  feedRequestError,
+  feedRequestMessage,
+  feedRequestClosed,
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer

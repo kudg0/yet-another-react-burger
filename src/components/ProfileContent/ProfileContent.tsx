@@ -5,7 +5,7 @@ import { Routes, Route, Link, useParams, useLocation, useNavigate } from 'react-
 import OrdersContent from './OrdersContent/OrdersContent';
 import EditContent from './EditContent/EditContent';
 import LogoutContent from './LogoutContent/LogoutContent';
-import ProtectedRoute from './../../helpers/RouterProviders/ProtectedRoute/ProtectedRoute';
+import ProtectedRoute from './../../helpers/RoutingProvider/ProtectedRoute/ProtectedRoute';
 import FeedOrderDetails from './../Modals/FeedOrderDetails/FeedOrderDetails';
 import Modal from './../Modals/Modal';
 
@@ -20,21 +20,6 @@ const ProfileContent: React.FC = () => {
   
   const location = useLocation() as ILocationType;
   const navigate = useNavigate()
-
-
-  React.useEffect(() => {
-
-    if(location.pathname.startsWith("/profile/orders/") && !location.state?.backgroundLocation) {
-      const locationPaths = location.pathname.split("/");
-      const orderId = locationPaths[locationPaths.length - 1];
-
-      navigate(`/feed/${ orderId }`, { 
-          state: { 
-              from: location.pathname,
-          },
-      });
-    }
-  }, [])
 
 
   return (
@@ -108,16 +93,6 @@ const ProfileContent: React.FC = () => {
             element={<LogoutContent />}
           />
         </Routes>
-        {
-          location.state?.backgroundLocation && (
-            <Routes>
-              <Route 
-                path='orders/:id' 
-                element={<Modal> <ProtectedRoute outlet={<FeedOrderDetails />} /> </Modal>}
-              />
-            </Routes>
-          )
-        }
       </div>
     </section>
   );

@@ -45,6 +45,10 @@ const RoutingProvider: React.FC = () => {
             element={<Home />}
           />
 
+          <Route
+            path='profile/orders/:id'
+            element={<FeedOrderDetails />}
+          />
           <Route 
             path='profile/*' 
             element={<ProtectedRoute outlet={<ProfileContent />} />}
@@ -93,6 +97,10 @@ const RoutingProvider: React.FC = () => {
           />
           <Route 
             path="/feed/:id" 
+            element={<Modal> <FeedOrderDetails /> </Modal>} 
+          />
+          <Route 
+            path="profile/orders/:id" 
             element={<ProtectedRoute outlet={<Modal> <FeedOrderDetails /> </Modal>} />} 
           />
         </Routes>

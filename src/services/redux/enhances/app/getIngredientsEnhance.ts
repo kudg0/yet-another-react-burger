@@ -8,6 +8,9 @@ import {
   ingredientsRequestFailed
 } from './../../slicers/appSlice';
 
+// Enhances 
+import { wsSocketEnhance } from './../';
+
 // Types
 import { IIngredientType } from './../../../types/';
 
@@ -33,6 +36,8 @@ export const getIngredientsEnhance = () => {
             result.data = result.data.map( (ingredient: IIngredientType) => {return {...ingredient, uuid: uuidv4()} });
 
             dispatch(ingredientsRequestSuccess(result.data));
+
+            dispatch(wsSocketEnhance({ isUserWs: false, type: "WS_CONNECTION_START" }) as any);
           })
           .catch( (error: Error) => {
             handleApiErrors(error);
