@@ -1,30 +1,34 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useSelector, shallowEqual } from 'react-redux';
 
-// Types
-import { ILocationType } from './../../services/types/'
+// Components
+import OrdersContainer from '../../components/Orders/OrdersContainer/OrdersContainer';
+import StatsContainer from '../../components/Orders/StatsContainer/StatsContainer';
+
+import { IReduxStore } from '../../services/types';
 
 // Styles
-import Styles from './feed.module.scss';
+import styles from './feed.module.scss';
 
 
+const Feed: React.FC = () => {
 
-const Feed = React.memo( () => {
-
-  const location = useLocation() as ILocationType;
-  const from = location.state?.from?.pathname || '/';
+  const orders = useSelector((store: IReduxStore) => store.app.feed.data, shallowEqual);
 
 
   return (
-    <section className={Styles.feedContainer}>
-      <span className={Styles.feedContainer__text}>
-        Скоро здесь будет лента заказов, но пока есть только кнопка
-      </span>
-      <Link to={from} className={Styles.feedContainer__link}> 
-        Назад
-      </Link>
+    <section className={styles.feedContainer}>
+      <h1 className={styles.feedContainer__header}>
+        Лента заказов
+      </h1>
+      <div className={styles.feedContainer__content}>
+        <OrdersContainer 
+          orders={ orders }
+        />
+        <StatsContainer />
+      </div>
     </section>
   );
-});
+};
 
-export default Feed;
+export default React.memo(Feed);

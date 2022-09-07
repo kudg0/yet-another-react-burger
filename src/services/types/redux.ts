@@ -1,4 +1,4 @@
-import { IIngredientType } from './';
+import { IIngredientType, IOrderType } from './';
 
 
 export interface IReduxStore {
@@ -30,7 +30,25 @@ export interface IReduxStore__App {
       success: boolean,
       failed: boolean
     }
-  }
+  },
+  orders: {
+    data: IOrderType[],
+    total: number,
+    totalToday: number, 
+    request: {
+      success: boolean,
+      failed: boolean
+    }
+  },
+  feed: {
+    data: IOrderType[],
+    total: number,
+    totalToday: number, 
+    request: {
+      success: boolean,
+      failed: boolean
+    }
+  },
 }
 export interface IReduxStore__User {
   data: {
@@ -45,4 +63,14 @@ export interface IReduxStore__User {
     success: boolean,
     failed: boolean
   }
+}
+
+interface IOrderPayload extends Omit<IOrderType, 'ingredients' | 'totalAmount'> {
+  ingredients: string[]
+};
+
+export interface IWsMessagePayload {
+  total: number, 
+  totalToday: number, 
+  orders: IOrderPayload[],
 }

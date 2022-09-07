@@ -8,11 +8,10 @@ import { Provider } from 'react-redux';
 import { store } from './services/redux/store';
 
 
-import RoutingProvider from './components/RouterProviders/'
+import RoutingProvider from './helpers/RoutingProvider'
 
 
-import './styles/index.scss';
-
+import './assets/styles/index.scss';
 
 
 const container = document.getElementById('root')!,

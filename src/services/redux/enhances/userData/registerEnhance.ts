@@ -65,7 +65,6 @@ export const registerEnhance = (formData: {name: string, email: string, password
               );
             })
             .catch( (error: Error) => {
-              console.log("fafa ", error)
               handleApiErrors(error);
 
               dispatch(registerRequestFailed());
@@ -76,7 +75,6 @@ export const registerEnhance = (formData: {name: string, email: string, password
           handleApiErrors(error);
 
           dispatch(registerRequestFailed());
-          console.log("fafa ", error)
           reject( error );
         })
     });

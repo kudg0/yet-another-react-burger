@@ -20,10 +20,9 @@ import LazyLoadPicture from './../../LazyLoad/';
 import Styles from './ingredientDetails.module.scss';
 
 
-
 const nutritionalValues = [
   {
-    name: "Калории,ккал",
+    name: "Калории, ккал",
     id: "calories"
   },
   {
@@ -40,8 +39,7 @@ const nutritionalValues = [
   },
 ];
 
-
-const IngredientDetails: React.FunctionComponent = React.memo(() => {
+const IngredientDetails: React.FC = () => {
 
     const location = useLocation() as ILocationType;
     const state = location.state as { backgroundLocation?: Location };
@@ -105,7 +103,6 @@ const IngredientDetails: React.FunctionComponent = React.memo(() => {
       </section>
     </div>
   )
+};
 
-});
-
-export default IngredientDetails;
+export default React.memo(IngredientDetails);

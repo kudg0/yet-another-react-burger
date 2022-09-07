@@ -1,13 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
 // Redux
-import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Types
 import { 
   IReduxStore__User
 } from './../../types/';
-
 
 
 const userSlice = createSlice({

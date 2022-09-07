@@ -1,0 +1,91 @@
+.StatsContainer{
+    display: grid;
+    grid-template-columns: 100%;
+    grid-auto-rows: auto auto auto;
+    grid-gap: 60px;
+  
+    width: 100%; height: 100%;
+
+    max-height: 72vh;
+    min-height: 500px;
+    
+
+    overflow: hidden;
+    overflow-y: scroll;
+
+    scroll-behavior: smooth;
+
+    position: relative;
+    
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: rgba(47, 47, 55, 1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(133, 133, 173, 1);
+    }
+    
+    .StatsContainer__header{
+        display: grid;
+        grid-template-columns: repeat(2, 272px);
+        grid-gap: 36px;
+
+
+        .header__order{
+            display: grid;
+            grid-template-columns: 100%;
+            grid-template-rows: 30px auto;
+            grid-gap: 24px;
+
+            color: $text__color_prior;
+
+
+            .order__title{
+                font-size: 24px;
+                line-height: 1;
+            }
+            .order__items{
+                display: grid;
+                grid-template-columns: auto auto;
+                grid-template-rows: repeat(5, auto);
+                grid-auto-flow: column;
+                grid-gap: 5px;
+
+                .items__item{
+                    font-family: $font_iceland;
+                    font-size: 28px;
+                    line-height: 1;
+                }
+            }
+
+            &_ready {
+                .order__items{
+                    color: $text__color_success;
+                }
+            }
+        }
+    }
+    .StatsContainer__main {
+        display: grid;
+        grid-template-rows: auto auto;
+
+        color: $text__color_prior;
+
+        .main__title {
+            font-size: 24px;
+            line-height: 1;
+        }
+        .main__subtitle {
+            font-family: $font_iceland;
+            font-size: 144px;
+            line-height: 1;
+
+            text-shadow: 0px 0px 16px rgba(51, 51, 255, 0.25), 0px 0px 8px rgba(51, 51, 255, 0.25), 0px 4px 32px rgba(51, 51, 255, 0.5);
+
+        }
+    }
+}

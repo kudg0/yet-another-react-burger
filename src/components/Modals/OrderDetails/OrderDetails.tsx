@@ -1,17 +1,7 @@
 import React from 'react';
 
-// Ya imports
-import {CheckMarkIcon} from '@ya.praktikum/react-developer-burger-ui-components';
-
-// Components
-import Modal from './../Modal';
-
-// Helpers
-import getRandomInt from './../../../services/utils/helpers/getRandomInt';
-
 // Styles
 import Styles from './orderDetails.module.scss';
-
 
 
 interface IOfferInfoComponent {
@@ -19,7 +9,7 @@ interface IOfferInfoComponent {
   name: string
 }
 
-const OfferInfo: React.FunctionComponent<IOfferInfoComponent> = React.memo(({
+const OfferInfo: React.FC<IOfferInfoComponent> = ({
   id,
   name,
 }) => {
@@ -58,6 +48,6 @@ const OfferInfo: React.FunctionComponent<IOfferInfoComponent> = React.memo(({
       </div>
     </div>
   )
-});
+};
 
-export default OfferInfo;
+export default React.memo(OfferInfo);

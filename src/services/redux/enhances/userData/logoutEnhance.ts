@@ -6,6 +6,8 @@ import {
   logoutRequestFailed
 } from './../../slicers/userSlice';
 
+// Enhances 
+import { wsSocketEnhance } from './../';
 
 // Helpers
 import checkApiResponse from './../../../utils/checkApiResponse';
@@ -23,6 +25,7 @@ export const logoutEnhance = () => {
     
     if(!refreshToken) return false;
 
+    dispatch(wsSocketEnhance({ isUserWs: true, type: "WS_CONNECTION_CLOSE" }) as any);
     dispatch(logoutRequest());
 
     fetch( apiUrl, {

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // YA imports
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -8,23 +8,27 @@ import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 // Components
 import ModalOverlay from './ModalOverlay/ModalOverlay';
 
+import { ILocationType } from './../../services/types'
+
 // Styles
 import Styles from './modal.module.scss';
-
 
 
 const modalRoot: HTMLElement = document.getElementById("root__modal")!;
 
 interface IModalComponent {
   closeModalCallback?: () => void;
+  children: React.ReactNode;
 }
 
-const Modal: React.FunctionComponent<IModalComponent> = React.memo(({
+const Modal: React.FC<IModalComponent> = ({
   children,
   closeModalCallback,
 }) => {
 
+  const location = useLocation() as ILocationType;
   const navigate = useNavigate();
+
   const modalRef = React.useRef<HTMLDivElement>(null);
 
 
@@ -36,7 +40,7 @@ const Modal: React.FunctionComponent<IModalComponent> = React.memo(({
 
 
   const closeModal = React.useCallback(() => {
-    navigate('/');
+    navigate(location.state.from || '/');
   }, [navigate]);
 
   const handleKeyPress : (e: React.KeyboardEvent) => void = React.useCallback((e) => {
@@ -45,7 +49,6 @@ const Modal: React.FunctionComponent<IModalComponent> = React.memo(({
     nameOfKey === "Escape" ? 
       closeModalCallback ? closeModalCallback() : closeModal() : false;
   }, [closeModalCallback, closeModal]);
-
 
   
   return ReactDOM.createPortal(
@@ -62,6 +65,6 @@ const Modal: React.FunctionComponent<IModalComponent> = React.memo(({
     </div>,
     modalRoot
   )
-});
+};
 
-export default Modal;
+export default React.memo(Modal);

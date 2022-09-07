@@ -6,6 +6,9 @@ import {
   loginRequestFailed
 } from './../../slicers/userSlice';
 
+// Enhances 
+import { wsSocketEnhance } from './../';
+
 // Helpers
 import checkApiResponse from './../../../utils/checkApiResponse';
 import handleApiErrors from './../../../utils/handleApiErrors';
@@ -62,6 +65,8 @@ export const loginEnhance = (formData: {email: string, password: string}) => {
                   name: result.user.name,
                 })
               );
+
+              dispatch(wsSocketEnhance({ isUserWs: true, type: "WS_CONNECTION_START" }) as any);
 
               resolve(result);
             })

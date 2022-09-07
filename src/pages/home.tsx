@@ -8,24 +8,25 @@ import {
 } from './../services/redux/slicers/appSlice';
 
 // Components
-import Main from './../components/App/Main/Main';
+import Main from './../components/Main/Main';
 
 
-
-const Home = React.memo( () => {
+const Home: React.FC = () => {
     
   const dispatch = useDispatch();  
   const location = useLocation();
   
 
   React.useEffect(() => {
-    if(!location.pathname.includes("ingredients/")) dispatch( removeClickedIngredient() );
+    if(!location.pathname.includes("ingredients/")) {
+      dispatch( removeClickedIngredient() );
+    }
   }, [dispatch, location])
 
 
   return (
     <Main />
   );
-});
+};
 
-export default Home;
+export default React.memo(Home);

@@ -7,7 +7,6 @@ import { remindPasswordEnhance } from './../../../services/redux/enhances/';
 
 // Types
 import { 
-  ILocationType, 
   TFormDataType,
 } from './../../../services/types/';
 
@@ -18,8 +17,7 @@ import AuthForm from './../../../components/Forms/Auth/AuthForm';
 import Styles from './../auth.module.scss';
 
 
-
-const ForgotPassword = React.memo( () => {
+const ForgotPassword: React.FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,7 +33,6 @@ const ForgotPassword = React.memo( () => {
       value: '',
     }
   ]);
-
 
 
   const dispatcherHelper = React.useCallback((dataFromForm) => {
@@ -57,7 +54,6 @@ const ForgotPassword = React.memo( () => {
       })
       .catch( ( error: Error) => { setFailedMessage(error.message) })
   }, [dispatch, setFailedMessage])
-
 
 
   return (
@@ -88,6 +84,6 @@ const ForgotPassword = React.memo( () => {
       </section>
     </main>
   );
-})
+};
 
-export default ForgotPassword;
+export default React.memo(ForgotPassword);

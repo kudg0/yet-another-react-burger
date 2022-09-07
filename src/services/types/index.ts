@@ -15,6 +15,18 @@ export interface IIngredientType {
 }
 
 
+export interface IOrderType {
+  _id: string;
+  name: string;
+  status: "done" | "created" | "pending";
+  number: number;
+  createdAt: string;
+  updatedAt: string;
+  ingredients: IIngredientType[];
+  totalAmount: number;
+}
+
+
 export type TFormDataType = IInputDataType[];
 
 export interface IInputDataType {
@@ -28,11 +40,12 @@ export interface IInputDataType {
 export interface ILocationType {
   pathname: string;
   state: {
-    from: Location;
+    from?: Location;
+    backgroundLocation?: string;
   };
 };
 
 
 // REDUX STORE
-export type { IReduxStore, IReduxStore__App, IReduxStore__User } from './redux';
+export type { IReduxStore, IReduxStore__App, IReduxStore__User, IWsMessagePayload } from './redux';
 
